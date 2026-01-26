@@ -10,7 +10,7 @@ import route from './routes/userRoute.js';
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const allowedOrigin = ['http://localhost:5173'];
 
