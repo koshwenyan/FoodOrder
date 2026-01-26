@@ -2,7 +2,7 @@ import User from "../model/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// ================= REGISTER =================
+
 export const register = async (req, res) => {
     try {
         const { name, email, password, phone, address, role, shopId, companyId } = req.body;
@@ -11,7 +11,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // role validation
+
         if (role === "shop-admin" && !shopId) {
             return res.status(400).json({ message: "shopId is required for shop-admin" });
         }
@@ -53,7 +53,7 @@ export const register = async (req, res) => {
     }
 };
 
-// ================= LOGIN =================
+
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -94,13 +94,12 @@ export const login = async (req, res) => {
     }
 };
 
-// ================= LOGOUT =================
-// JWT logout is handled on frontend (remove token)
+
 export const logout = async (req, res) => {
     res.status(200).json({ message: "Logout successful (token removed on client)" });
 };
 
-// ================= UPDATE USER =================
+
 export const updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -128,7 +127,7 @@ export const updateUser = async (req, res) => {
     }
 };
 
-// ================= DELETE USER =================
+
 export const deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
@@ -141,5 +140,53 @@ export const deleteUser = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "Delete failed", error: error.message });
+    }
+};
+
+
+export const getAllUsers = async (req, res) => {
+    try {
+        // Only admin can access (extra safety)
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        // Pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Search
+        const keyword = req.query.search
+            ? {
+                $or: [
+                    { name: { $regex: req.query.search, $options: "i" } },
+                    { email: { $regex: req.query.search, $options: "i" } }
+                ]
+            }
+            : {};
+
+        // Fetch users
+        const users = await User.find(keyword)
+            .select("-password")
+            .populate("shopId", "name")
+            .populate("companyId", "name")
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        // Total count
+        const totalUsers = await User.countDocuments(keyword);
+
+        res.status(200).json({
+            success: true,
+            totalUsers,
+            page,
+            pages: Math.ceil(totalUsers / limit),
+            users
+        });
+    } catch (error) {
+        console.error("Get all users error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
