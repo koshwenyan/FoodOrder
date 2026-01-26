@@ -6,11 +6,11 @@ import connnectedDB from './configs/db.js';
 import categoryRoute from './routes/categoryRoute.js';
 import shopRoute from './routes/shopRoute.js';
 import router from './routes/deliveryCompanyRoute.js';
-import route from './routes/userRoute.js';
+import userRouter from './routes/userRoute.js';
 
 const app = express();
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 const allowedOrigin = ['http://localhost:5173'];
 
@@ -23,7 +23,7 @@ app.use(cors({ credentials: true, origin: allowedOrigin }))
 
 app.use('/api/category', categoryRoute);
 app.use('/api/shop', shopRoute);
-app.use('/api/user', route)
+app.use('/api/user', userRouter)
 app.use('/api/company', router)
 
 app.get('/', (req, res) => res.send('API is working'));
