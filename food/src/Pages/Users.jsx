@@ -15,6 +15,8 @@ export default function Users() {
     email: "",
     password: "",
     phone: "",
+    companyId: "",
+    companyName: "",
     address: "",
     role: "customer",
   });
@@ -45,6 +47,8 @@ export default function Users() {
     }
   };
 
+  console.log("users",users)
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -55,6 +59,7 @@ export default function Users() {
       email: "",
       password: "",
       phone: "",
+      companyName: "",
       address: "",
       role: "customer",
     });
@@ -72,10 +77,12 @@ export default function Users() {
       if (!token) throw new Error("No token found");
 
       const payload = {
+        ...form,
         name: form.name,
         email: form.email,
         password: form.password || undefined,
         phone: form.phone,
+        company: form.companyId, // send ID
         address: form.address,
         role: form.role,
       };
@@ -122,6 +129,8 @@ export default function Users() {
       email: user.email,
       password: "",
       phone: user.phone,
+      companyId: user.companyId?._id || "",
+      companyName: user.companyId?.name || "",
       address: user.address,
       role: user.role,
     });
@@ -204,12 +213,23 @@ export default function Users() {
             onChange={handleChange}
             className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
+           <input
+            name="companyName"
+            type="text"
+            placeholder="Company"
+            value={form.companyName}
+            onChange={handleChange}
+            required={!isEditing}
+            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            disabled={isEditing}
+            
+          />
           <input
             name="address"
             placeholder="Address"
             value={form.address}
             onChange={handleChange}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 md:col-span-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <select
             name="role"
@@ -250,6 +270,7 @@ export default function Users() {
               <th className="p-4 text-left">Name</th>
               <th className="p-4 text-left">Email</th>
               <th className="p-4 text-left">Phone</th>
+              <th className="p-4 text-left">Company</th>
               <th className="p-4 text-left">Address</th>
               <th className="p-4 text-left">Role</th>
               <th className="p-4 text-right">Actions</th>
@@ -271,6 +292,7 @@ export default function Users() {
                   <td className="p-4 text-slate-200">{user.name}</td>
                   <td className="p-4 text-slate-300">{user.email}</td>
                   <td className="p-4 text-slate-300">{user.phone}</td>
+                  <td className="p-4 text-slate-300">{user.companyId?.name || "-"}</td>
                   <td className="p-4 text-slate-300 truncate max-w-xs">
                     {user.address}
                   </td>
@@ -336,6 +358,9 @@ export default function Users() {
             </p>
             <p>
               <strong>Phone:</strong> {modalUser.phone}
+            </p>
+            <p>
+              <strong>Company:</strong> {modalUser.companyId?.name}
             </p>
             <p>
               <strong>Address:</strong> {modalUser.address}
