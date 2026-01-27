@@ -26,7 +26,7 @@ export default function Shops() {
   const [editingId, setEditingId] = useState(null);
 
   const API_BASE = "http://localhost:3000/api/shop/";
-  const API_CATEGORY = "http://localhost:3000/api/category/";
+  const API_CATEGORY = "http://localhost:3000/api/category/all";
 
   // Fetch shops
   const fetchShops = async () => {
