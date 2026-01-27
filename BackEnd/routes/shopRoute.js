@@ -1,8 +1,23 @@
-import { createShop } from "../controller/shopController.js";
-import express from 'express';
+import express from "express";
+import {
+    createShop,
+    getAllShops,
+    getShopById,
+    updateShop,
+    deleteShop
+} from "../controller/shopController.js";
 
-const shopRoute = express.Router();
+import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
 
-shopRoute.post('/create', createShop);
+const shopRouter = express.Router();
 
-export default shopRoute;
+/* ===== PUBLIC ===== */
+shopRouter.get("/", getAllShops);
+shopRouter.get("/:shopId", getShopById);
+
+/* ===== ADMIN ONLY ===== */
+shopRouter.post("/", authMiddleware, adminMiddleware("admin"), createShop);
+shopRouter.put("/:shopId", authMiddleware, adminMiddleware("admin"), updateShop);
+shopRouter.delete("/:shopId", authMiddleware, adminMiddleware("admin"), deleteShop);
+
+export default shopRouter;

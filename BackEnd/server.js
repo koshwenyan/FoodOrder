@@ -4,9 +4,10 @@ import cookieParser from "cookie-parser";
 import 'dotenv/config';
 import connnectedDB from './configs/db.js';
 import categoryRoute from './routes/categoryRoute.js';
-import shopRoute from './routes/shopRoute.js';
 import router from './routes/deliveryCompanyRoute.js';
 import userRouter from './routes/userRoute.js';
+import shopRouter from './routes/shopRoute.js';
+shopRouter
 
 const app = express();
 
@@ -22,9 +23,10 @@ app.use(cookieParser());
 app.use(cors({ credentials: true, origin: allowedOrigin }))
 
 app.use('/api/category', categoryRoute);
-app.use('/api/shop', shopRoute);
+app.use('/api/shop', shopRouter);
 app.use('/api/user', userRouter)
 app.use('/api/company', router)
+
 
 app.get('/', (req, res) => res.send('API is working'));
 
