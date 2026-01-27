@@ -1,29 +1,39 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./Pages/Dashboard.jsx";
-import Shop from "./Pages/Shop.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import Login from "./Pages/login.jsx";
+import AdminDashboard from "./Pages/AdminDashboard.jsx";
+import PrivateRoute from "./routes/PrivateRoute.jsx";
 import Users from "./Pages/Users.jsx";
-import Categories from "./Pages/Category.jsx";
-import Company from "./Pages/Deliservice.jsx";
-import Reviews from "./Pages/Review.jsx";
-import Sidebar from "./components/sidebar.jsx";
+import Shop from "./Pages/Shop.jsx";
+import Category from "./Pages/Category.jsx";
+import Delivery from "./Pages/Deliservice.jsx";
+import Review from "./Pages/Review.jsx";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <div className="flex min-h-screen bg-black">
-        <Sidebar />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
-        <main className="flex-1 p-6">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/company" element={<Company />} />
-            <Route path="/reviews" element={<Reviews />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          >
+            <Route path="users" element={<Users />} />
+            <Route path="shop" element={<Shop />} />
+            <Route path="category" element={<Category />} />
+            <Route path="delivery" element={<Delivery />} />
+            <Route path="review" element={<Review />} />
+          </Route>
+
+          <Route path="*" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

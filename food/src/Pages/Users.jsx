@@ -17,18 +17,31 @@ export default function Users() {
 
   const isEditing = form.id !== null;
 
-   const API_URL = "http://localhost:5001/api/user"; 
+   const API_URL = "http://localhost:3000/api/user/all"; 
 
    const fetchUsers = async () => {
-     try {
-       const response = await fetch(API_URL);
-       const data = await response.json();
-       setUsers(data);
-       console.log("Fetched users:", data);
-     } catch (error) {
-       console.error("Error fetching users:", error);
-     }
-   };
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(API_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message || "Failed to fetch users");
+    }
+
+    const data = await response.json();
+    setUsers(data.users || data); // depending on backend
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+    setUsers([]); // prevent crash
+  }
+};
+
 
    useEffect(() => {
      fetchUsers();
@@ -60,7 +73,18 @@ export default function Users() {
     resetForm();
   };
 
-  const handleEdit = (user) => setForm(user);
+  const handleEdit = (user) => {
+  setForm({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    address: user.address,
+    role: user.role,
+    password: "",
+  });
+};
+
 
   const handleDelete = (id) => {
     if (confirm("Delete this user?")) setUsers(users.filter((u) => u.id !== id));
@@ -165,32 +189,34 @@ export default function Users() {
                 </td>
               </tr>
             ) : (
-              users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-t border-slate-800 hover:bg-slate-800/50"
-                >
-                  <td className="p-4 text-slate-200">{user.name}</td>
-                  <td className="p-4 text-slate-300">{user.email}</td>
-                  <td className="p-4 text-slate-300">{user.phone}</td>
-                  <td className="p-4 text-slate-300 truncate max-w-xs">{user.address}</td>
-                  <td className="p-4 text-slate-300">{user.role}</td>
-                  <td className="p-4 flex justify-end gap-2">
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600"
-                    >
-                      <PencilIcon className="w-4 h-4 text-slate-200" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40"
-                    >
-                      <TrashIcon className="w-4 h-4 text-red-400" />
-                    </button>
-                  </td>
-                </tr>
-              ))
+             users.map((user) => (
+  <tr
+    key={user._id}
+    className="border-t border-slate-800 hover:bg-slate-800/50"
+  >
+    <td className="p-4 text-slate-200">{user.name}</td>
+    <td className="p-4 text-slate-300">{user.email}</td>
+    <td className="p-4 text-slate-300">{user.phone}</td>
+    <td className="p-4 text-slate-300 truncate max-w-xs">
+      {user.address}
+    </td>
+    <td className="p-4 text-slate-300">{user.role}</td>
+    <td className="p-4 flex justify-end gap-2">
+      <button
+        onClick={() => handleEdit(user)}
+        className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+      >
+        <PencilIcon className="w-4 h-4 text-slate-200" />
+      </button>
+      <button
+        onClick={() => handleDelete(user._id)}
+        className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40"
+      >
+        <TrashIcon className="w-4 h-4 text-red-400" />
+      </button>
+    </td>
+  </tr>
+))
             )}
           </tbody>
         </table>
