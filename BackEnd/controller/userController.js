@@ -1,7 +1,7 @@
 import User from "../model/userModel.js";
+import DeliveryCompany from "../model/deliveryCompanyModel.js"; // <-- your company model
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 
 export const register = async (req, res) => {
     try {
@@ -11,12 +11,31 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
+        // ================= ROLE PERMISSION CHECK =================
+        if (["admin", "company-admin", "company-staff", "shop-admin"].includes(role)) {
+            if (!req.user) {
+                return res.status(401).json({ message: "Authentication required to create this role" });
+            }
+        }
 
+        if (role === "company-staff" && !["admin", "company-admin"].includes(req.user.role)) {
+            return res.status(403).json({ message: "Only admin or company-admin can create company-staff" });
+        }
+
+        if (role === "company-admin" && req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can create company-admin" });
+        }
+
+        if (role === "shop-admin" && req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can create shop-admin" });
+        }
+
+        // ================= ROLE DATA VALIDATION =================
         if (role === "shop-admin" && !shopId) {
             return res.status(400).json({ message: "shopId is required for shop-admin" });
         }
 
-        if ((role === "company-admin" || role === "company-staff") && !companyId) {
+        if (["company-admin", "company-staff"].includes(role) && !companyId) {
             return res.status(400).json({ message: "companyId is required" });
         }
 
@@ -27,7 +46,7 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await User.create({
+        const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
@@ -38,14 +57,28 @@ export const register = async (req, res) => {
             companyId: ["company-admin", "company-staff"].includes(role) ? companyId : null
         });
 
+        // ================= INCREMENT STAFF COUNT IF COMPANY-STAFF =================
+        if (role === "company-staff" && companyId) {
+            await DeliveryCompany.findByIdAndUpdate(
+                companyId,
+                { $inc: { staffCount: 1 } },
+                { new: true }
+            );
+        }
+
+        // ================= POPULATE USER =================
+        const populatedUser = await User.findById(newUser._id)
+            .select("-password")
+            .populate("shopId", "name")
+            .populate("companyId", "name");
+
+        // ================= COUNT TOTAL COMPANY-STAFF =================
+        // const totalCompanyStaff = await User.countDocuments({ role: "company-staff" });
+
         res.status(201).json({
             message: "User registered successfully",
-            data: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
+            // totalCompanyStaff,
+            data: populatedUser
         });
 
     } catch (error) {
@@ -59,25 +92,29 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email and password required" });
+            return res.status(400).json({ message: "Email and password are required" });
         }
 
+        // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
+        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
+        // Generate JWT token
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: "7d" } // token valid for 7 days
         );
 
+        // Return user data (without password) and token
         res.status(200).json({
             message: "Login successful",
             token,
@@ -85,18 +122,28 @@ export const login = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                shopId: user.shopId,
+                companyId: user.companyId
             }
         });
 
     } catch (error) {
+        console.error("Login error:", error);
         res.status(500).json({ message: "Login failed", error: error.message });
     }
 };
 
-
 export const logout = async (req, res) => {
-    res.status(200).json({ message: "Logout successful (token removed on client)" });
+    try {
+        // Client should delete token on logout
+        res.status(200).json({
+            message: "Logout successful. Please remove the token from the client."
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({ message: "Logout failed", error: error.message });
+    }
 };
 
 
@@ -105,21 +152,23 @@ export const updateUser = async (req, res) => {
         const userId = req.params.id;
         const updates = req.body;
 
+        const userToUpdate = await User.findById(userId);
+        if (!userToUpdate) return res.status(404).json({ message: "User not found" });
+
+        // ================= COMPANY-STAFF PERMISSION CHECK =================
+        if (userToUpdate.role === "company-staff" && !["admin", "company-admin"].includes(req.user.role)) {
+            return res.status(403).json({ message: "Only admin or company-admin can update company-staff" });
+        }
+
         if (updates.password) {
             updates.password = await bcrypt.hash(updates.password, 10);
         }
 
-        const user = await User.findByIdAndUpdate(userId, updates, {
-            new: true
-        }).select("-password");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true }).select("-password");
 
         res.status(200).json({
             message: "User updated successfully",
-            data: user
+            data: updatedUser
         });
 
     } catch (error) {
@@ -127,14 +176,17 @@ export const updateUser = async (req, res) => {
     }
 };
 
-
 export const deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
+        const userToDelete = await User.findById(req.params.id);
+        if (!userToDelete) return res.status(404).json({ message: "User not found" });
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+        // ================= COMPANY-STAFF PERMISSION CHECK =================
+        if (userToDelete.role === "company-staff" && !["admin", "company-admin"].includes(req.user.role)) {
+            return res.status(403).json({ message: "Only admin or company-admin can delete company-staff" });
         }
+
+        await User.findByIdAndDelete(req.params.id);
 
         res.status(200).json({ message: "User deleted successfully" });
 
@@ -144,49 +196,116 @@ export const deleteUser = async (req, res) => {
 };
 
 
+// export const getAllUsers = async (req, res) => {
+//     try {
+//         if (req.user.role !== "admin") {
+//             return res.status(403).json({ message: "Access denied" });
+//         }
+
+//         const page = Number(req.query.page) || 1;
+//         const limit = Number(req.query.limit);
+//         const skip = (page - 1) * limit;
+
+//         const keyword = req.query.search
+//             ? {
+//                 $or: [
+//                     { name: { $regex: req.query.search, $options: "i" } },
+//                     { email: { $regex: req.query.search, $options: "i" } }
+//                 ]
+//             }
+//             : {};
+
+//         const users = await User.find(keyword)
+//             .select("-password")
+//             .populate("shopId", "name")
+//             .populate("companyId", "name")
+//             .skip(skip)
+//             .limit(limit)
+//             .sort({ createdAt: -1 });
+
+//         const totalUsers = await User.countDocuments(keyword);
+//         const totalCompanyStaff = await User.countDocuments({ role: "company-staff" });
+
+//         res.status(200).json({
+//             success: true,
+//             totalUsers,
+//             totalCompanyStaff,
+//             page,
+//             pages: Math.ceil(totalUsers / limit),
+//             users
+//         });
+//     } catch (error) {
+//         console.error("Get all users error:", error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// };
+
 export const getAllUsers = async (req, res) => {
     try {
-        // Only admin can access (extra safety)
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Access denied" });
-        }
-
-        // Pagination
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit);
-        const skip = (page - 1) * limit;
-
-        // Search
-        const keyword = req.query.search
-            ? {
-                $or: [
-                    { name: { $regex: req.query.search, $options: "i" } },
-                    { email: { $regex: req.query.search, $options: "i" } }
-                ]
+        const result = await User.aggregate([
+            {
+                $facet: {
+                    users: [
+                        {
+                            $unset: "password"
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: "count"
+                        }
+                    ]
+                }
             }
-            : {};
-
-        // Fetch users
-        const users = await User.find(keyword)
-            .select("-password")
-            .populate("shopId", "name")
-            .populate("companyId", "name")
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
-
-        // Total count
-        const totalUsers = await User.countDocuments(keyword);
+        ]);
 
         res.status(200).json({
-            success: true,
-            totalUsers,
-            page,
-            pages: Math.ceil(totalUsers / limit),
-            users
+            totalUsers: result[0].totalCount[0]?.count || 0,
+            users: result[0].users
         });
+
     } catch (error) {
         console.error("Get all users error:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getUserById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+
+        const user = await User.findById(userId)
+            .select("-password")
+            .populate("shopId", "name")
+            .populate("companyId", "name");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // ================= COMPANY-STAFF PERMISSION CHECK =================
+        // Only admin or company-admin can view company-staff
+        if (
+            user.role === "company-staff" &&
+            !["admin", "company-admin"].includes(req.user.role)
+        ) {
+            return res.status(403).json({
+                message: "Only admin or company-admin can view company-staff"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: user
+        });
+
+    } catch (error) {
+        console.error("Get user by ID error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
