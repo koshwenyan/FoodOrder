@@ -1,8 +1,30 @@
-import express from 'express';
-import { createCategory } from '../controller/categoryController.js';
+import express from "express";
+import {
+    createCategory,
+    getAllCategories,
+    getCategoryById,
+    updateCategory,
+    deleteCategory
+} from "../controller/categoryController.js";
+import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
 
-const categoryRoute = express.Router();
+const categoryRouter = express.Router();
 
-categoryRoute.post('/create', createCategory);
+// ================= PUBLIC ROUTES =================
+// Get all categories
+categoryRouter.get("/all", authMiddleware, getAllCategories);
 
-export default categoryRoute;
+// Get category by ID
+categoryRouter.get("/:categoryId", authMiddleware, getCategoryById);
+
+// ================= ADMIN ROUTES =================
+// Create a new category (admin only)
+categoryRouter.post("/create", authMiddleware, adminMiddleware("admin"), createCategory);
+
+// Update category (admin only)
+categoryRouter.put("/:categoryId", authMiddleware, adminMiddleware("admin"), updateCategory);
+
+// Delete category (admin only)
+categoryRouter.delete("/:categoryId", authMiddleware, adminMiddleware("admin"), deleteCategory);
+
+export default categoryRouter;
