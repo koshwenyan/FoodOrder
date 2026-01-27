@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import Login from "./Pages/login.jsx";
-import AdminDashboard from "./Pages/AdminDashboard.jsx";
+// import AdminDashboard from "./Pages/AdminDashboard.jsx";
 import PrivateRoute from "./routes/PrivateRoute.jsx";
 import Users from "./Pages/Users.jsx";
 import Shop from "./Pages/Shop.jsx";
 import Category from "./Pages/Category.jsx";
 import Delivery from "./Pages/Deliservice.jsx";
 import Review from "./Pages/Review.jsx";
-
+import Sidebar from "./components/sidebar.jsx";
 export default function App() {
   return (
     <AuthProvider>
@@ -20,7 +20,7 @@ export default function App() {
             path="/admin"
             element={
               <PrivateRoute>
-                <AdminDashboard />
+                <Sidebar />
               </PrivateRoute>
             }
           >
