@@ -4,11 +4,12 @@ import {
   TrashIcon,
   PlusIcon,
   EyeIcon,
-  XMarkIcon
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Shops() {
   const [shops, setShops] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -16,7 +17,7 @@ export default function Shops() {
     OpenTime: "",
     CloseTime: "",
     isActive: true,
-    category: "",
+    category: "", // store category ID
   });
   const [modalShop, setModalShop] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,26 +25,44 @@ export default function Shops() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const API_BASE = "http://localhost:3000/api/shop";
+  const API_BASE = "http://localhost:3000/api/shop/";
+  const API_CATEGORY = "http://localhost:3000/api/category/";
 
   // Fetch shops
   const fetchShops = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/all`, {
+      const res = await fetch(`${API_BASE}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch shops");
       const data = await res.json();
-      setShops(data.shops || data);
+      setShops(data.data || []);
     } catch (err) {
-      console.error("Fetch shops error:", err.message);
+      console.error(err);
       setShops([]);
+    }
+  };
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_CATEGORY}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      const data = await res.json();
+      setCategories(data.data || []);
+    } catch (err) {
+      console.error(err);
+      setCategories([]);
     }
   };
 
   useEffect(() => {
     fetchShops();
+    fetchCategories();
   }, []);
 
   const resetForm = () => {
@@ -67,10 +86,7 @@ export default function Shops() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found");
-
       const payload = { ...form };
-
       let res;
       if (isEditing) {
         res = await fetch(`${API_BASE}/update/${editingId}`, {
@@ -92,16 +108,13 @@ export default function Shops() {
         });
       }
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || "Request failed");
-      }
+      if (!res.ok) throw new Error("Request failed");
 
       await res.json();
       fetchShops();
       resetForm();
     } catch (err) {
-      console.error("Submit error:", err.message);
+      console.error(err.message);
     }
   };
 
@@ -113,7 +126,7 @@ export default function Shops() {
       OpenTime: shop.OpenTime,
       CloseTime: shop.CloseTime,
       isActive: shop.isActive,
-      category: shop.category[0] || "",
+      category: shop.category?._id || "",
     });
     setIsEditing(true);
     setEditingId(shop._id);
@@ -130,13 +143,21 @@ export default function Shops() {
       if (!res.ok) throw new Error("Delete failed");
       setShops(shops.filter((s) => s._id !== id));
     } catch (err) {
-      console.error("Delete error:", err.message);
+      console.error(err.message);
     }
   };
 
   const handleView = (shop) => setModalShop(shop);
 
-  // Pagination
+  // Generate 12-hour options for OpenTime and CloseTime
+  const timeOptions = [];
+  for (let h = 1; h <= 12; h++) {
+    ["AM", "PM"].forEach((period) => {
+      timeOptions.push(`${h}:00 ${period}`);
+      timeOptions.push(`${h}:30 ${period}`);
+    });
+  }
+
   const indexOfLast = currentPage * perPage;
   const indexOfFirst = indexOfLast - perPage;
   const currentShops = shops.slice(indexOfFirst, indexOfLast);
@@ -158,7 +179,7 @@ export default function Shops() {
             value={form.name}
             onChange={handleChange}
             required
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
           />
           <input
             name="description"
@@ -174,27 +195,51 @@ export default function Shops() {
             onChange={handleChange}
             className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
           />
-          <input
+
+          {/* OpenTime */}
+          <select
             name="OpenTime"
-            placeholder="Open Time"
             value={form.OpenTime}
             onChange={handleChange}
             className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-          />
-          <input
+          >
+            <option value="">Select Open Time</option>
+            {timeOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+
+          {/* CloseTime */}
+          <select
             name="CloseTime"
-            placeholder="Close Time"
             value={form.CloseTime}
             onChange={handleChange}
             className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-          />
-          <input
+          >
+            <option value="">Select Close Time</option>
+            {timeOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+
+          {/* Category */}
+          <select
             name="category"
-            placeholder="Category ID"
             value={form.category}
             onChange={handleChange}
             className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-          />
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
 
           <div className="flex items-center gap-2 md:col-span-3">
             <button
@@ -245,21 +290,29 @@ export default function Shops() {
                   <td className="p-4">{shop.name}</td>
                   <td className="p-4">{shop.description}</td>
                   <td className="p-4">{shop.address}</td>
-                  <td className="p-4">{shop.OpenTime} - {shop.CloseTime}</td>
-                  <td className="p-4">{shop.isActive ? "Yes" : "No"}</td>
-                  <td className="p-4">{shop.category.join(", ")}</td>
+                  <td className="p-4">
+                    {shop.OpenTime} - {shop.CloseTime}
+                  </td>
+                  <td
+                    className={`p-4 ${
+                      shop.isActive ? "text-emerald-400" : "text-red-400"
+                    }`}
+                  >
+                    {shop.isActive ? "Active" : "Inactive"}
+                  </td>
+                  <td className="p-4">{shop.category?.name || "-"}</td>
                   <td className="p-4 flex justify-end gap-2">
                     <button
                       onClick={() => handleView(shop)}
                       className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600"
                     >
-                      <EyeIcon className="w-4 h-4 text-slate-200" />
+                      <EyeIcon className="w-4 h-4 text-green-400" />
                     </button>
                     <button
                       onClick={() => handleEdit(shop)}
                       className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600"
                     >
-                      <PencilIcon className="w-4 h-4 text-slate-200" />
+                      <PencilIcon className="w-4 h-4 text-blue-400" />
                     </button>
                     <button
                       onClick={() => handleDelete(shop._id)}
@@ -273,47 +326,65 @@ export default function Shops() {
             )}
           </tbody>
         </table>
-
-        {/* Pagination */}
-        <div className="flex justify-center items-center gap-2 p-4">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600"
-          >
-            Prev
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600"
-          >
-            Next
-          </button>
-        </div>
       </div>
 
       {/* Modal */}
       {modalShop && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-950 p-6 rounded-xl w-96">
-            <h2 className="text-xl font-bold mb-4">Shop Details</h2>
-            <p><strong>Name:</strong> {modalShop.name}</p>
-            <p><strong>Description:</strong> {modalShop.description}</p>
-            <p><strong>Address:</strong> {modalShop.address}</p>
-            <p><strong>Open Time:</strong> {modalShop.OpenTime}</p>
-            <p><strong>Close Time:</strong> {modalShop.CloseTime}</p>
-            <p><strong>Active:</strong> {modalShop.isActive ? "Yes" : "No"}</p>
-            <p><strong>Category:</strong> {modalShop.category.join(", ")}</p>
-            <button
-              onClick={() => setModalShop(null)}
-              className="mt-4 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded"
-            >
-              Close
-            </button>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-950 p-6 rounded-3xl w-96 shadow-2xl transform scale-95 animate-scaleUp">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-emerald-400">
+                Shop Details
+              </h2>
+              <button
+                onClick={() => setModalShop(null)}
+                className="p-1 rounded-full hover:bg-slate-700 transition"
+              >
+                <XMarkIcon className="w-5 h-5 text-slate-200" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-slate-200">
+              <p>
+                <span className="font-semibold text-emerald-400">Name:</span>{" "}
+                {modalShop.name}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">
+                  Description:
+                </span>{" "}
+                {modalShop.description}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">Address:</span>{" "}
+                {modalShop.address}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">Open Time:</span>{" "}
+                {modalShop.OpenTime}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">Close Time:</span>{" "}
+                {modalShop.CloseTime}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">Active:</span>{" "}
+                {modalShop.isActive ? "Active" : "Inactive"}
+              </p>
+              <p>
+                <span className="font-semibold text-emerald-400">Category:</span>{" "}
+                {modalShop.category?.name || "-"}
+              </p>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setModalShop(null)}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold rounded-lg"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

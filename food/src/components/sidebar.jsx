@@ -1,68 +1,91 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import {
   HomeIcon,
-  ShoppingBagIcon,
   UsersIcon,
-  TagIcon,
-  BuildingOfficeIcon,
-  StarIcon,
-  ArrowRightOnRectangleIcon,
+  ShoppingCartIcon,
+  ClipboardDocumentListIcon,
+  TruckIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 
-const menu = [
-  { name: "Dashboard", path: "/", icon: HomeIcon },
-  { name: "Shop", path: "/shop", icon: ShoppingBagIcon },
-  { name: "Users", path: "/users", icon: UsersIcon },
-  { name: "Categories", path: "/categories", icon: TagIcon },
-  { name: "Company", path: "/company", icon: BuildingOfficeIcon },
-  { name: "Reviews", path: "/reviews", icon: StarIcon },
-];
+export default function AdminDashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-export default function Sidebar() {
+  const menu = [
+    { name: "Shop", icon: ShoppingCartIcon, path: "shop" },
+    { name: "Category", icon: ClipboardDocumentListIcon, path: "category" },
+    { name: "Delivery", icon: TruckIcon, path: "delivery" },
+    { name: "Users", icon: UsersIcon, path: "users" },
+    { name: "Reviews", icon: HomeIcon, path: "review" },
+  ];
+
   return (
-    <aside className="w-72 min-h-screen bg-slate-950 text-slate-200 border-r border-slate-800 relative">
-      {/* LOGO */}
-      <div className="px-6 py-6 text-2xl font-bold">
-        <span className="text-emerald-400">Admin</span> Panel
-      </div>
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
+      
+      {/* SIDEBAR */}
+      <aside
+        className={`relative ${
+          sidebarOpen ? "w-64" : "w-20"
+        } transition-all duration-300 bg-slate-950 border-r border-slate-800`}
+      >
+        {/* Accent Line */}
+        <div className="absolute top-0 right-0 h-full w-[2px] bg-gradient-to-b from-emerald-400 via-cyan-400 to-indigo-400 opacity-70" />
 
-      {/* MENU */}
-      <nav className="px-4 space-y-1">
-        {menu.map(({ name, path, icon: Icon }) => (
-          <NavLink key={name} to={path} end>
-            {({ isActive }) => (
-              <div
-                className={`
-                  group flex items-center gap-3 px-4 py-3 rounded-xl transition-all
-                  ${
-                    isActive
-                      ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30"
-                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{name}</span>
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800">
+          {sidebarOpen && (
+            <span className="text-lg font-bold tracking-wide bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              MNS
+            </span>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg hover:bg-slate-800 transition"
+          >
+            <Bars3Icon className="w-5 h-5" />
+          </button>
+        </div>
 
-                {/* ACTIVE INDICATOR */}
-                <span
-                  className={`ml-auto h-5 w-1 rounded-full bg-emerald-400 transition ${
-                    isActive ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              </div>
-            )}
-          </NavLink>
-        ))}
-      </nav>
+        {/* MENU */}
+        <nav className="mt-6 space-y-1 px-3">
+          {menu.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all
+                ${
+                  isActive
+                    ? "bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_-5px_rgba(16,185,129,0.5)]"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800"
+                }`
+              }
+            >
+              {/* Active Indicator */}
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-emerald-400 opacity-0 group-[.active]:opacity-100" />
 
-      {/* FOOTER */}
-      <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
-        <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-red-400">
-          <ArrowRightOnRectangleIcon className="w-4 h-4" />
-          Logout
-        </button>
-      </div>
-    </aside>
+              <item.icon className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
+
+              {sidebarOpen && <span>{item.name}</span>}
+
+              {/* Tooltip when collapsed */}
+              {!sidebarOpen && (
+                <span className="absolute left-16 z-50 scale-0 group-hover:scale-100 origin-left rounded-md bg-slate-900 px-2 py-1 text-xs text-white shadow-lg transition">
+                  {item.name}
+                </span>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
+
+      {/* CONTENT */}
+      <main className="flex-1 p-6">
+        <div className="rounded-2xl bg-slate-900/70 backdrop-blur border border-slate-800 p-6 min-h-full shadow-xl">
+          <Outlet />
+        </div>
+      </main>
+    </div>
   );
 }
