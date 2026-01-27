@@ -36,7 +36,7 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800">
           {sidebarOpen && (
             <span className="text-lg font-bold tracking-wide bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-              Admin DashBoard
+              MNS
             </span>
           )}
           <button

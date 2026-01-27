@@ -24,9 +24,10 @@ export default function Users() {
   const [perPage] = useState(5);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [shops, setShops] = useState([]);
 
   const API_BASE = "http://localhost:3000/api/user";
-
+  const API_URL = "http://localhost:3000/api/shop/";
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -36,6 +37,22 @@ export default function Users() {
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       setUsers(data.users || data);
+      console.log("Users:", data);
+    } catch (err) {
+      console.error(err);
+      setUsers([]);
+    }
+  };
+  const fetchShops = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch users");
+      const data = await res.json();
+      setShops(data.users || data);
+      console.log("Shops:", data);
     } catch (err) {
       console.error(err);
       setUsers([]);
@@ -44,6 +61,7 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers();
+    fetchShops();
   }, []);
 
   const resetForm = () => {
@@ -232,6 +250,22 @@ export default function Users() {
               Customer
             </option>
           </select>
+        {form.role === "shop-admin" && (
+  <select
+    name="ShopId"
+    value={form.ShopId || ""}
+    onChange={(e) => setForm({ ...form, ShopId: e.target.value })}
+    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+  >
+    <option value="">Select Shop</option>
+    {shops.data?.map((shop) => (
+      <option key={shop._id} value={shop._id}>
+        {shop.name}
+      </option>
+    ))}
+  </select>
+)}
+
 
           <button
             type="submit"
