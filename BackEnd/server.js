@@ -3,7 +3,7 @@ import cors from 'cors';
 import cookieParser from "cookie-parser";
 import 'dotenv/config';
 import connnectedDB from './configs/db.js';
-import categoryRoute from './routes/categoryRoute.js';
+import categoryRouter from './routes/categoryRoute.js';
 import companyRouter from './routes/deliveryCompanyRoute.js';
 import userRouter from './routes/userRoute.js';
 import shopRouter from './routes/shopRoute.js';
@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: allowedOrigin }))
 
-app.use('/api/category', categoryRoute);
+app.use('/api/category', categoryRouter);
 app.use('/api/shop', shopRouter);
 app.use('/api/user', userRouter)
 app.use('/api/company', companyRouter)
