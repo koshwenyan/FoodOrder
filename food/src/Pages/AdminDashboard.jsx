@@ -53,60 +53,63 @@ export const AdminDashboard = () => {
       name: "Customers",
       count: totals.users,
       icon: <UsersIcon className="w-10 h-10 text-red-500" />,
-      bg: "bg-red-50",
+      gradient: "bg-gradient-to-r from-red-400 to-pink-500",
     },
     {
       name: "Restaurants",
       count: totals.shops,
-      icon: <BuildingStorefrontIcon className="w-10 h-10 text-yellow-500" />,
-      bg: "bg-yellow-50",
+      icon: <BuildingStorefrontIcon className="w-10 h-10 text-orange-500" />,
+      gradient: "bg-gradient-to-r from-yellow-400 to-orange-500",
     },
     {
       name: "Companies",
       count: totals.companies,
-      icon: <BuildingOffice2Icon className="w-10 h-10 text-green-500" />,
-      bg: "bg-green-50",
+      icon: <BuildingOffice2Icon className="w-10 h-10 text-emerald-500" />,
+      gradient: "bg-gradient-to-r from-green-400 to-teal-500",
     },
     {
       name: "Categories",
       count: totals.categories,
-      icon: <Squares2X2Icon className="w-10 h-10 text-orange-500" />,
-      bg: "bg-orange-50",
+      icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
+      gradient: "bg-gradient-to-r from-purple-400 to-indigo-500",
     },
   ];
 
   return (
     <div className="p-8 min-h-screen bg-slate-900">
-      <h1 className="text-4xl font-bold text-gray-800 mb-10 text-center">
-        🍴 Food Order Admin
-      </h1>
+      {/* <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
+         Food Order Admin
+      </h1> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card) => (
           <div
             key={card.name}
             onClick={() => navigate("#")}
-            className={`cursor-pointer flex flex-col justify-between p-6 rounded-2xl shadow hover:shadow-lg transition bg-white ${card.bg}`}
+            className={`cursor-pointer relative p-6 rounded-3xl shadow-lg transform transition hover:-translate-y-2 hover:shadow-2xl ${card.gradient}`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-lg bg-white shadow-sm">
-                {card.icon}
-              </div>
-              <span className="text-gray-700 font-semibold">{card.name}</span>
+            {/* Icon */}
+            <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md">
+              {card.icon}
             </div>
 
-            <p className="text-3xl font-bold text-gray-800">{card.count}</p>
+            {/* Content */}
+            <div className="mt-8">
+              <p className="text-gray-100 font-semibold text-lg">{card.name}</p>
+              <h2 className="text-3xl font-bold text-white mt-2">{card.count}</h2>
+            </div>
 
-            <div className="h-1 w-16 bg-gray-200 rounded mt-2"></div>
+            {/* Decorative bar */}
+            <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
           </div>
         ))}
       </div>
-
+{/* 
       <div className="mt-12 text-center text-gray-500">
         <p className="text-sm tracking-wide">
-          Classic and clean food-order admin dashboard
+          Modern and colorful food-order admin dashboard
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };
