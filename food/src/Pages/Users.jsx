@@ -275,6 +275,22 @@ export default function Users() {
           <option value="customer">Customer</option>
         </select>
 
+        {form.role === "shop-admin" && (
+  <select
+    value={form.shopId}
+    onChange={(e) => setForm({ ...form, shopId: e.target.value })}
+    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+  >
+    <option value="">Select a shop</option>
+    {shops.map((shop) => (
+      <option key={shop._id} value={shop._id}>
+        {shop.name}
+      </option>
+    ))}
+  </select>
+)}
+
+
         <button
           onClick={handleSubmit}
           className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-4 py-2 rounded-lg"
