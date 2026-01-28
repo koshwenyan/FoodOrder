@@ -7,6 +7,7 @@ import categoryRouter from './routes/categoryRoute.js';
 import companyRouter from './routes/deliveryCompanyRoute.js';
 import userRouter from './routes/userRoute.js';
 import shopRouter from './routes/shopRoute.js';
+import menuRouter from './routes/menuRoute.js';
 
 
 
@@ -26,6 +27,7 @@ app.use(cors({ credentials: true, origin: allowedOrigin }))
 app.use('/api/category', categoryRouter);
 app.use('/api/shop', shopRouter);
 app.use('/api/user', userRouter)
+app.use('/api/menu', menuRouter)
 app.use('/api/company', companyRouter)
 
 

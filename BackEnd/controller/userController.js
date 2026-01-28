@@ -196,50 +196,6 @@ export const deleteUser = async (req, res) => {
 };
 
 
-// export const getAllUsers = async (req, res) => {
-//     try {
-//         if (req.user.role !== "admin") {
-//             return res.status(403).json({ message: "Access denied" });
-//         }
-
-//         const page = Number(req.query.page) || 1;
-//         const limit = Number(req.query.limit);
-//         const skip = (page - 1) * limit;
-
-//         const keyword = req.query.search
-//             ? {
-//                 $or: [
-//                     { name: { $regex: req.query.search, $options: "i" } },
-//                     { email: { $regex: req.query.search, $options: "i" } }
-//                 ]
-//             }
-//             : {};
-
-//         const users = await User.find(keyword)
-//             .select("-password")
-//             .populate("shopId", "name")
-//             .populate("companyId", "name")
-//             .skip(skip)
-//             .limit(limit)
-//             .sort({ createdAt: -1 });
-
-//         const totalUsers = await User.countDocuments(keyword);
-//         const totalCompanyStaff = await User.countDocuments({ role: "company-staff" });
-
-//         res.status(200).json({
-//             success: true,
-//             totalUsers,
-//             totalCompanyStaff,
-//             page,
-//             pages: Math.ceil(totalUsers / limit),
-//             users
-//         });
-//     } catch (error) {
-//         console.error("Get all users error:", error);
-//         res.status(500).json({ message: "Internal server error" });
-//     }
-// };
-
 export const getUserById = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -326,5 +282,31 @@ export const getAllUsers = async (req, res) => {
     } catch (error) {
         console.error("Get all users error:", error);
         res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+//get login user data
+export const getLoginUser = async (req, res) => {
+    try {
+        const user = req.user;
+
+        res.status(200).json({
+            success: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                address: user.address,
+                phone: user.phone,
+                shopId: user.shopId,
+                companyId: user.companyId
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to get logged in user",
+            error: error.message
+        });
     }
 };
