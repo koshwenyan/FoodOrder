@@ -134,7 +134,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4">
             {/* Date & time */}
             <div className="bg-slate-800/50 backdrop-blur-md border border-slate-700 rounded-xl px-4 py-2 text-right shadow-md">
-              <div className="text-xs text-slate-400">Today</div>
+              {/* <div className="text-xs text-slate-400">Today</div> */}
               <div className="text-sm font-medium text-emerald-400">{formattedDate}</div>
               <div className="text-sm font-semibold text-emerald-400">{formattedTime}</div>
             </div>
