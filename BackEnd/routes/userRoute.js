@@ -4,34 +4,38 @@ import {
     login,
     logout,
     updateUser,
-    deleteUser, getAllUsers
+    deleteUser,
+    getAllUsers,
+    getUserById
 } from "../controller/userController.js";
 
 import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
 
 const userRouter = express.Router();
 
-
-userRouter.post("/register", register);
+// ================= AUTH ROUTES =================
+// Login
 userRouter.post("/login", login);
-userRouter.post("/logout", logout);
 
+// Logout (client should delete token)
+userRouter.post("/logout", authMiddleware, logout);
 
-userRouter.put("/update/:id", authMiddleware, updateUser);
+// ================= USER MANAGEMENT =================
+// Register new user
+// Only authenticated users can create roles like company-staff/admin, shop-admin
+userRouter.post("/register", authMiddleware, register);
 
+// Get all users
+// Only admin can access
+userRouter.get("/all", authMiddleware, adminMiddleware("admin"), getAllUsers);
 
-userRouter.delete(
-    "/delete/:id",
-    authMiddleware,
-    adminMiddleware("admin"),
-    deleteUser
-);
+// Get user by ID
+userRouter.get("/:id", authMiddleware, getUserById);
 
-userRouter.get(
-    "/all",
-    authMiddleware,
-    adminMiddleware("admin"),
-    getAllUsers
-);
+// Update user by ID
+userRouter.put("/:id", authMiddleware, updateUser);
+
+// Delete user by ID
+userRouter.delete("/:id", authMiddleware, deleteUser);
 
 export default userRouter;
