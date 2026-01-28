@@ -240,36 +240,6 @@ export const deleteUser = async (req, res) => {
 //     }
 // };
 
-export const getAllUsers = async (req, res) => {
-    try {
-        const result = await User.aggregate([
-            {
-                $facet: {
-                    users: [
-                        {
-                            $unset: "password"
-                        }
-                    ],
-                    totalCount: [
-                        {
-                            $count: "count"
-                        }
-                    ]
-                }
-            }
-        ]);
-
-        res.status(200).json({
-            totalUsers: result[0].totalCount[0]?.count || 0,
-            users: result[0].users
-        });
-
-    } catch (error) {
-        console.error("Get all users error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
 export const getUserById = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -309,3 +279,52 @@ export const getUserById = async (req, res) => {
     }
 };
 
+
+
+export const getAllUsers = async (req, res) => {
+    try {
+        // 🔐 Admin only
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        // 📄 Pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // 🔍 Search by name or email
+        const keyword = req.query.search
+            ? {
+                $or: [
+                    { name: { $regex: req.query.search, $options: "i" } },
+                    { email: { $regex: req.query.search, $options: "i" } }
+                ]
+            }
+            : {};
+
+        // 👥 Get users
+        const users = await User.find(keyword)
+            .select("-password")
+            .populate("shopId", "name")
+            .populate("companyId", "name")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        // 🔢 Count users
+        const totalUsers = await User.countDocuments(keyword);
+
+        res.status(200).json({
+            success: true,
+            totalUsers,
+            page,
+            pages: Math.ceil(totalUsers / limit),
+            users
+        });
+
+    } catch (error) {
+        console.error("Get all users error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
