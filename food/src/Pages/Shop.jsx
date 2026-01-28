@@ -81,8 +81,8 @@ export default function Shops() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const url = isEditing
-      ? `${API_BASE}/update/${editingId}`
-      : `${API_BASE}/create`;
+      ? `${API_BASE}/${editingId}`
+      : `${API_BASE}/`;
 
     await fetch(url, {
       method: isEditing ? "PUT" : "POST",
@@ -114,7 +114,7 @@ export default function Shops() {
   const handleDelete = async (id) => {
     if (!confirm("Delete this shop?")) return;
     const token = localStorage.getItem("token");
-    await fetch(`${API_BASE}/delete/${id}`, {
+    await fetch(`${API_BASE}/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -123,7 +123,7 @@ export default function Shops() {
 
   const toggleActive = async (shop) => {
     const token = localStorage.getItem("token");
-    await fetch(`${API_BASE}/update/${shop._id}`, {
+    await fetch(`${API_BASE}/${shop._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
