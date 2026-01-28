@@ -26,6 +26,7 @@ app.use(cors({ credentials: true, origin: allowedOrigin }))
 app.use('/api/category', categoryRouter);
 app.use('/api/shop', shopRouter);
 app.use('/api/user', userRouter)
+
 app.use('/api/company', companyRouter)
 
 
