@@ -12,8 +12,8 @@ import {
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [me, setMe] = useState(null);
   const navigate = useNavigate();
 
   const menu = [
@@ -24,28 +24,25 @@ export default function AdminDashboard() {
     { name: "Reviews", icon: HomeIcon, path: "review" },
   ];
 
+  const API_Me = "http://localhost:3000/api/user/me";
+
   // Fetch current user
+  const fetchMe = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(API_Me, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setMe(data.user);
+      else setMe(null);
+    } catch {
+      setMe(null);
+    }
+  };
+
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
-        if (!token || !userId) return;
-
-        const res = await fetch(`http://localhost:3000/api/user/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch user");
-
-        const data = await res.json();
-        setCurrentUser(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchCurrentUser();
+    fetchMe();
   }, []);
 
   // Live time
@@ -63,7 +60,7 @@ export default function AdminDashboard() {
   });
   const formattedTime = currentTime.toLocaleTimeString();
 
-  // Logout function
+  // Logout
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -71,6 +68,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
+
       {/* ================= SIDEBAR ================= */}
       <aside
         className={`relative ${
@@ -126,11 +124,13 @@ export default function AdminDashboard() {
       {/* ================= MAIN CONTENT ================= */}
       <main className="flex-1 flex flex-col p-6">
         {/* TOP HEADER */}
-        <header className="flex items-center justify-between mb-6">
+        <header className="flex items-center justify-between mb-6 border-b-2 border-emerald-400/20 shadow-md pb-4">
           {/* Page title */}
-          <h1 className="text-2xl font-bold tracking-wide bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">MNS</h1>
+          <h1 className="text-2xl font-bold tracking-wide bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            MNS
+          </h1>
 
-          {/* Right side: Date, time, profile, logout */}
+          {/* Right side: Date, profile, logout */}
           <div className="flex items-center gap-4">
             {/* Date & time */}
             <div className="bg-slate-800/50 backdrop-blur-md border border-slate-700 rounded-xl px-4 py-2 text-right shadow-md">
@@ -142,11 +142,11 @@ export default function AdminDashboard() {
             {/* Admin profile */}
             <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-md px-4 py-2 rounded-xl border border-slate-700 shadow-md hover:shadow-lg transition cursor-pointer">
               <img
-                src={`https://ui-avatars.com/api/?name=${currentUser?.name || "Admin"}&background=0f172a&color=22c55e`}
+                src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}&background=0f172a&color=22c55e`}
                 alt="Admin"
                 className="w-9 h-9 rounded-full border-2 border-emerald-400"
               />
-              <span className="text-sm font-medium text-white">{currentUser?.name || "Admin"}</span>
+              <span className="text-sm font-medium text-white">{me?.name || "Admin"}</span>
             </div>
 
             {/* Logout button */}

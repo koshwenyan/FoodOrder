@@ -115,7 +115,7 @@ export default function Users() {
 
     const payload = { ...form, password: form.password || undefined };
     const url = isEditing
-      ? `${API_BASE}/update/${editingId}`
+      ? `${API_BASE}/${editingId}`
       : `${API_BASE}/register`;
 
     await fetch(url, {

@@ -161,7 +161,7 @@ export default function Shops() {
   /* ================= UI ================= */
   return (
     <div className="p-6 bg-slate-900 min-h-screen text-slate-100">
-      <h1 className="text-2xl font-bold mb-6">Shop Management</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center items-center text-emerald-400">Shop Management</h1>
 
       {/* SEARCH + FILTER */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
