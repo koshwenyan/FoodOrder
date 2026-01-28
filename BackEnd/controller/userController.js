@@ -58,7 +58,7 @@ export const register = async (req, res) => {
         });
 
         // ================= INCREMENT STAFF COUNT IF COMPANY-STAFF =================
-        if (role === "company-staff" && companyId) {
+        if (role === "company-staff") {
             await DeliveryCompany.findByIdAndUpdate(
                 companyId,
                 { $inc: { staffCount: 1 } },

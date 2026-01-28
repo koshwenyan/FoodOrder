@@ -106,7 +106,8 @@ export const deleteCompany = async (req, res) => {
     }
 };
 
-// ================= GET COMPANY WITH STAFF =================
+
+
 export const getCompanyWithStaff = async (req, res) => {
     try {
         const { companyId } = req.params;
@@ -116,7 +117,9 @@ export const getCompanyWithStaff = async (req, res) => {
         }
 
         const company = await DeliveryCompany.aggregate([
-            { $match: { _id: new mongoose.Types.ObjectId(companyId) } },
+            {
+                $match: { _id: new mongoose.Types.ObjectId(companyId) }
+            },
             {
                 $lookup: {
                     from: "users",
@@ -126,16 +129,21 @@ export const getCompanyWithStaff = async (req, res) => {
                 }
             },
             {
+                // ✅ KEEP ONLY company-staff
                 $addFields: {
-                    totalStaff: {
-                        $size: {
-                            $filter: {
-                                input: "$staffs",
-                                as: "staff",
-                                cond: { $eq: ["$$staff.role", "delivery-staff"] }
-                            }
+                    staffs: {
+                        $filter: {
+                            input: "$staffs",
+                            as: "staff",
+                            cond: { $eq: ["$$staff.role", "company-staff"] }
                         }
                     }
+                }
+            },
+            {
+                // ✅ COUNT ONLY company-staff
+                $addFields: {
+                    totalStaff: { $size: "$staffs" }
                 }
             },
             {
@@ -144,8 +152,9 @@ export const getCompanyWithStaff = async (req, res) => {
                     email: 1,
                     serviceFee: 1,
                     staffCount: 1,
-
+                    totalStaff: 1,
                     staffs: {
+                        _id: 1,
                         name: 1,
                         email: 1,
                         phone: 1
@@ -158,8 +167,15 @@ export const getCompanyWithStaff = async (req, res) => {
             return res.status(404).json({ message: "Company not found" });
         }
 
-        res.status(200).json({ message: "Company with staff", data: company[0] });
+        res.status(200).json({
+            message: "Company with staff",
+            data: company[0]
+        });
+
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };
