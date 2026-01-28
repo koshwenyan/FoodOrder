@@ -9,6 +9,7 @@ import Category from "./Pages/Category.jsx";
 import Delivery from "./Pages/Deliservice.jsx";
 import Review from "./Pages/Review.jsx";
 import Sidebar from "./components/sidebar.jsx";
+import { AdminDashboard } from "./Pages/AdminDashboard.jsx";
 export default function App() {
   return (
     <AuthProvider>
@@ -24,6 +25,7 @@ export default function App() {
               </PrivateRoute>
             }
           >
+            <Route path="admindashboard" element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="shop" element={<Shop />} />
             <Route path="category" element={<Category />} />

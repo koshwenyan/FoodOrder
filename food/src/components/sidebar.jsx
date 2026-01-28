@@ -17,6 +17,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   const menu = [
+    {name: "Dashboard", icon: HomeIcon, path: "admindashboard" },
     { name: "Shop", icon: ShoppingCartIcon, path: "shop" },
     { name: "Category", icon: ClipboardDocumentListIcon, path: "category" },
     { name: "Delivery", icon: TruckIcon, path: "delivery" },
