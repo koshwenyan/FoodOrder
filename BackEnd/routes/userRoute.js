@@ -20,7 +20,7 @@ userRouter.get("/me", protect, getLoginUser);
 // User CRUD
 userRouter.get("/all", authMiddleware, adminMiddleware("admin"), getAllUsers);
 userRouter.get("/:id", authMiddleware, getUserById);
-userRouter.put("/:id", authMiddleware, updateUser);
+userRouter.put("/update/:id", authMiddleware, updateUser);
 userRouter.delete("/:id", authMiddleware, deleteUser);
 
 // Auth
