@@ -1,8 +1,7 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
   PencilIcon,
   TrashIcon,
-  PlusIcon,
   EyeIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -10,18 +9,18 @@ import {
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [shops, setShops] = useState([]);
-  const [current, setCurrent] = useState([]);
-  const {_id} = current;
+  const [current, setCurrent] = useState(null); // current logged-in user
+  const currentId = current?._id;
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
-    companyId: "",
+    companyId: null,
     address: "",
     role: "customer",
-    shopId: "",
+    shopId: null,
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -37,15 +36,31 @@ export default function Users() {
 
   const API_BASE = "http://localhost:3000/api/user";
   const API_SHOP = "http://localhost:3000/api/shop";
-  const API_User = `http://localhost:3000/api/user/${_id}`;
 
   /* ---------------- Debounce Search ---------------- */
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
   }, [search]);
 
-  /* ---------------- Fetch Data ---------------- */
+  /* ---------------- Fetch Current User ---------------- */
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE}/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setCurrent(data.user || null);
+      } catch (err) {
+        console.error("Fetch current user error:", err);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+
+  /* ---------------- Fetch Users ---------------- */
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -54,26 +69,13 @@ export default function Users() {
       });
       const data = await res.json();
       setUsers(data.users || data);
-    } catch {
+    } catch (err) {
+      console.error("Fetch users error:", err);
       setUsers([]);
     }
   };
 
-   const fetchCurrents = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(API_User, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setCurrent(data.data || []);
-      console.log(data);
-    } catch {
-      setShops([]);
-    }
-  };
-
-
+  /* ---------------- Fetch Shops ---------------- */
   const fetchShops = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -82,7 +84,8 @@ export default function Users() {
       });
       const data = await res.json();
       setShops(data.data || []);
-    } catch {
+    } catch (err) {
+      console.error("Fetch shops error:", err);
       setShops([]);
     }
   };
@@ -90,7 +93,6 @@ export default function Users() {
   useEffect(() => {
     fetchUsers();
     fetchShops();
-    fetchCurrents();
   }, []);
 
   /* ---------------- Helpers ---------------- */
@@ -100,76 +102,117 @@ export default function Users() {
       email: "",
       password: "",
       phone: "",
-      companyId: "",
+      companyId: null,
       address: "",
       role: "customer",
-      shopId: "",
+      shopId: null,
     });
     setIsEditing(false);
     setEditingId(null);
   };
 
+  
+
+  /* ---------------- Handle Submit ---------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isEditing && !editingId) return alert("No user selected to update!");
     const token = localStorage.getItem("token");
 
-    const payload = { ...form, password: form.password || undefined };
+    const payload = {
+  name: form.name,
+  email: form.email,
+  password: form.password || undefined,
+  phone: form.phone,
+  address: form.address,
+  role: form.role,
+  companyId: form.companyId || null,
+  shopId: form.shopId || null,
+};
+
+
+
+
     const url = isEditing
-      ? `${API_BASE}/${editingId}`
+      ? `${API_BASE}/update/${editingId}`
       : `${API_BASE}/register`;
 
-    await fetch(url, {
-      method: isEditing ? "PUT" : "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    fetchUsers();
-    resetForm();
+    try {
+      const res = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Update failed");
+      fetchUsers();
+      resetForm();
+      alert(isEditing ? "User updated!" : "User created!");
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert(err.message);
+    }
   };
 
+  /* ---------------- Toggle Active ---------------- */
   const toggleActive = async (user) => {
-    const token = localStorage.getItem("token");
-    await fetch(`${API_BASE}/update/${user._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ isActive: !user.isActive }),
-    });
-    fetchUsers();
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/update/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isActive: !user.isActive }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Toggle failed");
+      fetchUsers();
+    } catch (err) {
+      console.error("Toggle active error:", err);
+      alert(err.message);
+    }
+
+    
   };
 
+  /* ---------------- Handle Edit ---------------- */
   const handleEdit = (user) => {
     setForm({
       name: user.name,
       email: user.email,
       password: "",
       phone: user.phone || "",
-      companyId: user.companyId?._id || "",
+      companyId: user.companyId?._id || null,
       address: user.address || "",
       role: user.role,
-      shopId: user.shopId?._id || "",
+      shopId: user.shopId?._id || null,
     });
     setIsEditing(true);
     setEditingId(user._id);
   };
 
+  /* ---------------- Handle Delete ---------------- */
   const handleDelete = async (id) => {
     if (!confirm("Delete this user?")) return;
-    const token = localStorage.getItem("token");
-    await fetch(`${API_BASE}/delete/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setUsers((prev) => prev.filter((u) => u._id !== id));
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Delete failed");
+      setUsers((prev) => prev.filter((u) => u._id !== id));
+    } catch (err) {
+      console.error("Delete user error:", err);
+      alert(err.message);
+    }
   };
-
-    
 
   /* ---------------- Role Colors ---------------- */
   const roleClasses = {
@@ -190,7 +233,6 @@ export default function Users() {
   });
 
   const totalPages = Math.ceil(filteredUsers.length / perPage);
-
   const currentUsers = filteredUsers.slice(
     (currentPage - 1) * perPage,
     currentPage * perPage
@@ -200,66 +242,55 @@ export default function Users() {
   return (
     <div className="space-y-6 p-6">
       <h1 className="text-3xl font-bold text-emerald-400">User Management</h1>
+
+      {/* ---------------- Form ---------------- */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 grid md:grid-cols-3 gap-4">
-  {["name", "email", "phone", "address"].map((f) => (
-    <input
-      key={f}
-      placeholder={f}
-      value={form[f]}
-      onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-      className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-    />
-  ))}
+        {["name", "email", "phone", "address"].map((f) => (
+          <input
+            key={f}
+            placeholder={f}
+            value={form[f]}
+            onChange={(e) => setForm({ ...form, [f]: e.target.value })}
+            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+          />
+        ))}
 
-  <input
-    type="password"
-    placeholder="password"
-    disabled={isEditing}
-    onChange={(e) => setForm({ ...form, password: e.target.value })}
-    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-  />
+        <input
+          type="password"
+          placeholder="password"
+          disabled={isEditing}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+        />
 
-  <select
-    value={form.role}
-    onChange={(e) => setForm({ ...form, role: e.target.value })}
-    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-  >
-    <option value="admin">Admin</option>
-    <option value="shop-admin">Shop Admin</option>
-    <option value="company-admin">Company Admin</option>
-    <option value="company-staff">Company Staff</option>
-    <option value="customer">Customer</option>
-  </select>
-  {form.role === "shop-admin" && (
-  <select
-    value={form.shopId}
-    onChange={(e) => setForm({ ...form, shopId: e.target.value })}
-    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
-  >
-    <option value="">Select a shop</option>
-    {shops.map((shop) => (
-      <option key={shop._id} value={shop._id}>
-        {shop.name}
-      </option>
-    ))}
-  </select>
-)}
+        <select
+          value={form.role}
+          onChange={(e) => setForm({ ...form, role: e.target.value })}
+          className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+        >
+          <option value="admin">Admin</option>
+          <option value="shop-admin">Shop Admin</option>
+          <option value="company-admin">Company Admin</option>
+          <option value="company-staff">Company Staff</option>
+          <option value="customer">Customer</option>
+        </select>
 
+        <button
+          onClick={handleSubmit}
+          className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-4 py-2 rounded-lg"
+        >
+          {isEditing ? "Update User" : "Create User"}
+        </button>
+        <button
+          type="button"
+          onClick={resetForm}
+          className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl"
+        >
+          <XMarkIcon className="w-4 h-4 " /> Cancel
+        </button>
+      </div>
 
-
-  <button
-    onClick={handleSubmit}
-    className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-4 py-2 rounded-lg"
-  >
-    {isEditing ? "Update User" : "Create User"}
-  </button>
-  <button type="button" onClick={resetForm} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl">
-              <XMarkIcon className="w-4 h-4 " /> Cancel
-            </button>
-</div>
-
-
-      {/* ---------------- Desktop Table ---------------- */}
+      {/* ---------------- Table ---------------- */}
       <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
         <table className="w-full text-sm text-slate-200">
           <thead className="bg-slate-800">
