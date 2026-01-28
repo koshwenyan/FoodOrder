@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
   PencilIcon,
   TrashIcon,
@@ -9,116 +9,139 @@ import {
 
 export default function Users() {
   const [users, setUsers] = useState([]);
+  const [shops, setShops] = useState([]);
+  const [current, setCurrent] = useState([]);
+  const {_id} = current;
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
     companyId: "",
-    companyName: "",
     address: "",
     role: "customer",
+    shopId: "",
   });
-  const [modalUser, setModalUser] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [shops, setShops] = useState([]);
+  const [modalUser, setModalUser] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 5;
 
   const API_BASE = "http://localhost:3000/api/user";
-  const API_URL = "http://localhost:3000/api/shop/";
+  const API_SHOP = "http://localhost:3000/api/shop";
+  const API_User = `http://localhost:3000/api/user/${_id}`;
+
+  /* ---------------- Debounce Search ---------------- */
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  /* ---------------- Fetch Data ---------------- */
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_BASE}/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       setUsers(data.users || data);
-      console.log("Users:", data);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setUsers([]);
     }
   };
+
+   const fetchCurrents = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(API_User, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setCurrent(data.data || []);
+      console.log(data);
+    } catch {
+      setShops([]);
+    }
+  };
+
+
   const fetchShops = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}`, {
+      const res = await fetch(API_SHOP, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
-      setShops(data.users || data);
-      console.log("Shops:", data);
-    } catch (err) {
-      console.error(err);
-      setUsers([]);
+      setShops(data.data || []);
+    } catch {
+      setShops([]);
     }
   };
 
   useEffect(() => {
     fetchUsers();
     fetchShops();
+    fetchCurrents();
   }, []);
 
+  /* ---------------- Helpers ---------------- */
   const resetForm = () => {
     setForm({
       name: "",
       email: "",
       password: "",
       phone: "",
-      companyName: "",
+      companyId: "",
       address: "",
       role: "customer",
+      shopId: "",
     });
     setIsEditing(false);
     setEditingId(null);
   };
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const token = localStorage.getItem("token");
-      const payload = {
-        ...form,
-        password: form.password || undefined,
-        company: form.companyId,
-      };
-      let res;
+    const token = localStorage.getItem("token");
 
-      if (isEditing) {
-        res = await fetch(`${API_BASE}/update/${editingId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        res = await fetch(`${API_BASE}/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-      }
+    const payload = { ...form, password: form.password || undefined };
+    const url = isEditing
+      ? `${API_BASE}/update/${editingId}`
+      : `${API_BASE}/register`;
 
-      if (!res.ok) throw new Error("Request failed");
-      await res.json();
-      fetchUsers();
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    }
+    await fetch(url, {
+      method: isEditing ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    fetchUsers();
+    resetForm();
+  };
+
+  const toggleActive = async (user) => {
+    const token = localStorage.getItem("token");
+    await fetch(`${API_BASE}/update/${user._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ isActive: !user.isActive }),
+    });
+    fetchUsers();
   };
 
   const handleEdit = (user) => {
@@ -126,11 +149,11 @@ export default function Users() {
       name: user.name,
       email: user.email,
       password: "",
-      phone: user.phone,
+      phone: user.phone || "",
       companyId: user.companyId?._id || "",
-      companyName: user.companyId?.name || "",
-      address: user.address,
+      address: user.address || "",
       role: user.role,
+      shopId: user.shopId?._id || "",
     });
     setIsEditing(true);
     setEditingId(user._id);
@@ -138,294 +161,188 @@ export default function Users() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this user?")) return;
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/delete/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      setUsers(users.filter((u) => u._id !== id));
-    } catch (err) {
-      console.error(err);
-    }
+    const token = localStorage.getItem("token");
+    await fetch(`${API_BASE}/delete/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUsers((prev) => prev.filter((u) => u._id !== id));
   };
 
-  const handleView = (user) => setModalUser(user);
+    
 
-  const indexOfLast = currentPage * perPage;
-  const indexOfFirst = indexOfLast - perPage;
-  const currentUsers = users.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(users.length / perPage);
+  /* ---------------- Role Colors ---------------- */
+  const roleClasses = {
+    admin: "bg-red-500/20 text-red-400",
+    "shop-admin": "bg-green-500/20 text-green-400",
+    "company-admin": "bg-yellow-500/20 text-yellow-400",
+    "company-staff": "bg-purple-500/20 text-purple-400",
+    customer: "bg-blue-500/20 text-blue-400",
+  };
 
+  /* ---------------- Filtering + Pagination ---------------- */
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      u.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      u.email?.toLowerCase().includes(debouncedSearch.toLowerCase());
+    const matchRole = roleFilter === "all" || u.role === roleFilter;
+    return matchSearch && matchRole;
+  });
+
+  const totalPages = Math.ceil(filteredUsers.length / perPage);
+
+  const currentUsers = filteredUsers.slice(
+    (currentPage - 1) * perPage,
+    currentPage * perPage
+  );
+
+  /* ============================ UI ============================ */
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-emerald-400 tracking-wide">
-          User Management
-        </h1>
-      </div>
+    <div className="space-y-6 p-6">
+      <h1 className="text-3xl font-bold text-emerald-400">User Management</h1>
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 grid md:grid-cols-3 gap-4">
+  {["name", "email", "phone", "address"].map((f) => (
+    <input
+      key={f}
+      placeholder={f}
+      value={form[f]}
+      onChange={(e) => setForm({ ...form, [f]: e.target.value })}
+      className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+    />
+  ))}
 
-      {/* Form Card */}
-      <div className="bg-slate-900/70 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl transition hover:shadow-2xl">
-        <h2 className="text-xl font-semibold mb-4">
-          {isEditing ? "Update User" : "Create User"}
-        </h2>
-        <form className="grid md:grid-cols-3 gap-4" onSubmit={handleSubmit}>
-          <input
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required={!isEditing}
-            disabled={isEditing}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <input
-            name="phone"
-            placeholder="Phone"
-            value={form.phone}
-            onChange={handleChange}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <input
-            name="companyName"
-            placeholder="Company"
-            value={form.companyName}
-            onChange={handleChange}
-            disabled={isEditing}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <input
-            name="address"
-            placeholder="Address"
-            value={form.address}
-            onChange={handleChange}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-          />
-          <select
-            name="role"
-            value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none appearance-none hover:text-white"
-          >
-            <option className="bg-slate-800 text-slate-200" value="admin">
-              Admin
-            </option>
-            <option className="bg-slate-800 text-slate-200" value="shop-admin">
-              Shop Admin
-            </option>
-            <option
-              className="bg-slate-800 text-slate-200"
-              value="company-admin"
-            >
-              Company Admin
-            </option>
-            <option
-              className="bg-slate-800 text-slate-200"
-              value="company-staff"
-            >
-              Company Staff
-            </option>
-            <option className="bg-slate-800 text-slate-200" value="customer">
-              Customer
-            </option>
-          </select>
-        {form.role === "shop-admin" && (
+  <input
+    type="password"
+    placeholder="password"
+    disabled={isEditing}
+    onChange={(e) => setForm({ ...form, password: e.target.value })}
+    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
+  />
+
   <select
-    name="ShopId"
-    value={form.ShopId || ""}
-    onChange={(e) => setForm({ ...form, ShopId: e.target.value })}
-    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+    value={form.role}
+    onChange={(e) => setForm({ ...form, role: e.target.value })}
+    className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-2"
   >
-    <option value="">Select Shop</option>
-    {shops.data?.map((shop) => (
-      <option key={shop._id} value={shop._id}>
-        {shop.name}
-      </option>
-    ))}
+    <option value="admin">Admin</option>
+    <option value="shop-admin">Shop Admin</option>
+    <option value="company-admin">Company Admin</option>
+    <option value="company-staff">Company Staff</option>
+    <option value="customer">Customer</option>
   </select>
-)}
+
+  <button
+    onClick={handleSubmit}
+    className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-4 py-2 rounded-lg"
+  >
+    {isEditing ? "Update User" : "Create User"}
+  </button>
+  <button type="button" onClick={resetForm} className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl">
+              <XMarkIcon className="w-4 h-4 " /> Cancel
+            </button>
+</div>
 
 
-          <button
-            type="submit"
-            className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold rounded-lg px-4 py-2 transition"
-          >
-            <PlusIcon className="w-4 h-4" />{" "}
-            {isEditing ? "Update User" : "Create User"}
-          </button>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-lg px-4 py-2 transition"
-          >
-            <XMarkIcon className="w-4 h-4" /> Cancel
-          </button>
-        </form>
-      </div>
-
-      {/* Table Card */}
-      <div className="bg-slate-900/70 backdrop-blur-md border border-slate-800 rounded-2xl overflow-hidden shadow-xl transition hover:shadow-2xl">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-800/80 text-slate-300">
+      {/* ---------------- Desktop Table ---------------- */}
+      <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
+        <table className="w-full text-sm text-slate-200">
+          <thead className="bg-slate-800">
             <tr>
               <th className="p-4 text-left">Name</th>
-              <th className="p-4 text-left">Email</th>
-              <th className="p-4 text-left">Phone</th>
-              <th className="p-4 text-left">Company</th>
-              <th className="p-4 text-left">Address</th>
-              <th className="p-4 text-left">Role</th>
-              <th className="p-4 text-right">Actions</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Shop</th>
+              <th>Address</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            {currentUsers.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="p-6 text-center text-slate-400">
-                  No users found
+            {currentUsers.map((u) => (
+              <tr key={u._id} className="border-t border-slate-800">
+                <td className="p-4">{u.name}</td>
+                <td>{u.email}</td>
+                <td>{u.phone || "-"}</td>
+                <td>{u.companyId?.name || "-"}</td>
+                <td>{u.shopId?.name || "-"}</td>
+                <td>{u.address || "-"}</td>
+
+                <td>
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${
+                      roleClasses[u.role] ?? "bg-gray-500/20 text-gray-400"
+                    }`}
+                  >
+                    {u.role}
+                  </span>
+                </td>
+
+                <td>
+                  <button
+                    onClick={() => toggleActive(u)}
+                    className={`px-2 py-1 rounded text-xs ${
+                      u.isActive
+                        ? "bg-emerald-500/20 text-emerald-400"
+                        : "bg-red-500/20 text-red-400"
+                    }`}
+                  >
+                    {u.isActive ? "Active" : "Inactive"}
+                  </button>
+                </td>
+
+                <td className="p-4 flex justify-end gap-2">
+                  <button
+                    onClick={() => setModalUser(u)}
+                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
+                  >
+                    <EyeIcon className="w-4 h-4 text-emerald-400" />
+                  </button>
+
+                  <button
+                    onClick={() => handleEdit(u)}
+                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
+                  >
+                    <PencilIcon className="w-4 h-4 text-blue-400" />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(u._id)}
+                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/30"
+                  >
+                    <TrashIcon className="w-4 h-4 text-red-400" />
+                  </button>
                 </td>
               </tr>
-            ) : (
-              currentUsers.map((user) => (
-                <tr
-                  key={user._id}
-                  className="border-t border-slate-800 hover:bg-slate-800/40 transition"
-                >
-                  <td className="p-4 text-slate-200">{user.name}</td>
-                  <td className="p-4 text-slate-300">{user.email}</td>
-                  <td className="p-4 text-slate-300">{user.phone}</td>
-                  <td className="p-4 text-slate-300 truncate">
-                    {user.companyId?.name || "-"}
-                  </td>
-                  <td className="p-4 text-slate-300 truncate max-w-xs">
-                    {user.address}
-                  </td>
-                  <td className="p-4 text-slate-300">{user.role}</td>
-                  <td className="p-4 flex justify-end gap-2">
-                    <button
-                      onClick={() => handleView(user)}
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
-                    >
-                      <EyeIcon className="w-4 h-4 text-slate-200" />
-                    </button>
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
-                    >
-                      <PencilIcon className="w-4 h-4 text-slate-200" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user._id)}
-                      className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/30"
-                    >
-                      <TrashIcon className="w-4 h-4 text-red-400" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
-
-        {/* Pagination */}
-        <div className="flex justify-center items-center gap-2 p-4">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600"
-          >
-            Prev
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600"
-          >
-            Next
-          </button>
-        </div>
       </div>
 
-      {/* Modal */}
-      {modalUser && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-3xl p-6 w-96 shadow-2xl transform transition-transform duration-300 scale-95 animate-scaleUp">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-emerald-400">
-                User Details
-              </h2>
-              <button
-                onClick={() => setModalUser(null)}
-                className="p-1 rounded-full hover:bg-slate-700 transition"
-              >
-                <XMarkIcon className="w-5 h-5 text-slate-200" />
-              </button>
-            </div>
+      {/* ---------------- Pagination ---------------- */}
+      <div className="flex justify-center gap-2">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600 disabled:opacity-40"
+        >
+          Prev
+        </button>
 
-            {/* Modal Content */}
-            <div className="space-y-2 text-slate-200">
-              <p>
-                <span className="font-semibold text-emerald-400">Name:</span>{" "}
-                {modalUser.name}
-              </p>
-              <p>
-                <span className="font-semibold text-emerald-400">Email:</span>{" "}
-                {modalUser.email}
-              </p>
-              <p>
-                <span className="font-semibold text-emerald-400">Phone:</span>{" "}
-                {modalUser.phone}
-              </p>
-              <p>
-                <span className="font-semibold text-emerald-400">Company:</span>{" "}
-                {modalUser.companyId?.name || "-"}
-              </p>
-              <p>
-                <span className="font-semibold text-emerald-400">Address:</span>{" "}
-                {modalUser.address}
-              </p>
-              <p>
-                <span className="font-semibold text-emerald-400">Role:</span>{" "}
-                {modalUser.role}
-              </p>
-            </div>
+        <span className="px-3 py-1">
+          {currentPage} / {totalPages}
+        </span>
 
-            {/* Modal Footer */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setModalUser(null)}
-                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold rounded-lg transition"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600 disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
