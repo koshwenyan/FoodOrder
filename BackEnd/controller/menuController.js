@@ -13,6 +13,11 @@ export const createMenu = async (req, res) => {
             return res.status(400).json({ message: "Name and price are required" });
         }
 
+        const existingMenu = await Menu.findOne({ name });
+        if (existingMenu) {
+            return res.status(400).json({ message: "Menu is already exist" })
+        }
+
         const menu = await Menu.create({
             name,
             price,

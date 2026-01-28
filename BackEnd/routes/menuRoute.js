@@ -12,8 +12,8 @@ const menuRouter = express.Router();
 
 // shop-admin only
 menuRouter.post("/create", protect, createMenu);
-menuRouter.put("/:id", protect, updateMenu);
-menuRouter.delete("/:id", protect, deleteMenu);
+menuRouter.put("/update/:id", protect, updateMenu);
+menuRouter.delete("/delete/:id", protect, deleteMenu);
 
 // public / authenticated
 menuRouter.get("/shop/:shopId", getAllMenus);
