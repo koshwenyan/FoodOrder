@@ -11,7 +11,7 @@ import { protect } from "../middleware/authMiddleware.js";
 const menuRouter = express.Router();
 
 // shop-admin only
-menuRouter.post("/", protect, createMenu);
+menuRouter.post("/create", protect, createMenu);
 menuRouter.put("/:id", protect, updateMenu);
 menuRouter.delete("/:id", protect, deleteMenu);
 
