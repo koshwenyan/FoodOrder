@@ -4,7 +4,8 @@ import {
     getAllMenus,
     getMenuById,
     updateMenu,
-    deleteMenu
+    deleteMenu,
+
 } from "../controller/menuController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -18,5 +19,6 @@ menuRouter.delete("/delete/:id", protect, deleteMenu);
 // public / authenticated
 menuRouter.get("/shop/:shopId", getAllMenus);
 menuRouter.get("/:id", getMenuById);
+
 
 export default menuRouter;
