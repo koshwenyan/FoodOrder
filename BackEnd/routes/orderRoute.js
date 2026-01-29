@@ -7,7 +7,9 @@ import {
     assignDeliveryStaff,
     getAllOrders,
     deleteOrder,
-    getOrdersByShop
+    getOrdersByShop,
+    getMyOrders,
+    getMyOrderById
 } from "../controller/orderController.js";
 
 const router = express.Router();
@@ -35,6 +37,9 @@ router.delete("/:orderId", protect, deleteOrder);
 router.put("/:orderId/assign-staff", protect, assignDeliveryStaff);
 
 //customer
+router.get("/myorders", protect, getMyOrders);
 
+// Get a specific order by ID for logged-in user
+router.get("/myorders/:orderId", protect, getMyOrderById);
 
 export default router;

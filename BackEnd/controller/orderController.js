@@ -241,3 +241,62 @@ export const getOrdersByShop = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
+
+//get order customer
+// controller/orderController.js
+
+// ================= Get logged-in user's orders =================
+export const getMyOrders = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Fetch all orders for this customer
+        const orders = await Order.find({ customer: userId })
+            .populate("shopId", "name address")             // Shop info
+            .populate("items.menuId", "name price")        // Menu item info
+            .populate("deliveryCompany", "name")           // Delivery company info
+            .populate("deliveryStaff", "name email phone") // Delivery staff info
+            .sort({ createdAt: -1 });                      // Latest orders first
+
+        res.status(200).json({
+            success: true,
+            totalOrders: orders.length,
+            data: orders
+        });
+
+    } catch (error) {
+        console.error("Get my orders error:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+// ================= Get a specific order for logged-in user =================
+export const getMyOrderById = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid order ID" });
+        }
+
+        // Fetch order
+        const order = await Order.findOne({ _id: orderId, customer: req.user._id })
+            .populate("shopId", "name address")
+            .populate("items.menuId", "name price")
+            .populate("deliveryCompany", "name")
+            .populate("deliveryStaff", "name email phone");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: order
+        });
+
+    } catch (error) {
+        console.error("Get my order by ID error:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
