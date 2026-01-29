@@ -6,6 +6,7 @@ const API_Order = "http://localhost:3000";
 /* fake auth */
 const user = JSON.parse(localStorage.getItem("user"));
 const role = user?.role;
+const shopId = user?.shopId; 
 
 /* delivery staff list */
 const deliveryStaffs = ["Aung Aung", "Kyaw Kyaw", "Mg Mg"];
@@ -24,7 +25,7 @@ export default function OrdersTable() {
   /* ========== FETCH ORDERS ========== */
   const fetchOrders = async () => {
     const res = await axios.get(
-      `${API_Order}/api/order/shop/6978676b0c2e6814ceba8670`,
+      `${API_Order}/api/order/shop/${shopId}`,
       authHeader
     );
     if (res.data.success) setOrders(res.data.data);

@@ -15,30 +15,33 @@ export default function ShopAdminDashboard() {
     companies: 0,
     categories: 0,
   });
-
+  const user = JSON.parse(localStorage.getItem("user"));
+const shopId = user?.shopId; 
   const API_BASE = "http://localhost:3000/api";
 
   const fetchTotals = async () => {
     const token = localStorage.getItem("token");
     try {
-      const [usersRes, shopsRes, companiesRes, categoriesRes] = await Promise.all([
-        fetch(`${API_BASE}/user/all`, { headers: { Authorization: `Bearer ${token}` } }),
+      const [orderRes, shopsRes, companiesRes, categoriesRes] = await Promise.all([
+        fetch(`${API_BASE}/order/shop/${shopId}`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_BASE}/shop`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${API_BASE}/company`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_BASE}/category/all`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_BASE}/menu/shop/${shopId}`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
-      const usersData = usersRes.ok ? await usersRes.json() : { totalUsers: 0 };
+      const orderData = orderRes.ok ? await orderRes.json() : { data: [] };
+      console.log("Order Data:", orderData);
       const shopsData = shopsRes.ok ? await shopsRes.json() : { data: [] };
       const companiesData = companiesRes.ok ? await companiesRes.json() : { data: [] };
       const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { data: [] };
 
       setTotals({
-        users: usersData.totalUsers || 0,
-        shops: shopsData.data?.length || 0,
-        companies: companiesData.data?.length || 0,
-        categories: categoriesData.data?.length || 0,
-      });
+  orders: orderData.totalOrders || orderData.data?.length || 0,
+  shops: shopsData.data?.length || 0,
+  companies: companiesData.data?.length || 0,
+  categories: categoriesData.data?.length || 0,
+});
+
     } catch (err) {
       console.error("Error fetching totals:", err);
     }
@@ -51,7 +54,7 @@ export default function ShopAdminDashboard() {
   const cards = [
     {
       name: "Orders",
-      count: totals.users,
+      count: totals.orders,
       icon: <BookmarkIcon className="w-10 h-10 text-red-500" />,
       gradient: "bg-gradient-to-r from-red-400 to-pink-500",
     },
