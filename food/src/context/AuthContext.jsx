@@ -4,16 +4,21 @@ import api from "../api/axios";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const login = async (email, password) => {
     const res = await api.post("/user/login", { email, password });
 
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    setUser(res.data.user);
+    const { token, user } = res.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    setUser(user);
+    return user; // 👈 important for redirect logic
   };
 
   const logout = () => {

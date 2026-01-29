@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  UsersIcon,
-  BuildingStorefrontIcon,
-  BuildingOffice2Icon,
+  BookmarkIcon,
+  ClockIcon,
+  TruckIcon,
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 
-export default function AdminDashboard() {
+export default function ShopAdminDashboard() {
   const navigate = useNavigate();
   const [totals, setTotals] = useState({
     users: 0,
@@ -50,25 +50,25 @@ export default function AdminDashboard() {
 
   const cards = [
     {
-      name: "Customers",
+      name: "Orders",
       count: totals.users,
-      icon: <UsersIcon className="w-10 h-10 text-red-500" />,
+      icon: <BookmarkIcon className="w-10 h-10 text-red-500" />,
       gradient: "bg-gradient-to-r from-red-400 to-pink-500",
     },
     {
-      name: "Restaurants",
+      name: "Pending Orders",
       count: totals.shops,
-      icon: <BuildingStorefrontIcon className="w-10 h-10 text-orange-500" />,
+      icon: <ClockIcon className="w-10 h-10 text-orange-500" />,
       gradient: "bg-gradient-to-r from-yellow-400 to-orange-500",
     },
     {
-      name: "Companies",
+      name: "Completed Orders",
       count: totals.companies,
-      icon: <BuildingOffice2Icon className="w-10 h-10 text-emerald-500" />,
+      icon: <TruckIcon className="w-10 h-10 text-emerald-500" />,
       gradient: "bg-gradient-to-r from-green-400 to-teal-500",
     },
     {
-      name: "Categories",
+      name: "Total Menu Items",
       count: totals.categories,
       icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
       gradient: "bg-gradient-to-r from-purple-400 to-indigo-500",
@@ -77,9 +77,9 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-8 min-h-screen bg-slate-900">
-      {/* <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
+      <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
          Food Order Admin
-      </h1> */}
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card) => (

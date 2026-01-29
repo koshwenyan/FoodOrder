@@ -13,19 +13,27 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      await login(email, password);
-      navigate("/admin");
-    } catch {
-      setError("Invalid email or password");
-    } finally {
-      setLoading(false);
+  try {
+    const user = await login(email, password);
+
+    if (user.role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (user.role === "shop-admin") {
+      navigate("/shop-admin/shopadmindashboard");
+    } else {
+      setError("Unauthorized role");
     }
-  };
+  } catch {
+    setError("Invalid email or password");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950 px-4">
