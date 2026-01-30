@@ -4,21 +4,32 @@ import mongoose from "mongoose";
 // ================= CREATE CATEGORY =================
 export const createCategory = async (req, res) => {
     try {
-        const { name } = req.body;
-        if (!name) {
-            return res.status(400).json({ message: "Please fill category name" });
+        const { name, photo } = req.body;
+
+        if (!name || !photo) {
+            return res.status(400).json({
+                message: "Category name and photo are required"
+            });
         }
 
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
-            return res.status(400).json({ message: "Category name already exists" });
+            return res.status(400).json({
+                message: "Category name already exists"
+            });
         }
 
-        const newCategory = await Category.create({ name });
+        const newCategory = await Category.create({ name, photo });
 
-        res.status(201).json({ message: "Category created successfully", data: newCategory });
+        res.status(201).json({
+            message: "Category created successfully",
+            data: newCategory
+        });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };
 
@@ -26,15 +37,17 @@ export const createCategory = async (req, res) => {
 export const getAllCategories = async (req, res) => {
     try {
         const categories = await Category.find().sort({ createdAt: -1 });
-        const totalCategories = await Category.countDocuments();
 
         res.status(200).json({
-            message: "All categories retrieved",
-            totalCategories,
+            success: true,
+            totalCategories: categories.length,
             data: categories
         });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };
 
@@ -52,9 +65,15 @@ export const getCategoryById = async (req, res) => {
             return res.status(404).json({ message: "Category not found" });
         }
 
-        res.status(200).json({ message: "Category retrieved successfully", data: category });
+        res.status(200).json({
+            success: true,
+            data: category
+        });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };
 
@@ -62,14 +81,10 @@ export const getCategoryById = async (req, res) => {
 export const updateCategory = async (req, res) => {
     try {
         const { categoryId } = req.params;
-        const { name } = req.body;
+        const { name, photo } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(categoryId)) {
             return res.status(400).json({ message: "Invalid category ID" });
-        }
-
-        if (!name) {
-            return res.status(400).json({ message: "Please provide a category name to update" });
         }
 
         const category = await Category.findById(categoryId);
@@ -77,18 +92,36 @@ export const updateCategory = async (req, res) => {
             return res.status(404).json({ message: "Category not found" });
         }
 
-        // Check if new name already exists
-        const existingCategory = await Category.findOne({ name });
-        if (existingCategory && existingCategory._id.toString() !== categoryId) {
-            return res.status(400).json({ message: "Category name already exists" });
+        if (name) {
+            const existingCategory = await Category.findOne({
+                name,
+                _id: { $ne: categoryId }
+            });
+
+            if (existingCategory) {
+                return res.status(400).json({
+                    message: "Category name already exists"
+                });
+            }
+
+            category.name = name;
         }
 
-        category.name = name;
+        if (photo) {
+            category.photo = photo;
+        }
+
         await category.save();
 
-        res.status(200).json({ message: "Category updated successfully", data: category });
+        res.status(200).json({
+            message: "Category updated successfully",
+            data: category
+        });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };
 
@@ -102,13 +135,17 @@ export const deleteCategory = async (req, res) => {
         }
 
         const category = await Category.findByIdAndDelete(categoryId);
-
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }
 
-        res.status(200).json({ message: "Category deleted successfully" });
+        res.status(200).json({
+            message: "Category deleted successfully"
+        });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };

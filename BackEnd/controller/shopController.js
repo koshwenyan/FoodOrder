@@ -4,10 +4,10 @@ import mongoose from "mongoose";
 
 export const createShop = async (req, res) => {
     try {
-        const { name, category, description, address, OpenTime, CloseTime } = req.body;
+        const { name, category, description, address, OpenTime, CloseTime, photo } = req.body;
 
 
-        if (!name || !category || !description || !address || !OpenTime || !CloseTime) {
+        if (!name || !category || !description || !address || !OpenTime || !CloseTime || !photo) {
             return res.status(400).json({
                 message: "Please fill all required fields",
                 success: false
@@ -30,7 +30,8 @@ export const createShop = async (req, res) => {
             description,
             address,
             OpenTime,
-            CloseTime
+            CloseTime,
+            photo
         });
 
 
@@ -53,6 +54,7 @@ export const createShop = async (req, res) => {
                     address: 1,
                     OpenTime: 1,
                     CloseTime: 1,
+                    photo: 1,
                     category: {
                         _id: 1,
                         name: 1
