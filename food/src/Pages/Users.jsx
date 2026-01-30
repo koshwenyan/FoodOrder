@@ -293,76 +293,130 @@ export default function Users() {
       </div>
 
       {/* ---------------- Table ---------------- */}
-      <div className="hidden md:block bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-x-auto">
-        <table className="w-full text-sm text-white">
-          <thead className="bg-white/20">
-            <tr>
-              <th className="p-4 text-left">Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Company</th>
-              <th>Shop</th>
-              <th>Address</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentUsers.map((u) => (
-              <tr key={u._id} className="border-t border-white/20">
-                <td className="p-4">{u.name}</td>
-                <td>{u.email}</td>
-                <td>{u.phone || "-"}</td>
-                <td>{u.companyId?.name || "-"}</td>
-                <td>{u.shopId?.name || "-"}</td>
-                <td>{u.address || "-"}</td>
+      <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
+  <table className="w-full table-fixed text-sm text-slate-200">
 
-                <td>
-                  <span
-                    className={`px-2 py-1 text-xs rounded ${
-                      roleClasses[u.role] ?? "bg-white/20 text-white"
-                    }`}
-                  >
-                    {u.role}
-                  </span>
-                </td>
+    {/* ================= HEADER ================= */}
+    <thead className="bg-slate-800 text-slate-400 uppercase text-xs">
+      <tr>
+        <th className="p-4 w-12 text-left">No</th>
+        <th className="p-4 w-40 text-left">Name</th>
+        <th className="p-4 w-56 text-left">Email</th>
+        <th className="p-4 w-32 text-left">Phone</th>
+        <th className="p-4 w-32 text-left">Company</th>
+        <th className="p-4 w-32 text-left">Shop</th>
+        <th className="p-4 w-40 text-left">Address</th>
+        <th className="p-4 w-32 text-left">Role</th>
+        <th className="p-4 w-28 text-left">Status</th>
+        <th className="p-4 w-32 text-right">Actions</th>
+      </tr>
+    </thead>
 
-                <td>
-                  <button
-                    onClick={() => toggleActive(u)}
-                    className={`px-2 py-1 rounded text-xs ${
-                      u.isActive
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-red-500/20 text-red-400"
-                    }`}
-                  >
-                    {u.isActive ? "Active" : "Inactive"}
-                  </button>
-                </td>
+    {/* ================= BODY ================= */}
+    <tbody className="divide-y divide-slate-800">
+      {currentUsers.map((u, index) => (
+        <tr
+          key={u._id}
+          className="hover:bg-slate-800/60 transition"
+        >
+          {/* No */}
+          <td className="p-4 text-slate-400">
+            {(currentPage - 1) * perPage + index + 1}
+          </td>
 
-                <td className="p-4 flex justify-center gap-2">
-                  <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20">
-                    <EyeIcon className="w-4 h-4 text-emerald-400" />
-                  </button>
-                  <button
-                    onClick={() => handleEdit(u)}
-                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20"
-                  >
-                    <PencilIcon className="w-4 h-4 text-blue-500" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(u._id)}
-                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/30"
-                  >
-                    <TrashIcon className="w-4 h-4 text-red-400" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          {/* Name */}
+          <td className="p-4 font-medium truncate">
+            {u.name || "-"}
+          </td>
+
+          {/* Email */}
+          <td className="p-4 truncate text-slate-300">
+            {u.email}
+          </td>
+
+          {/* Phone */}
+          <td className="p-4">
+            {u.phone || "-"}
+          </td>
+
+          {/* Company */}
+          <td className="p-4 truncate">
+            {u.companyId?.name || "-"}
+          </td>
+
+          {/* Shop */}
+          <td className="p-4 truncate">
+            {u.shopId?.name || "-"}
+          </td>
+
+          {/* Address */}
+          <td className="p-4 truncate text-slate-400">
+            {u.address || "-"}
+          </td>
+
+          {/* Role */}
+          <td className="p-4">
+            <span
+              className={`px-2.5 py-1 text-xs rounded-full ${
+                roleClasses[u.role] ??
+                "bg-gray-500/20 text-gray-400"
+              }`}
+            >
+              {u.role}
+            </span>
+          </td>
+
+          {/* Status */}
+          <td className="p-4">
+            <span
+              className={`px-2.5 py-1 text-xs rounded-full ${
+                u.isActive
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : "bg-red-500/20 text-red-400"
+              }`}
+            >
+              {u.isActive ? "Active" : "Inactive"}
+            </span>
+          </td>
+
+          {/* Actions */}
+<td className="p-4">
+  <div className="flex justify-end gap-2">
+
+    {/* VIEW */}
+    <button
+      onClick={() => setModalUser(u)}
+      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
+    >
+      <EyeIcon className="w-4 h-4 text-emerald-400" />
+    </button>
+
+    {/* EDIT */}
+    <button
+      onClick={() => handleEdit(u)}
+      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700"
+    >
+      <PencilIcon className="w-4 h-4 text-blue-400" />
+    </button>
+
+    {/* DELETE */}
+    <button
+      onClick={() => handleDelete(u._id)}
+      className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/30"
+    >
+      <TrashIcon className="w-4 h-4 text-red-400" />
+    </button>
+
+  </div>
+</td>
+
+        </tr>
+      ))}
+    </tbody>
+
+  </table>
+</div>
+
 
       {/* ---------------- Pagination ---------------- */}
       <div className="flex justify-center gap-2">
@@ -384,6 +438,45 @@ export default function Users() {
           Next
         </button>
       </div>
+
+      {/* ---------------- User Detail Modal ---------------- */}
+{modalUser && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md">
+      
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-emerald-400">
+          User Detail
+        </h2>
+        <button onClick={() => setModalUser(null)}>
+          <XMarkIcon className="w-5 h-5 text-slate-400 hover:text-red-400" />
+        </button>
+      </div>
+
+      <div className="space-y-2 text-slate-200 text-sm">
+        <p><b>Name:</b> {modalUser.name}</p>
+        <p><b>Email:</b> {modalUser.email}</p>
+        <p><b>Phone:</b> {modalUser.phone || "-"}</p>
+        <p><b>Role:</b> {modalUser.role}</p>
+        <p><b>Company:</b> {modalUser.companyId?.name || "-"}</p>
+        <p><b>Shop:</b> {modalUser.shopId?.name || "-"}</p>
+        <p><b>Address:</b> {modalUser.address || "-"}</p>
+        <p>
+          <b>Status:</b>{" "}
+          {modalUser.isActive ? "Active" : "Inactive"}
+        </p>
+      </div>
+
+      <button
+        onClick={() => setModalUser(null)}
+        className="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold py-2 rounded-lg"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
