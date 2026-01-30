@@ -7,6 +7,12 @@ const menuSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true
+        },
+
         description: {
             type: String
         },
@@ -29,7 +35,8 @@ const menuSchema = new mongoose.Schema(
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        }
+        },
+        isActive: { type: Boolean, default: true }
     },
     { timestamps: true }
 );
