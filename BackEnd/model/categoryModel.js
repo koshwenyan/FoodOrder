@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 const categorySchem = new mongoose.Schema({
-    name: { type: "String", required: true }
+    name: { type: "String", required: true },
+    photo: { type: String, required: true }
 }, { timestamps: true });
 
 const Category = mongoose.model("Category", categorySchem);
