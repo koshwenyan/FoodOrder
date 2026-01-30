@@ -7,7 +7,7 @@ export const createMenu = async (req, res) => {
             return res.status(403).json({ message: "Only shop-admin can create menu items" });
         }
 
-        const { name, price, description, image } = req.body;
+        const { name, category, price, description, image } = req.body;
 
         if (!name || !price) {
             return res.status(400).json({ message: "Name and price are required" });
@@ -20,6 +20,7 @@ export const createMenu = async (req, res) => {
 
         const menu = await Menu.create({
             name,
+            category,
             price,
             description,
             image,
