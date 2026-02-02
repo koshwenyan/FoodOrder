@@ -16,7 +16,7 @@ const router = express.Router();
 
 // CREATE SHOP
 router.post(
-    "/create",
+    "/",
     authMiddleware,               // user must be logged in
     // adminMiddleware("admin"),   // uncomment if admin-only
     createShop

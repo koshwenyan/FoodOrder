@@ -148,9 +148,9 @@ export const updateShop = async (req, res) => {
             }
             shop.category = category;
         }
-        if (photo) {
-            category.photo = photo;
-        }
+        // if (photo) {
+        //     category.photo = photo;
+        // }
 
         shop.description = description || shop.description;
         shop.address = address || shop.address;
