@@ -169,50 +169,121 @@ export const getAllShops = async (req, res) => {
 };
 
 //updateshop
+// export const updateShop = async (req, res) => {
+//     try {
+//         const { shopId } = req.params;
+//         const { name, category, description, address, OpenTime, CloseTime, isActive, photo } = req.body;
+
+//         if (!mongoose.Types.ObjectId.isValid(shopId)) {
+//             return res.status(400).json({
+//                 message: "Invalid shop ID",
+//                 success: false
+//             });
+//         }
+
+//         const shop = await Shop.findById(shopId);
+//         if (!shop) {
+//             return res.status(404).json({
+//                 message: "Shop not found",
+//                 success: false
+//             });
+//         }
+
+//         shop.name = name || shop.name;
+//         shop.category = category || shop.category;
+//         shop.description = description || shop.description;
+//         shop.address = address || shop.address;
+//         shop.OpenTime = OpenTime || shop.OpenTime;
+//         shop.CloseTime = CloseTime || shop.CloseTime;
+//         shop.isActive = isActive ?? shop.isActive;
+//         shop.photo = photo || shop.photo
+
+//         await shop.save();
+
+//         res.status(200).json({
+//             message: "Shop updated successfully",
+//             success: true,
+//             data: shop
+//         });
+
+//     } catch (error) {
+//         console.error("Update shop error:", error);
+//         res.status(500).json({
+//             message: "Internal server error",
+//             success: false
+//         });
+//     }
+// };
+
 export const updateShop = async (req, res) => {
     try {
         const { shopId } = req.params;
-        const { name, category, description, address, OpenTime, CloseTime, isActive } = req.body;
+        const {
+            name,
+            category,
+            description,
+            address,
+            OpenTime,
+            CloseTime,
+            isActive,
+            photo
+        } = req.body;
 
+        // ✅ Validate shopId
         if (!mongoose.Types.ObjectId.isValid(shopId)) {
             return res.status(400).json({
-                message: "Invalid shop ID",
-                success: false
+                success: false,
+                message: "Invalid shop ID"
             });
         }
 
-        const shop = await Shop.findById(shopId);
-        if (!shop) {
+        // ✅ Validate category if provided
+        if (category && !mongoose.Types.ObjectId.isValid(category)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid category ID"
+            });
+        }
+
+        const updatedShop = await Shop.findByIdAndUpdate(
+            shopId,
+            {
+                $set: {
+                    ...(name && { name }),
+                    ...(category && { category }),
+                    ...(description && { description }),
+                    ...(address && { address }),
+                    ...(OpenTime && { OpenTime }),
+                    ...(CloseTime && { CloseTime }),
+                    ...(photo && { photo }),
+                    ...(isActive !== undefined && { isActive })
+                }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedShop) {
             return res.status(404).json({
-                message: "Shop not found",
-                success: false
+                success: false,
+                message: "Shop not found"
             });
         }
-
-        shop.name = name || shop.name;
-        shop.category = category || shop.category;
-        shop.description = description || shop.description;
-        shop.address = address || shop.address;
-        shop.OpenTime = OpenTime || shop.OpenTime;
-        shop.CloseTime = CloseTime || shop.CloseTime;
-        shop.isActive = isActive ?? shop.isActive;
-
-        await shop.save();
 
         res.status(200).json({
-            message: "Shop updated successfully",
             success: true,
-            data: shop
+            message: "Shop updated successfully",
+            data: updatedShop
         });
 
     } catch (error) {
         console.error("Update shop error:", error);
         res.status(500).json({
-            message: "Internal server error",
-            success: false
+            success: false,
+            message: "Internal server error"
         });
     }
 };
+
 
 //delete shop
 export const deleteShop = async (req, res) => {
