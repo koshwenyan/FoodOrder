@@ -7,17 +7,41 @@ import {
     deleteShop
 } from "../controller/shopController.js";
 
-import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+// import { adminMiddleware } from "../middleware/adminMiddleware.js"; // optional
 
-const shopRouter = express.Router();
+const router = express.Router();
 
-/* ===== PUBLIC ===== */
-shopRouter.get("/", getAllShops);
-shopRouter.get("/:shopId", getShopById);
+// ================= SHOP ROUTES =================
 
-/* ===== ADMIN ONLY ===== */
-shopRouter.post("/create", authMiddleware, adminMiddleware("admin"), createShop);
-shopRouter.put("/:shopId", authMiddleware, adminMiddleware("admin"), updateShop);
-shopRouter.delete("/:shopId", authMiddleware, adminMiddleware("admin"), deleteShop);
+// CREATE SHOP
+router.post(
+    "/create",
+    authMiddleware,               // user must be logged in
+    // adminMiddleware("admin"),   // uncomment if admin-only
+    createShop
+);
 
-export default shopRouter;
+// GET ALL SHOPS
+router.get("/", getAllShops);
+
+// GET SHOP BY ID
+router.get("/:shopId", getShopById);
+
+// UPDATE SHOP
+router.put(
+    "/:shopId",
+    authMiddleware,
+    // adminMiddleware("admin"),
+    updateShop
+);
+
+// DELETE SHOP
+router.delete(
+    "/:shopId",
+    authMiddleware,
+    // adminMiddleware("admin"),
+    deleteShop
+);
+
+export default router;
