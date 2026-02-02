@@ -80,84 +80,81 @@ export default function AdminShell() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-gray-100 relative">
+    <div className="flex min-h-screen bg-[#ECEFF1] text-[#111827]">
 
       {/* ================= SIDEBAR ================= */}
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } transition-all duration-300 relative z-0`}
+        } transition-all duration-300 bg-white border-r border-gray-200 shadow-sm`}
       >
-        {/* Sidebar Glass Background */}
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-lg border-r border-white/20 rounded-tr-2xl rounded-br-2xl shadow-lg pointer-events-none"></div>
-
-        {/* Sidebar Content */}
-        <div className="relative z-10 flex flex-col h-full">
-
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 h-16">
-            {sidebarOpen && (
-              <span className="text-lg font-bold text-white tracking-wide select-none">
-                DASHBOARD
-              </span>
-            )}
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-white/10 transition"
-            >
-              <Bars3Icon className="w-5 h-5 text-white" />
-            </button>
-          </div>
-
-          {/* Menu */}
-          <nav className="mt-6 space-y-1 px-3">
-            {menu.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition
-                   ${isActive
-                    ? "bg-white/20 text-white shadow-md"
-                    : "text-gray-200 hover:bg-white/10 hover:text-white"}`
-                }
-              >
-                <item.icon className="w-5 h-5" />
-                {sidebarOpen && <span>{item.name}</span>}
-              </NavLink>
-            ))}
-          </nav>
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
+          {sidebarOpen && (
+            <span className="text-lg font-bold tracking-wide">
+              DASHBOARD
+            </span>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100"
+          >
+            <Bars3Icon className="w-5 h-5" />
+          </button>
         </div>
+
+        {/* Menu */}
+        <nav className="mt-4 px-3 space-y-1">
+          {menu.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
+                 ${
+                   isActive
+                     ? "bg-[#1F2933] text-white"
+                     : "text-gray-700 hover:bg-gray-100"
+                 }`
+              }
+            >
+              <item.icon className="w-5 h-5" />
+              {sidebarOpen && <span>{item.name}</span>}
+            </NavLink>
+          ))}
+        </nav>
       </aside>
 
       {/* ================= MAIN ================= */}
       <main className="flex-1 flex flex-col p-6">
 
         {/* TOP BAR */}
-        <header className="flex items-center justify-between mb-6 pb-4
-                           bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3 shadow-lg">
-          <h1 className="text-xl font-bold text-white tracking-wide">
+        <header className="flex items-center justify-between mb-6 bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm">
+          <h1 className="text-xl font-bold">
             {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
           </h1>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+
             <div className="text-right text-sm">
-              <div className="text-gray-300">{formattedDate}</div>
-              <div className="font-semibold text-white">{formattedTime}</div>
+              <div className="text-gray-500">{formattedDate}</div>
+              <div className="font-semibold">{formattedTime}</div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <img
                 src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}`}
-                className="w-9 h-9 rounded-full border-2 border-white/30"
+                className="w-9 h-9 rounded-full border border-gray-300"
                 alt="profile"
               />
-              <span className="text-sm">{me?.name || "Admin"}</span>
+              <span className="text-sm font-medium">
+                {me?.name || "Admin"}
+              </span>
             </div>
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-red-400 hover:text-red-300 transition"
+              className="flex items-center gap-2 text-red-600 hover:text-red-700"
             >
               <ArrowRightOnRectangleIcon className="w-5 h-5" />
               Logout
@@ -166,11 +163,11 @@ export default function AdminShell() {
         </header>
 
         {/* PAGE CONTENT */}
-        <div className="flex-1 rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg">
+        <div className="flex-1  border border-gray-200 rounded-xl p-6 shadow-sm">
           <Outlet />
         </div>
-      </main>
 
+      </main>
     </div>
   );
 }
