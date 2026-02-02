@@ -80,21 +80,17 @@ export default function AdminShell() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#ECEFF1] text-[#111827]">
+    <div className="flex min-h-screen bg-gray-100 text-gray-900">
 
       {/* ================= SIDEBAR ================= */}
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } transition-all duration-300 bg-white border-r border-gray-200 shadow-sm`}
+        } transition-all duration-300 bg-white border-r border-gray-200 shadow-sm flex flex-col`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
-          {sidebarOpen && (
-            <span className="text-lg font-bold tracking-wide">
-              DASHBOARD
-            </span>
-          )}
+          {sidebarOpen && <span className="text-lg font-bold tracking-wide">DASHBOARD</span>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg hover:bg-gray-100"
@@ -104,21 +100,18 @@ export default function AdminShell() {
         </div>
 
         {/* Menu */}
-        <nav className="mt-4 px-3 space-y-1">
+        <nav className="mt-4 px-2 flex-1 space-y-1">
           {menu.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
-                 ${
-                   isActive
-                     ? "bg-[#1F2933] text-white"
-                     : "text-gray-700 hover:bg-gray-100"
-                 }`
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
+                 ${isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-100"}`
               }
+              title={item.name} // Tooltip when collapsed
             >
-              <item.icon className="w-5 h-5" />
+              <item.icon className="w-5 h-5 flex-shrink-0" />
               {sidebarOpen && <span>{item.name}</span>}
             </NavLink>
           ))}
@@ -126,16 +119,15 @@ export default function AdminShell() {
       </aside>
 
       {/* ================= MAIN ================= */}
-      <main className="flex-1 flex flex-col p-6">
+      <main className="flex-1 flex flex-col overflow-hidden">
 
         {/* TOP BAR */}
-        <header className="flex items-center justify-between mb-6 bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm">
+        <header className="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm">
           <h1 className="text-xl font-bold">
             {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
           </h1>
 
           <div className="flex items-center gap-6">
-
             <div className="text-right text-sm">
               <div className="text-gray-500">{formattedDate}</div>
               <div className="font-semibold">{formattedTime}</div>
@@ -144,12 +136,10 @@ export default function AdminShell() {
             <div className="flex items-center gap-3">
               <img
                 src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}`}
-                className="w-9 h-9 rounded-full border border-gray-300"
+                className="w-10 h-10 rounded-full border border-gray-300"
                 alt="profile"
               />
-              <span className="text-sm font-medium">
-                {me?.name || "Admin"}
-              </span>
+              {sidebarOpen && <span className="text-sm font-medium">{me?.name || "Admin"}</span>}
             </div>
 
             <button
@@ -157,13 +147,13 @@ export default function AdminShell() {
               className="flex items-center gap-2 text-red-600 hover:text-red-700"
             >
               <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              Logout
+              {sidebarOpen && <span>Logout</span>}
             </button>
           </div>
         </header>
 
         {/* PAGE CONTENT */}
-        <div className="flex-1  border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="flex-1 p-6 overflow-auto">
           <Outlet />
         </div>
 

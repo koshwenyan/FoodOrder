@@ -21,17 +21,30 @@ export default function AdminDashboard() {
   const fetchTotals = async () => {
     const token = localStorage.getItem("token");
     try {
-      const [usersRes, shopsRes, companiesRes, categoriesRes] = await Promise.all([
-        fetch(`${API_BASE}/user/all`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_BASE}/shop`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_BASE}/company`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_BASE}/category/all`, { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
+      const [usersRes, shopsRes, companiesRes, categoriesRes] =
+        await Promise.all([
+          fetch(`${API_BASE}/user/all`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE}/shop`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE}/company`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE}/category/all`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
       const usersData = usersRes.ok ? await usersRes.json() : { totalUsers: 0 };
       const shopsData = shopsRes.ok ? await shopsRes.json() : { data: [] };
-      const companiesData = companiesRes.ok ? await companiesRes.json() : { data: [] };
-      const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { data: [] };
+      const companiesData = companiesRes.ok
+        ? await companiesRes.json()
+        : { data: [] };
+      const categoriesData = categoriesRes.ok
+        ? await categoriesRes.json()
+        : { data: [] };
 
       setTotals({
         users: usersData.totalUsers || 0,
@@ -52,64 +65,62 @@ export default function AdminDashboard() {
     {
       name: "Customers",
       count: totals.users,
-      icon: <UsersIcon className="w-10 h-10 text-red-500" />,
-      gradient: "bg-gradient-to-r from-red-400 to-pink-500",
+      icon: <UsersIcon className="w-8 h-8 text-blue-600" />,
     },
     {
       name: "Restaurants",
       count: totals.shops,
-      icon: <BuildingStorefrontIcon className="w-10 h-10 text-orange-500" />,
-      gradient: "bg-gradient-to-r from-yellow-400 to-orange-500",
+      icon: <BuildingStorefrontIcon className="w-8 h-8 text-orange-600" />,
     },
     {
       name: "Companies",
       count: totals.companies,
-      icon: <BuildingOffice2Icon className="w-10 h-10 text-emerald-500" />,
-      gradient: "bg-gradient-to-r from-green-400 to-teal-500",
+      icon: <BuildingOffice2Icon className="w-8 h-8 text-indigo-600" />,
     },
     {
       name: "Categories",
       count: totals.categories,
-      icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
-      gradient: "bg-gradient-to-r from-purple-400 to-indigo-500",
+      icon: <Squares2X2Icon className="w-8 h-8 text-purple-600" />,
     },
   ];
 
   return (
-    <div className="p-8 min-h-screen bg-slate-900">
-      {/* <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
-         Food Order Admin
-      </h1> */}
+    <div className="min-h-screen bg-[#ECEFF1] p-8">
+      <h1 className="text-3xl font-bold text-[#111827] mb-8">
+        Dashboard Overview
+      </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* CARDS */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 place-items-start">
         {cards.map((card) => (
           <div
             key={card.name}
             onClick={() => navigate("#")}
-            className={`cursor-pointer relative p-6 rounded-3xl shadow-lg transform transition hover:-translate-y-2 hover:shadow-2xl ${card.gradient}`}
+            className="
+              w-[260px]
+              bg-white
+              border border-gray-200
+              rounded-md
+              p-5
+              cursor-pointer
+              shadow-[0_6px_16px_rgba(0,0,0,0.1)]
+              transition
+              hover:-translate-y-1
+            "
           >
-            {/* Icon */}
-            <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md">
+            {/* ICON */}
+            <div className="w-12 h-12 flex items-center justify-center rounded bg-gray-100">
               {card.icon}
             </div>
 
-            {/* Content */}
-            <div className="mt-8">
-              <p className="text-gray-100 font-semibold text-lg">{card.name}</p>
-              <h2 className="text-3xl font-bold text-white mt-2">{card.count}</h2>
-            </div>
-
-            {/* Decorative bar */}
-            <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
+            {/* TEXT */}
+            <p className="mt-4 text-sm text-gray-500">{card.name}</p>
+            <h2 className="text-3xl font-bold text-[#111827] mt-1">
+              {card.count}
+            </h2>
           </div>
         ))}
       </div>
-{/* 
-      <div className="mt-12 text-center text-gray-500">
-        <p className="text-sm tracking-wide">
-          Modern and colorful food-order admin dashboard
-        </p>
-      </div> */}
     </div>
   );
-};
+}

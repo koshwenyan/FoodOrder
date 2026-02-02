@@ -18,9 +18,6 @@ export default function Categories() {
 
   const API_CATEGORY = "http://localhost:3000/api/category";
 
-  const inputClass =
-    "w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500";
-
   /* ================= FETCH ================= */
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
@@ -87,13 +84,15 @@ export default function Categories() {
 
   /* ================= UI ================= */
   return (
-    <div className="p-6 bg-slate-900 min-h-screen text-slate-100">
-      <h1 className="text-2xl font-bold text-center text-emerald-400 mb-6">
+    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6">
+
+      {/* TITLE */}
+      <h1 className="text-3xl font-bold text-[#111827]">
         Category Management
       </h1>
 
       {/* FORM */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-10">
+      <div className="bg-white rounded-xl shadow-md p-6 text-[#111827]">
         <h2 className="text-lg font-semibold mb-4">
           {isEditing ? "Update Category" : "Create Category"}
         </h2>
@@ -105,7 +104,7 @@ export default function Categories() {
             onChange={handleChange}
             placeholder="Category Name"
             required
-            className={inputClass}
+            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
           />
 
           <input
@@ -113,11 +112,13 @@ export default function Categories() {
             value={form.photo}
             onChange={handleChange}
             placeholder="Photo URL"
-            className={inputClass}
+            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
           />
 
           <div className="flex gap-2 md:col-span-2">
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-5 py-3 rounded-xl flex items-center gap-2">
+            <button
+              className="bg-[#1F2933] hover:bg-black text-white rounded-lg px-5 py-2 flex items-center gap-2"
+            >
               <PlusIcon className="w-4 h-4" />
               {isEditing ? "Update Category" : "Create Category"}
             </button>
@@ -125,7 +126,7 @@ export default function Categories() {
             <button
               type="button"
               onClick={resetForm}
-              className="bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl flex items-center gap-2"
+              className="bg-gray-200 hover:bg-gray-300 rounded-lg px-5 py-2 flex items-center gap-2"
             >
               <XMarkIcon className="w-4 h-4" /> Cancel
             </button>
@@ -133,78 +134,60 @@ export default function Categories() {
         </form>
       </div>
 
+     
       {/* CATEGORY CARDS */}
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+{/* CATEGORY CARDS */}
+<div className="flex flex-wrap gap-8">
   {categories.map((cat) => (
     <div
       key={cat._id}
-      className="group relative rounded-2xl
-                 bg-gradient-to-b from-slate-800 to-slate-900
-                 border border-slate-700
-                 hover:border-emerald-400/60
-                 transition-all duration-300"
+      className="w-[260px] bg-[#E5E7E7] rounded-md shadow-md p-4"
     >
       {/* IMAGE */}
-      <div className="p-4">
+      <div className="flex justify-center mb-4">
         {cat.photo ? (
           <img
             src={cat.photo}
             alt={cat.name}
-            className="w-full h-56 object-cover
-                       rounded-xl
-                       group-hover:scale-105
-                       transition-transform duration-500"
+            className="w-40 h-40 rounded-full object-cover"
           />
         ) : (
-          <div
-            className="w-full h-56 rounded-xl
-                       flex items-center justify-center
-                       bg-slate-700 text-slate-400"
-          >
+          <div className="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
             No Image
           </div>
         )}
       </div>
 
-      {/* CONTENT */}
-      <div className="px-5 pb-5">
-        <h3 className="text-lg font-semibold text-slate-100">
-          {cat.name}
-        </h3>
+      {/* NAME */}
+      <h3 className="text-sm font-semibold text-center text-[#111827]">
+        {cat.name}
+      </h3>
 
-        <p className="text-xs text-slate-400 mt-1">
-          Category
-        </p>
-      </div>
+      <p className="text-xs text-center text-gray-500 mt-1">
+        Category
+      </p>
 
-      {/* ACTION BUTTONS */}
-      <div
-        className="absolute bottom-4 right-4 flex gap-2
-                   opacity-0 group-hover:opacity-100
-                   transition-opacity"
-      >
+      {/* ACTION BAR */}
+      <div className="mt-4 flex gap-2">
         <button
           onClick={() => handleEdit(cat)}
-          className="p-2 rounded-lg
-                     bg-slate-800
-                     hover:bg-sky-500/20"
+          className="flex-1 bg-[#1F2933] hover:bg-black text-white py-2 text-sm rounded"
         >
-          <PencilIcon className="w-4 h-4 text-sky-400" />
+          Edit
         </button>
 
         <button
           onClick={() => handleDelete(cat._id)}
-          className="p-2 rounded-lg
-                     bg-slate-800
-                     hover:bg-rose-500/20"
+          className="flex-1 bg-gray-300 hover:bg-gray-400 text-[#111827] py-2 text-sm rounded"
         >
-          <TrashIcon className="w-4 h-4 text-rose-400" />
+          Delete
         </button>
       </div>
     </div>
   ))}
 </div>
+
+
 
     </div>
   );
