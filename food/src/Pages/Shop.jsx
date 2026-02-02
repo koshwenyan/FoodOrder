@@ -15,7 +15,7 @@ export default function Shops() {
         CloseTime: "",
         isActive: true,
         category: "",
-        image: null,
+
     });
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -53,7 +53,7 @@ export default function Shops() {
             CloseTime: "",
             isActive: true,
             category: "",
-            image: null,
+
         });
         setIsEditing(false);
         setEditingId(null);
@@ -71,7 +71,7 @@ export default function Shops() {
             formData.append("CloseTime", form.CloseTime);
             formData.append("isActive", form.isActive ? "true" : "false");
             formData.append("category", form.category);
-            if (form.image) formData.append("image", form.image);
+
 
             const url = isEditing ? `${API_BASE}/${editingId}` : `${API_BASE}/`;
 
@@ -122,7 +122,7 @@ export default function Shops() {
             CloseTime: to24Hour(shop.CloseTime),
             isActive: shop.isActive ?? true,
             category: shop.category?._id || "",
-            image: null,
+
         });
         setIsEditing(true);
         setEditingId(shop._id);
@@ -212,11 +212,11 @@ export default function Shops() {
                     ))}
                 </select>
 
-                <input
+                {/* <input
                     type="file"
                     onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
                     className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-                />
+                /> */}
 
                 <button onClick={handleSubmit} className="bg-[#1F2933] hover:bg-black text-white rounded-lg py-2">
                     {isEditing ? "Update Shop" : "Create Shop"}

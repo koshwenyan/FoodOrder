@@ -1,5 +1,4 @@
 import express from "express";
-
 import {
     createShop,
     getAllShops,
@@ -9,7 +8,6 @@ import {
 } from "../controller/shopController.js";
 
 import { authMiddleware, adminMiddleware } from "../middleware/authMiddleware.js";
-import upload from "../middleware/upload.js";
 
 const shopRouter = express.Router();
 
@@ -19,7 +17,7 @@ shopRouter.get("/:shopId", getShopById);
 
 /* ===== ADMIN ONLY ===== */
 shopRouter.post("/", authMiddleware, adminMiddleware("admin"), createShop);
-shopRouter.put("/:shopId", upload.single("image"), authMiddleware, adminMiddleware("admin"), updateShop);
+shopRouter.put("/:shopId", authMiddleware, adminMiddleware("admin"), updateShop);
 shopRouter.delete("/:shopId", authMiddleware, adminMiddleware("admin"), deleteShop);
 
 export default shopRouter;
