@@ -2,14 +2,19 @@ import express from "express";
 import { protect } from "../middleware/authMiddleware.js";
 import {
     createOrder,
-    updateOrderStatusByShop,
+    updateOrderStatus,
     assignDeliveryCompany,
     assignDeliveryStaff,
     getAllOrders,
     deleteOrder,
     getOrdersByShop,
     getMyOrders,
-    getMyOrderById
+    getMyOrderById,
+    getMyDeliveryOrders,
+    getOrdersByCompany,
+    getCompanyOrderCounts,
+    getStaffPickedAndDeliveredOrders,
+    getShopOrderStatusTotals
 } from "../controller/orderController.js";
 
 const router = express.Router();
@@ -17,8 +22,16 @@ const router = express.Router();
 // customer
 router.post("/create", protect, createOrder);
 
-// shop-admin
-router.put("/:orderId/status", protect, updateOrderStatusByShop);
+// shop-admin and staff
+router.put("/:orderId/status", protect, updateOrderStatus);
+
+//shop view total order status
+router.get(
+    "/shop/orders/totals",
+    protect,
+    getShopOrderStatusTotals
+);
+
 // view all order shop-admin
 router.get("/shop/:shopId", protect, getOrdersByShop);
 // shop-admin → assign delivery company
@@ -33,13 +46,41 @@ router.put(
 router.get("/", protect, getAllOrders);
 router.delete("/:orderId", protect, deleteOrder);
 
-// delivery-company admin
+// delivery-company assigned staff
 router.put("/:orderId/assign-staff", protect, assignDeliveryStaff);
 
-//customer
+//customer view of all my orders
 router.get("/myorders", protect, getMyOrders);
 
-// Get a specific order by ID for logged-in user
+// Get a specific order by ID for logged-in customer
 router.get("/myorders/:orderId", protect, getMyOrderById);
+
+// Company (company-admin)
+router.get(
+    "/company/orders",
+    protect,
+    getOrdersByCompany
+);
+
+router.get(
+    "/company/order-counts",
+    protect,
+    getCompanyOrderCounts
+);
+
+
+// Delivery staff
+router.get(
+    "/delivery/my-orders",
+    protect,
+    getMyDeliveryOrders
+);
+router.get(
+    "/staff/my-orders/status",
+    protect,
+    getStaffPickedAndDeliveredOrders
+);
+
+
 
 export default router;

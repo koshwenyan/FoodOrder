@@ -72,17 +72,47 @@ export const createOrder = async (req, res) => {
 };
 
 
-//update order
-export const updateOrderStatusByShop = async (req, res) => {
+// //update order
+// export const updateOrderStatusByShop = async (req, res) => {
+//     try {
+//         const { orderId } = req.params;
+//         const { status } = req.body;
+
+//         const allowedStatus = ["accepted", "preparing", "ready"];
+
+//         if (!allowedStatus.includes(status)) {
+//             return res.status(400).json({ message: "Invalid status update" });
+//         }
+
+//         const order = await Order.findById(orderId);
+
+//         if (!order) {
+//             return res.status(404).json({ message: "Order not found" });
+//         }
+
+//         // shop-admin can only update their shop orders
+//         if (order.shopId.toString() !== req.user.shopId.toString()) {
+//             return res.status(403).json({ message: "Access denied" });
+//         }
+
+//         order.status = status;
+//         await order.save();
+
+//         res.status(200).json({
+//             message: "Order status updated",
+//             data: order
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+export const updateOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
         const { status } = req.body;
 
-        const allowedStatus = ["accepted", "preparing", "ready"];
-
-        if (!allowedStatus.includes(status)) {
-            return res.status(400).json({ message: "Invalid status update" });
-        }
+        const SHOP_ADMIN_STATUS = ["accepted", "preparing", "ready"];
+        const STAFF_STATUS = ["picked-up", "delivered"];
 
         const order = await Order.findById(orderId);
 
@@ -90,22 +120,65 @@ export const updateOrderStatusByShop = async (req, res) => {
             return res.status(404).json({ message: "Order not found" });
         }
 
-        // shop-admin can only update their shop orders
-        if (order.shopId.toString() !== req.user.shopId.toString()) {
-            return res.status(403).json({ message: "Access denied" });
+        // ================= SHOP-ADMIN =================
+        if (req.user.role === "shop-admin") {
+
+            if (!SHOP_ADMIN_STATUS.includes(status)) {
+                return res.status(400).json({
+                    message: "Invalid status for shop-admin"
+                });
+            }
+
+            // shop-admin can update only their shop orders
+            if (!req.user.shopId || order.shopId.toString() !== req.user.shopId.toString()) {
+                return res.status(403).json({ message: "Access denied" });
+            }
+
+            order.status = status;
+            await order.save();
+
+            return res.status(200).json({
+                message: "Order status updated by shop-admin",
+                data: order
+            });
         }
 
-        order.status = status;
-        await order.save();
+        // ================= DELIVERY STAFF =================
+        if (req.user.role === "company-staff") {
 
-        res.status(200).json({
-            message: "Order status updated",
-            data: order
+            if (!STAFF_STATUS.includes(status)) {
+                return res.status(400).json({
+                    message: "Invalid status for delivery staff"
+                });
+            }
+
+            // staff can update only assigned orders
+            if (!order.deliveryStaff || order.deliveryStaff.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    message: "You can update only your assigned orders"
+                });
+            }
+
+            order.status = status;
+            await order.save();
+
+            return res.status(200).json({
+                message: "Order status updated by delivery staff",
+                data: order
+            });
+        }
+
+        // ================= OTHERS =================
+        return res.status(403).json({
+            message: "You are not allowed to update order status"
         });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Update order status error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 //shop-admin assigned delivery-company
 export const assignDeliveryCompany = async (req, res) => {
@@ -298,5 +371,222 @@ export const getMyOrderById = async (req, res) => {
     } catch (error) {
         console.error("Get my order by ID error:", error);
         res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+//view company admin total orders
+
+export const getOrdersByCompany = async (req, res) => {
+    try {
+        // 🔐 ONLY company-admin
+        if (req.user.role !== "company-admin") {
+            return res.status(403).json({
+                message: "Only company-admin can view company orders"
+            });
+        }
+
+        // company-admin must belong to a company
+        if (!req.user.companyId) {
+            return res.status(400).json({
+                message: "Company not assigned to this admin"
+            });
+        }
+
+        const orders = await Order.find({
+            deliveryCompany: req.user.companyId
+        })
+            .populate("customer", "name phone")
+            .populate("shopId", "name address")
+            .populate("items.menuId", "name price")
+            .populate("deliveryStaff", "name phone")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            totalOrders: orders.length,
+            data: orders
+        });
+
+    } catch (error) {
+        console.error("Get company orders error:", error);
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+};
+
+//view staff total orders
+// ================= Get orders for delivery staff =================
+export const getMyDeliveryOrders = async (req, res) => {
+    try {
+        // 🔐 Only delivery staff
+        if (req.user.role !== "company-staff") {
+            return res.status(403).json({ message: "Only delivery staff can access this" });
+        }
+
+        const orders = await Order.find({
+            deliveryStaff: req.user._id
+        })
+            .populate("customer", "name phone")
+            .populate("shopId", "name address")
+            .populate("items.menuId", "name price")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            totalOrders: orders.length,
+            data: orders
+        });
+
+    } catch (error) {
+        console.error("Get staff orders error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// ============ Delivery company order counts (assigned & delivered) ============
+export const getCompanyOrderCounts = async (req, res) => {
+    try {
+        // 🔐 Only company-admin
+        if (req.user.role !== "company-admin") {
+            return res.status(403).json({
+                message: "Only company-admin can view order counts"
+            });
+        }
+
+        if (!req.user.companyId) {
+            return res.status(400).json({
+                message: "Company not assigned to user"
+            });
+        }
+
+        const assignedCount = await Order.countDocuments({
+            deliveryCompany: req.user.companyId,
+            status: "assigned"
+        });
+
+        const pickupedCount = await Order.countDocuments({
+            deliveryCompany: req.user.companyId,
+            status: "picked-up"
+        });
+
+        const deliveredCount = await Order.countDocuments({
+            deliveryCompany: req.user.companyId,
+            status: "delivered"
+        });
+
+        res.status(200).json({
+            success: true,
+            data: {
+                assigned: assignedCount,
+                delivered: deliveredCount,
+                pickup: pickupedCount
+            }
+        });
+
+    } catch (error) {
+        console.error("Get company order counts error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// ============ Delivery staff picked-up & delivered orders ============
+export const getStaffPickedAndDeliveredOrders = async (req, res) => {
+    try {
+        // 🔐 Only delivery staff
+        if (req.user.role !== "company-staff") {
+            return res.status(403).json({
+                message: "Only delivery staff can access this"
+            });
+        }
+
+        const pickedUpOrders = await Order.find({
+            deliveryStaff: req.user._id,
+            status: "picked-up"
+        })
+            .populate("customer", "name phone")
+            .populate("shopId", "name address")
+            .populate("items.menuId", "name price")
+            .sort({ createdAt: -1 });
+
+        const deliveredOrders = await Order.find({
+            deliveryStaff: req.user._id,
+            status: "delivered"
+        })
+            .populate("customer", "name phone")
+            .populate("shopId", "name address")
+            .populate("items.menuId", "name price")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            staffId: req.user._id,
+            totals: {
+                pickedUp: pickedUpOrders.length,
+                delivered: deliveredOrders.length
+            },
+            data: {
+                pickedUpOrders,
+                deliveredOrders
+            }
+        });
+
+    } catch (error) {
+        console.error("Get staff orders error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+//get order status by a shop
+// ================= Shop order status totals =================
+export const getShopOrderStatusTotals = async (req, res) => {
+    try {
+        // 🔐 Only shop-admin
+        if (req.user.role !== "shop-admin") {
+            return res.status(403).json({
+                message: "Only shop-admin can access this"
+            });
+        }
+
+        if (!req.user.shopId) {
+            return res.status(400).json({
+                message: "Shop not assigned to this user"
+            });
+        }
+
+        const shopId = req.user.shopId;
+
+        const pendingCount = await Order.countDocuments({
+            shopId,
+            status: "pending"
+        });
+
+        const assignedCount = await Order.countDocuments({
+            shopId,
+            status: "assigned"
+        });
+
+        const deliveredCount = await Order.countDocuments({
+            shopId,
+            status: "delivered"
+        });
+
+        res.status(200).json({
+            success: true,
+            shopId,
+            totals: {
+                pending: pendingCount,
+                assigned: assignedCount,
+                delivered: deliveredCount
+            }
+        });
+
+    } catch (error) {
+        console.error("Shop order totals error:", error);
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
 };

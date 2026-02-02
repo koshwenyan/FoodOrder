@@ -4,9 +4,9 @@ import DeliveryCompany from "../model/deliveryCompanyModel.js";
 // ================= CREATE COMPANY =================
 export const createCompany = async (req, res) => {
     try {
-        const { name, email, serviceFee } = req.body;
+        const { name, email, serviceFee, photo } = req.body;
 
-        if (!name || !email || !serviceFee) {
+        if (!name || !email || !serviceFee || !photo) {
             return res.status(400).json({ message: "Please fill all required fields" });
         }
 
