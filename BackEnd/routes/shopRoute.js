@@ -16,7 +16,7 @@ shopRouter.get("/", getAllShops);
 shopRouter.get("/:shopId", getShopById);
 
 /* ===== ADMIN ONLY ===== */
-shopRouter.post("/", authMiddleware, adminMiddleware("admin"), createShop);
+shopRouter.post("/create", authMiddleware, adminMiddleware("admin"), createShop);
 shopRouter.put("/:shopId", authMiddleware, adminMiddleware("admin"), updateShop);
 shopRouter.delete("/:shopId", authMiddleware, adminMiddleware("admin"), deleteShop);
 

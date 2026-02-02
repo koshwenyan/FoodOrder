@@ -73,13 +73,13 @@ export default function Shops() {
             formData.append("category", form.category);
 
 
-            const url = isEditing ? `${API_BASE}/${editingId}` : `${API_BASE}/`;
+            // const url = isEditing ? `${API_BASE}/${editingId}` : `${API_BASE}/`;
 
-            const res = await fetch(url, {
-                method: isEditing ? "PUT" : "POST",
-                headers: { Authorization: `Bearer ${token}` }, // no Content-Type
-                body: formData,
-            });
+            // const res = await fetch(url, {
+            //     method: isEditing ? "PUT" : "POST",
+            //     headers: { Authorization: `Bearer ${token}` }, // no Content-Type
+            //     body: formData,
+            // });
 
             const data = await res.json();
 
