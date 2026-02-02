@@ -169,120 +169,96 @@ export const getAllShops = async (req, res) => {
 };
 
 //updateshop
-// export const updateShop = async (req, res) => {
-//     try {
-//         const { shopId } = req.params;
-//         const { name, category, description, address, OpenTime, CloseTime, isActive, photo } = req.body;
-
-//         if (!mongoose.Types.ObjectId.isValid(shopId)) {
-//             return res.status(400).json({
-//                 message: "Invalid shop ID",
-//                 success: false
-//             });
-//         }
-
-//         const shop = await Shop.findById(shopId);
-//         if (!shop) {
-//             return res.status(404).json({
-//                 message: "Shop not found",
-//                 success: false
-//             });
-//         }
-
-//         shop.name = name || shop.name;
-//         shop.category = category || shop.category;
-//         shop.description = description || shop.description;
-//         shop.address = address || shop.address;
-//         shop.OpenTime = OpenTime || shop.OpenTime;
-//         shop.CloseTime = CloseTime || shop.CloseTime;
-//         shop.isActive = isActive ?? shop.isActive;
-//         shop.photo = photo || shop.photo
-
-//         await shop.save();
-
-//         res.status(200).json({
-//             message: "Shop updated successfully",
-//             success: true,
-//             data: shop
-//         });
-
-//     } catch (error) {
-//         console.error("Update shop error:", error);
-//         res.status(500).json({
-//             message: "Internal server error",
-//             success: false
-//         });
-//     }
-// };
-
 export const updateShop = async (req, res) => {
     try {
         const { shopId } = req.params;
-        const {
-            name,
-            category,
-            description,
-            address,
-            OpenTime,
-            CloseTime,
-            isActive,
-            photo
-        } = req.body;
+        const { name, category, description, address, OpenTime, CloseTime, isActive } = req.body;
 
-        // ✅ Validate shopId
         if (!mongoose.Types.ObjectId.isValid(shopId)) {
             return res.status(400).json({
-                success: false,
-                message: "Invalid shop ID"
+                message: "Invalid shop ID",
+                success: false
             });
         }
 
-        // ✅ Validate category if provided
-        if (category && !mongoose.Types.ObjectId.isValid(category)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid category ID"
-            });
-        }
-
-        const updatedShop = await Shop.findByIdAndUpdate(
-            shopId,
-            {
-                $set: {
-                    ...(name && { name }),
-                    ...(category && { category }),
-                    ...(description && { description }),
-                    ...(address && { address }),
-                    ...(OpenTime && { OpenTime }),
-                    ...(CloseTime && { CloseTime }),
-                    ...(photo && { photo }),
-                    ...(isActive !== undefined && { isActive })
-                }
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedShop) {
+        const shop = await Shop.findById(shopId);
+        if (!shop) {
             return res.status(404).json({
-                success: false,
-                message: "Shop not found"
+                message: "Shop not found",
+                success: false
             });
         }
+
+        shop.name = name || shop.name;
+        shop.category = category || shop.category;
+        shop.description = description || shop.description;
+        shop.address = address || shop.address;
+        shop.OpenTime = OpenTime || shop.OpenTime;
+        shop.CloseTime = CloseTime || shop.CloseTime;
+        shop.isActive = isActive ?? shop.isActive;
+
+        if (req.file) {
+            shop.photo = `/uploads/${req.file.filename}`;
+        }
+
+
+
+        await shop.save();
 
         res.status(200).json({
-            success: true,
             message: "Shop updated successfully",
-            data: updatedShop
+            success: true,
+            data: shop
         });
 
     } catch (error) {
         console.error("Update shop error:", error);
         res.status(500).json({
-            success: false,
-            message: "Internal server error"
+            message: "Internal server error",
+            success: false
         });
     }
 };
+
+// export const updateShop = async (req, res) => {
+//     try {
+//         // req.body now exists 🎉
+//         const { name, description, address, OpenTime, CloseTime, isActive, category } = req.body;
+
+//         const shop = await Shop.findById(req.params.id);
+//         if (!shop) {
+//             return res.status(404).json({ message: "Shop not found" });
+//         }
+
+//         shop.name = name ?? shop.name;
+//         shop.description = description ?? shop.description;
+//         shop.address = address ?? shop.address;
+//         shop.category = category ?? shop.category;
+//         shop.isActive = isActive ?? shop.isActive;
+
+//         if (OpenTime) shop.OpenTime = OpenTime;
+//         if (CloseTime) shop.CloseTime = CloseTime;
+
+//         if (req.file) {
+//             shop.photo = req.file.path;
+//         }
+
+//         await shop.save();
+
+//         res.json({
+//             success: true,
+//             message: "Shop updated successfully",
+//             shop,
+//         });
+//     } catch (err) {
+//         console.error("UPDATE SHOP ERROR:", err);
+//         res.status(500).json({
+//             message: "Update failed",
+//             error: err.message,
+//         });
+//     }
+// };
+
 
 
 //delete shop
