@@ -130,20 +130,23 @@ export const getShopById = async (req, res) => {
     }
 };
 
-//getallshop
+//get all shops
 export const getAllShops = async (req, res) => {
     try {
         const shops = await Shop.aggregate([
             {
                 $lookup: {
-                    from: "categories",
-                    localField: "category",
-                    foreignField: "_id",
+                    from: "categories",       // collection name
+                    localField: "category",  // field in Shop
+                    foreignField: "_id",     // field in Category
                     as: "category"
                 }
             },
             {
-                $unwind: "$category"
+                $unwind: {
+                    path: "$category",
+                    preserveNullAndEmptyArrays: true
+                }
             },
             {
                 $sort: { createdAt: -1 }
@@ -159,8 +162,8 @@ export const getAllShops = async (req, res) => {
     } catch (error) {
         console.error("Get all shops error:", error);
         res.status(500).json({
-            message: "Internal server error",
-            success: false
+            success: false,
+            message: "Internal server error"
         });
     }
 };
