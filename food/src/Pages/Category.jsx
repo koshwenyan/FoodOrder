@@ -134,34 +134,42 @@ export default function Categories() {
       </div>
 
       {/* CATEGORY CARDS */}
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
   {categories.map((cat) => (
     <div
       key={cat._id}
-      className="group relative bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden
-                 hover:border-emerald-500/60 hover:shadow-2xl transition-all duration-300"
+      className="group relative rounded-2xl
+                 bg-gradient-to-b from-slate-800 to-slate-900
+                 border border-slate-700
+                 hover:border-emerald-400/60
+                 transition-all duration-300"
     >
       {/* IMAGE */}
-      <div className="relative h-72 overflow-hidden">
+      <div className="p-4">
         {cat.photo ? (
           <img
             src={cat.photo}
             alt={cat.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-56 object-cover
+                       rounded-xl
+                       group-hover:scale-105
+                       transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm bg-slate-900">
+          <div
+            className="w-full h-56 rounded-xl
+                       flex items-center justify-center
+                       bg-slate-700 text-slate-400"
+          >
             No Image
           </div>
         )}
-
-        {/* GRADIENT OVERLAY */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       </div>
 
       {/* CONTENT */}
-      <div className="p-5">
-        <h3 className="text-lg font-semibold tracking-wide text-slate-100">
+      <div className="px-5 pb-5">
+        <h3 className="text-lg font-semibold text-slate-100">
           {cat.name}
         </h3>
 
@@ -172,23 +180,26 @@ export default function Categories() {
 
       {/* ACTION BUTTONS */}
       <div
-        className="absolute bottom-4 right-4 flex gap-2 opacity-0
-                   group-hover:opacity-100 transition-opacity"
+        className="absolute bottom-4 right-4 flex gap-2
+                   opacity-0 group-hover:opacity-100
+                   transition-opacity"
       >
         <button
           onClick={() => handleEdit(cat)}
-          className="p-2 rounded-lg bg-slate-900/80 backdrop-blur
-                     hover:bg-blue-500/20 border border-slate-700"
+          className="p-2 rounded-lg
+                     bg-slate-800
+                     hover:bg-sky-500/20"
         >
-          <PencilIcon className="w-4 h-4 text-blue-400" />
+          <PencilIcon className="w-4 h-4 text-sky-400" />
         </button>
 
         <button
           onClick={() => handleDelete(cat._id)}
-          className="p-2 rounded-lg bg-slate-900/80 backdrop-blur
-                     hover:bg-red-500/20 border border-slate-700"
+          className="p-2 rounded-lg
+                     bg-slate-800
+                     hover:bg-rose-500/20"
         >
-          <TrashIcon className="w-4 h-4 text-red-400" />
+          <TrashIcon className="w-4 h-4 text-rose-400" />
         </button>
       </div>
     </div>

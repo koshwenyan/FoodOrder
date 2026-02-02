@@ -103,55 +103,27 @@ export const deleteMenu = async (req, res) => {
 //getall menu
 
 export const getAllMenus = async (req, res) => {
-    try {
-        const { shopId } = req.params;
+  try {
+    const shopId = req.user.shopId;
 
-        if (!mongoose.Types.ObjectId.isValid(shopId)) {
-            return res.status(400).json({ message: "Invalid shop ID" });
-        }
-
-        const menus = await Menu.aggregate([
-            {
-                $match: {
-                    shopId: new mongoose.Types.ObjectId(shopId),
-                    isAvailable: true
-                }
-            },
-            {
-                $lookup: {
-                    from: "shops",
-                    localField: "shopId",
-                    foreignField: "_id",
-                    as: "shop"
-                }
-            },
-            { $unwind: "$shop" },
-            {
-                $project: {
-                    name: 1,
-                    price: 1,
-                    description: 1,
-                    image: 1,
-                    isAvailable: 1,
-                    createdAt: 1,
-                    shop: {
-                        _id: "$shop._id",
-                        name: "$shop.name"
-                    }
-                }
-            },
-            { $sort: { createdAt: -1 } }
-        ]);
-
-        res.status(200).json({
-            totalMenus: menus.length,
-            data: menus
-        });
-
-    } catch (error) {
-        res.status(500).json({ message: "Get menus failed", error: error.message });
+    if (!shopId) {
+      return res.status(400).json({ message: "Shop ID not found" });
     }
+
+    const menus = await Menu.find({
+      shopId,
+      isActive: true,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: menus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 
 //getbyid

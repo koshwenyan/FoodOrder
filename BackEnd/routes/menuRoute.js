@@ -17,7 +17,9 @@ menuRouter.put("/update/:id", protect, updateMenu);
 menuRouter.delete("/delete/:id", protect, deleteMenu);
 
 // public / authenticated
-menuRouter.get("/shop/:shopId", getAllMenus);
+// menuRouter.get("/shop/:shopId", getAllMenus);
+menuRouter.get("/my-shop", protect, getAllMenus);
+
 menuRouter.get("/:id", getMenuById);
 
 
