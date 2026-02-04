@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   PlusIcon,
   PencilIcon,
@@ -23,26 +23,27 @@ export default function Menus() {
   });
 
   const API_MENU = "http://localhost:3000/api/menu";
-  const SHOP_ID = localStorage.getItem("shopId"); // or from auth context
-
   const API_CATEGORY = "http://localhost:3000/api/category";
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   /* ================= FETCH ================= */
   const fetchMenus = async () => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_MENU}/my-shop`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    console.log("Menu data:", data);
+    // normalize isAvailable
+    const normalizedMenus = (data.data || []).map((m) => ({
+      ...m,
+      isAvailable: m.isAvailable === true || m.isAvailable === "true",
+    }));
 
-  const res = await fetch("http://localhost:3000/api/menu/my-shop", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const data = await res.json();
-  setMenus(data.data || []);
-};
+    setMenus(normalizedMenus);
+  };
 
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
@@ -51,6 +52,7 @@ export default function Menus() {
     });
     const data = await res.json();
     setCategories(data.data || []);
+    
   };
 
   useEffect(() => {
@@ -126,14 +128,14 @@ export default function Menus() {
 
   /* ================= UI ================= */
   return (
-    <div className="p-6 bg-slate-900 min-h-screen text-slate-100">
-      <h1 className="text-2xl font-bold text-center text-emerald-400 mb-6">
+    <div className="p-6 bg-[#ECEFF1] min-h-screen text-gray-900">
+      <h1 className="text-2xl font-bold text-center text-slate-900 mb-6">
         Menu Management
       </h1>
 
       {/* FORM */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-10">
-        <h2 className="text-lg font-semibold mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-10 shadow-sm">
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">
           {isEditing ? "Update Menu" : "Create Menu"}
         </h2>
 
@@ -188,18 +190,19 @@ export default function Menus() {
             className={`${inputClass} md:col-span-2`}
           />
 
-          <label className="flex items-center gap-2 md:col-span-2 text-sm">
+          <label className="flex items-center gap-2 md:col-span-2 text-sm text-gray-900">
             <input
               type="checkbox"
               name="isAvailable"
               checked={form.isAvailable}
               onChange={handleChange}
+              className="accent-emerald-500"
             />
             Available
           </label>
 
           <div className="flex gap-2 md:col-span-2">
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-semibold px-5 py-3 rounded-xl flex items-center gap-2">
+            <button className="bg-gray-900 hover:bg-black text-white font-semibold px-5 py-3 rounded-lg flex items-center gap-2">
               <PlusIcon className="w-4 h-4" />
               {isEditing ? "Update Menu" : "Create Menu"}
             </button>
@@ -207,7 +210,7 @@ export default function Menus() {
             <button
               type="button"
               onClick={resetForm}
-              className="bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl flex items-center gap-2"
+              className="bg-gray-200 hover:bg-gray-300 px-5 py-3 rounded-lg flex items-center gap-2"
             >
               <XMarkIcon className="w-4 h-4" />
               Cancel
@@ -217,90 +220,80 @@ export default function Menus() {
       </div>
 
       {/* MENU CARDS */}
-
-      {/* MENU CARDS */}
-<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-  {menus.map((menu) => (
-    <div
-      key={menu._id}
-      className="relative group bg-slate-200 rounded-xl p-6 text-center
-                 shadow hover:shadow-lg transition"
-    >
-      {/* IMAGE */}
-      <div className="relative w-full h-48 flex items-center justify-center mb-4">
-        {menu.image ? (
-          <img
-            src={menu.image}
-            alt={menu.name}
-            className="h-full object-contain
-                       transition-transform duration-300
-                       group-hover:scale-105"
-          />
-        ) : (
-          <div className="text-slate-500">No Image</div>
-        )}
-
-        {/* AVAILABLE BADGE */}
-        <span
-          className={`absolute top-2 right-2 text-xs px-2 py-1 rounded
-            ${
-              menu.isAvailable
-                ? "bg-emerald-500 text-white"
-                : "bg-red-500 text-white"
-            }`}
-        >
-          {menu.isAvailable ? "Available" : "Unavailable"}
-        </span>
-
-        {/* ACTION ICONS – SHOW WHEN CARD HOVER */}
-        <div
-          className="absolute bottom-2 right-2 flex gap-2
-                     opacity-0 group-hover:opacity-100 transition"
-        >
-          <button
-            onClick={() => handleEdit(menu)}
-            className="p-2 rounded-full bg-blue-500 text-white
-                       hover:bg-blue-600 shadow"
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {menus.map((menu) => (
+          <div
+            key={menu._id}
+            className="relative group bg-white rounded-xl p-6 text-center shadow hover:shadow-lg"
           >
-            <PencilIcon className="w-4 h-4" />
-          </button>
+            {/* IMAGE */}
+            <div className="relative w-full h-48 flex items-center justify-center mb-4">
+              {menu.image ? (
+                <img
+                  src={menu.image}
+                  alt={menu.name}
+                  className="h-full object-contain transition-transform duration-300 group-hover:scale-105 rounded-xl"
+                />
+              ) : (
+                <div className="text-gray-400">No Image</div>
+              )}
 
-          <button
-            onClick={() => handleDelete(menu._id)}
-            className="p-2 rounded-full bg-red-500 text-white
-                       hover:bg-red-600 shadow"
-          >
-            <TrashIcon className="w-4 h-4" />
-          </button>
-        </div>
+              {/* AVAILABLE BADGE */}
+              <span
+                className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full ${
+                  menu.isAvailable
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-red-100 text-red-600"
+                }`}
+              >
+                {menu.isAvailable ? "Available" : "Unavailable"}
+              </span>
+
+              {/* ACTION ICONS */}
+              <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                <button
+                  onClick={() => handleEdit(menu)}
+                  className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 shadow"
+                >
+                  <PencilIcon className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => handleDelete(menu._id)}
+                  className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 shadow"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* NAME */}
+            <h3 className="text-sm font-semibold text-gray-900 uppercase">
+              {menu.name}
+            </h3>
+             <h2 className="text-sm font-semibold text-gray-900 uppercase">
+              {menu.category.name}
+            </h2>
+
+            {/* PRICE */}
+            <p className="text-sm text-gray-500 mt-1">
+              {menu.price.toLocaleString()} Ks
+            </p>
+
+            {/* BUTTON */}
+            <button
+              disabled={!menu.isAvailable}
+              className={`mt-4 w-full py-2 text-sm rounded transition font-semibold ${
+                menu.isAvailable
+                  ? "bg-emerald-500 text-white"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Add To Cart
+            </button>
+          </div>
+        ))}
       </div>
-
-      {/* NAME */}
-      <h3 className="text-sm font-semibold text-slate-800 uppercase">
-        {menu.name}
-      </h3>
-
-      {/* PRICE */}
-      <p className="text-sm text-slate-700 mt-1">
-        {menu.price.toLocaleString()} Ks
-      </p>
-
-      {/* BUTTON */}
-      <button
-        disabled={!menu.isAvailable}
-        className={`mt-4 w-full py-2 text-sm rounded transition
-          ${
-            menu.isAvailable
-              ? "bg-slate-900 text-white hover:bg-slate-800"
-              : "bg-slate-400 text-slate-200 cursor-not-allowed"
-          }`}
-      >
-        Add To Cart
-      </button>
-    </div>
-  ))}
-</div>
-
     </div>
   );
 }

@@ -80,17 +80,24 @@ export default function AdminShell() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 text-gray-900">
+    <div className="min-h-screen bg-gray-100 text-gray-900">
 
       {/* ================= SIDEBAR ================= */}
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } transition-all duration-300 bg-white border-r border-gray-200 shadow-sm flex flex-col`}
+        } fixed inset-y-0 left-0 z-40
+        transition-all duration-300
+        bg-white border-r border-gray-200 shadow-sm
+        flex flex-col`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
-          {sidebarOpen && <span className="text-lg font-bold tracking-wide">DASHBOARD</span>}
+          {sidebarOpen && (
+            <span className="text-lg font-bold tracking-wide">
+              DASHBOARD
+            </span>
+          )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg hover:bg-gray-100"
@@ -106,11 +113,23 @@ export default function AdminShell() {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
-                 ${isActive ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-100"}`
+                `relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
+                ${
+                  isActive
+                    ? "bg-[#3A3330] text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`
               }
-              title={item.name} // Tooltip when collapsed
+              title={item.name}
             >
+              {/* ACTIVE INDICATOR BAR */}
+              <span
+                className={`absolute left-0 top-0 h-full w-1 rounded-r
+                ${"bg-[#3A3330]"} ${
+                  sidebarOpen ? "" : "opacity-0"
+                }`}
+              />
+
               <item.icon className="w-5 h-5 flex-shrink-0" />
               {sidebarOpen && <span>{item.name}</span>}
             </NavLink>
@@ -119,10 +138,17 @@ export default function AdminShell() {
       </aside>
 
       {/* ================= MAIN ================= */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-
-        {/* TOP BAR */}
-        <header className="flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm">
+      <main
+        className={`flex flex-col
+        ${sidebarOpen ? "ml-64" : "ml-20"}`}
+      >
+        {/* TOP BAR (FIXED) */}
+        <header
+          className={`fixed top-0 right-0 z-30
+          ${sidebarOpen ? "left-64" : "left-20"}
+          h-16 flex items-center justify-between
+          px-6 bg-white border-b border-gray-200 shadow-sm`}
+        >
           <h1 className="text-xl font-bold">
             {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
           </h1>
@@ -139,7 +165,11 @@ export default function AdminShell() {
                 className="w-10 h-10 rounded-full border border-gray-300"
                 alt="profile"
               />
-              {sidebarOpen && <span className="text-sm font-medium">{me?.name || "Admin"}</span>}
+              {sidebarOpen && (
+                <span className="text-sm font-medium">
+                  {me?.name || "Admin"}
+                </span>
+              )}
             </div>
 
             <button
@@ -152,11 +182,10 @@ export default function AdminShell() {
           </div>
         </header>
 
-        {/* PAGE CONTENT */}
-        <div className="flex-1 p-6 overflow-auto">
+        {/* PAGE CONTENT (SCROLLS) */}
+        <div className="pt-16 h-screen overflow-auto p-6 ">
           <Outlet />
         </div>
-
       </main>
     </div>
   );

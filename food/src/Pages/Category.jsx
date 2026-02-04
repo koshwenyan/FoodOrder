@@ -137,26 +137,28 @@ export default function Categories() {
      
       {/* CATEGORY CARDS */}
 {/* CATEGORY CARDS */}
-<div className="flex flex-wrap gap-8">
+<div className="flex flex-wrap gap-24">
   {categories.map((cat) => (
     <div
       key={cat._id}
       className="w-[260px] bg-[#E5E7E7] rounded-md shadow-md p-4"
     >
       {/* IMAGE */}
-      <div className="flex justify-center mb-4">
-        {cat.photo ? (
-          <img
-            src={cat.photo}
-            alt={cat.name}
-            className="w-40 h-40 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-gray-500">
-            No Image
-          </div>
-        )}
-      </div>
+     {/* IMAGE */}
+<div className="flex justify-center mb-4">
+  <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+    {cat.photo ? (
+      <img
+        src={cat.photo}
+        alt={cat.name}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <span className="text-gray-500 text-sm">No Image</span>
+    )}
+  </div>
+</div>
+
 
       {/* NAME */}
       <h3 className="text-sm font-semibold text-center text-[#111827]">
