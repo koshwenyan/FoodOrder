@@ -102,6 +102,7 @@ export const deleteMenu = async (req, res) => {
 
 //getall menu
 
+
 export const getAllMenus = async (req, res) => {
     try {
         const shopId = req.user.shopId;
@@ -116,6 +117,7 @@ export const getAllMenus = async (req, res) => {
         };
 
         const menus = await Menu.find(filter)
+            .populate("category", "name") // 👈 ONLY category name
             .sort({ createdAt: -1 });
 
         const totalMenus = await Menu.countDocuments(filter);
