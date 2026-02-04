@@ -14,7 +14,7 @@ const companyRouter = express.Router();
 // ================= ROUTES =================
 
 // GET all companies - only admin can access
-companyRouter.get("/", authMiddleware, adminMiddleware("admin"), getAllCompanies);
+companyRouter.get("/", getAllCompanies);
 
 // GET single company by ID - only admin can access
 companyRouter.get("/:companyId", authMiddleware, adminMiddleware("admin"), getCompanyById);
