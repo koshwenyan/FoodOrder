@@ -13,6 +13,7 @@ import {
   BuildingOffice2Icon,
   BuildingOfficeIcon,
   Squares2X2Icon,
+  ListBulletIcon
 } from "@heroicons/react/24/outline";
 
 export default function AdminShell() {
@@ -36,7 +37,7 @@ export default function AdminShell() {
     { name: " Create Orders", icon: ClipboardDocumentListIcon, path: "orders" },
     { name: "Delivery", icon: TruckIcon, path: "delivery" },
     { name: "Menu", icon: ShoppingCartIcon, path: "menu" },
-    { name: "Orders Lists", icon: ShoppingCartIcon, path: "orderslists" },
+    { name: "Orders Lists", icon: ListBulletIcon, path: "orderslists" },
   ];
 
   const menu = user?.role === "shop-admin" ? shopAdminMenu : adminMenu;
