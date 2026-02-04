@@ -15,7 +15,7 @@ export default function OrderPage() {
 
   const API_MENU = "http://localhost:3000/api/menu";
   const API_DELIVERY = "http://localhost:3000/api/company/";
-
+  const API_ORDER = "http://localhost:3000/api/phoneCalledOrder/";
   /* ================= FETCH PRODUCTS ================= */
   const fetchProducts = async () => {
     const token = localStorage.getItem("token");
@@ -58,7 +58,68 @@ export default function OrderPage() {
         )
         .filter((i) => i.qty > 0)
     );
+
   };
+  const handleSubmitOrder = async () => {
+  if (!customer.name || !customer.phone || !customer.address) {
+    alert("Please fill all customer info");
+    return;
+  }
+  if (!selectedDelivery?._id) {
+    alert("Please select a delivery company");
+    return;
+  }
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+    
+    const orderData = {
+      customerName: customer.name,
+      phone: customer.phone,
+      address: customer.address,
+      deliveryCompany: selectedDelivery._id,
+      totalAmount: itemsTotal + serviceFee, // must be a number
+      items: cart.map((i) => ({
+        menu: i._id, // your product reference
+        quantity: i.qty,
+        price: i.price, // price per item
+      })),
+    };
+
+    const res = await fetch(`${API_ORDER}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Failed to submit order");
+    }
+
+    const data = await res.json();
+    console.log("Order submitted:", data);
+
+    // Reset cart and customer info
+    setCart([]);
+    setCustomer({ name: "", phone: "", address: "" });
+    setSelectedDelivery(null);
+
+    alert("Order submitted successfully!");
+  } catch (error) {
+    console.error("Order submission error:", error);
+    alert(`Error submitting order: ${error.message}`);
+  }
+};
+
+
 
   /* ================= TOTALS ================= */
   const itemsTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -70,6 +131,7 @@ export default function OrderPage() {
     const { name, value } = e.target;
     setCustomer((prev) => ({ ...prev, [name]: value }));
   };
+
 
   return (
     <div className="flex h-screen bg-slate-100">
@@ -224,6 +286,7 @@ export default function OrderPage() {
               !customer.phone ||
               !customer.address
             }
+            onClick={handleSubmitOrder}
             className="w-full bg-yellow-400 text-black py-2 rounded font-bold disabled:opacity-50"
           >
             Checkout
