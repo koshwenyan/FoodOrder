@@ -9,6 +9,7 @@ import userRouter from './routes/userRoute.js';
 import shopRouter from './routes/shopRoute.js';
 import menuRouter from './routes/menuRoute.js';
 import router from './routes/orderRoute.js';
+import phoneRouter from './routes/phoneCalledOrderRoute.js';
 
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/user', userRouter)
 app.use('/api/menu', menuRouter)
 app.use('/api/company', companyRouter)
 app.use('/api/order', router)
+app.use('/api/phoneCalledOrder', phoneRouter)
 
 
 app.get('/', (req, res) => res.send('API is working'));
