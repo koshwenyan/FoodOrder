@@ -102,27 +102,36 @@ export const deleteMenu = async (req, res) => {
 
 //getall menu
 
+
 export const getAllMenus = async (req, res) => {
-  try {
-    const shopId = req.user.shopId;
+    try {
+        const shopId = req.user.shopId;
 
-    if (!shopId) {
-      return res.status(400).json({ message: "Shop ID not found" });
+        if (!shopId) {
+            return res.status(400).json({ message: "Shop ID not found" });
+        }
+
+        const filter = {
+            shopId,
+            isActive: true,
+        };
+
+        const menus = await Menu.find(filter)
+            .populate("category", "name") // 👈 ONLY category name
+            .sort({ createdAt: -1 });
+
+        const totalMenus = await Menu.countDocuments(filter);
+
+        res.status(200).json({
+            success: true,
+            total: totalMenus,
+            data: menus,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const menus = await Menu.find({
-      shopId,
-      isActive: true,
-    }).sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      data: menus,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
+
 
 
 
