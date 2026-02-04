@@ -271,9 +271,12 @@ export default function Menus() {
             <h3 className="text-sm font-semibold text-gray-900 uppercase">
               {menu.name}
             </h3>
-             <h2 className="text-sm font-semibold text-gray-900 uppercase">
+             <h4 className="text-sm font-medium text-gray-400 uppercase">
               {menu.category.name}
-            </h2>
+            </h4>
+             <h5 className="text-sm font-semibold text-gray-900 uppercase">
+              {menu.description}
+            </h5>
 
             {/* PRICE */}
             <p className="text-sm text-gray-500 mt-1">
