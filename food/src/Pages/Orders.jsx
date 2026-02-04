@@ -5,6 +5,13 @@ export default function OrderPage() {
   const [cart, setCart] = useState([]);
   const [deliveryCompanies, setDeliveryCompanies] = useState([]);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
+  
+  // ================= CUSTOMER INFO =================
+  const [customer, setCustomer] = useState({
+    name: "",
+    phone: "",
+    address: "",
+  });
 
   const API_MENU = "http://localhost:3000/api/menu";
   const API_DELIVERY = "http://localhost:3000/api/company/";
@@ -27,7 +34,6 @@ export default function OrderPage() {
     });
     const data = await res.json();
     setDeliveryCompanies(data.data || []);
-    console.log("Delivery data:", data);
   };
 
   useEffect(() => {
@@ -35,7 +41,7 @@ export default function OrderPage() {
     fetchDeliveryCompanies();
   }, []);
 
-  /* ================= ADD TO CART (ONE LINE PER PRODUCT) ================= */
+  /* ================= ADD TO CART ================= */
   const addToCart = (product) => {
     setCart((prev) => {
       if (prev.some((i) => i._id === product._id)) return prev;
@@ -55,21 +61,21 @@ export default function OrderPage() {
   };
 
   /* ================= TOTALS ================= */
-  const itemsTotal = cart.reduce(
-    (sum, i) => sum + i.price * i.qty,
-    0
-  );
+  const itemsTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const serviceFee = selectedDelivery?.serviceFee || 0;
+  const grandTotal = itemsTotal + serviceFee;
 
-  const deliveryFee = selectedDelivery?.fee || 0;
-  const grandTotal = itemsTotal + deliveryFee;
+  /* ================= HANDLE CUSTOMER CHANGE ================= */
+  const handleCustomerChange = (e) => {
+    const { name, value } = e.target;
+    setCustomer((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div className="flex h-screen bg-slate-100">
-
       {/* ================= PRODUCTS ================= */}
       <div className="w-3/4 p-6 overflow-y-auto">
         <h1 className="text-2xl font-bold mb-6">Products</h1>
-
         <div className="grid grid-cols-3 gap-6">
           {products.map((p) => (
             <div
@@ -81,21 +87,18 @@ export default function OrderPage() {
                 alt={p.name}
                 className="rounded-lg h-40 object-cover mb-3"
               />
-
               <h3 className="font-semibold">{p.name}</h3>
               <p className="text-sm text-slate-600 mb-3">
                 {p.price.toLocaleString()} Ks
               </p>
-
               <button
                 disabled={cart.some((i) => i._id === p._id)}
                 onClick={() => addToCart(p)}
-                className={`mt-auto py-2 rounded text-white
-                  ${
-                    cart.some((i) => i._id === p._id)
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-slate-900 hover:bg-slate-800"
-                  }`}
+                className={`mt-auto py-2 rounded text-white ${
+                  cart.some((i) => i._id === p._id)
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-slate-900 hover:bg-slate-800"
+                }`}
               >
                 {cart.some((i) => i._id === p._id) ? "Added" : "Add To Cart"}
               </button>
@@ -107,6 +110,7 @@ export default function OrderPage() {
       {/* ================= CART ================= */}
       <div className="w-1/4 bg-[#3b3430] text-white flex flex-col">
 
+        {/* CART HEADER */}
         <div className="p-4 border-b border-white/20">
           <h2 className="text-xl font-semibold">Cart</h2>
         </div>
@@ -119,14 +123,12 @@ export default function OrderPage() {
                 src={i.image}
                 className="w-12 h-12 rounded-full object-cover"
               />
-
               <div className="flex-1">
                 <p className="text-sm font-medium">{i.name}</p>
                 <p className="text-xs text-slate-300">
                   {i.price.toLocaleString()} Ks
                 </p>
               </div>
-
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateQty(i._id, -1)}
@@ -146,6 +148,37 @@ export default function OrderPage() {
           ))}
         </div>
 
+        {/* CUSTOMER INFO */}
+        <div className="p-4 border-t border-white/20 space-y-2">
+          <h3 className="text-sm font-semibold text-slate-200 mb-2">
+            Customer Info
+          </h3>
+          <input
+            type="text"
+            name="name"
+            value={customer.name}
+            onChange={handleCustomerChange}
+            placeholder="Name"
+            className="w-full px-2 py-1 rounded text-white border border-white"
+          />
+          <input
+            type="text"
+            name="phone"
+            value={customer.phone}
+            onChange={handleCustomerChange}
+            placeholder="Phone"
+            className="w-full px-2 py-1 rounded text-white border border-white"
+          />
+          <input
+            type="text"
+            name="address"
+            value={customer.address}
+            onChange={handleCustomerChange}
+            placeholder="Address"
+            className="w-full px-2 py-1 rounded text-white border border-white"
+          />
+        </div>
+
         {/* DELIVERY */}
         <div className="p-4 border-t border-white/20">
           <label className="text-sm mb-1 block text-slate-300">
@@ -154,9 +187,7 @@ export default function OrderPage() {
           <select
             value={selectedDelivery?._id || ""}
             onChange={(e) => {
-              const d = deliveryCompanies.find(
-                (x) => x._id === e.target.value
-              );
+              const d = deliveryCompanies.find((x) => x._id === e.target.value);
               setSelectedDelivery(d || null);
             }}
             className="w-full bg-white text-black rounded px-2 py-1"
@@ -164,7 +195,7 @@ export default function OrderPage() {
             <option value="">Select delivery</option>
             {deliveryCompanies.map((d) => (
               <option key={d._id} value={d._id}>
-                {d.name} ({d.fee.toLocaleString()} Ks)
+                {d.name} ({d.serviceFee.toLocaleString()} Ks)
               </option>
             ))}
           </select>
@@ -176,19 +207,23 @@ export default function OrderPage() {
             <span>Items Total</span>
             <span>{itemsTotal.toLocaleString()} Ks</span>
           </div>
-
           <div className="flex justify-between text-sm">
             <span>Delivery Fee</span>
-            <span>{deliveryFee.toLocaleString()} Ks</span>
+            <span>{selectedDelivery?.serviceFee?.toLocaleString() || 0} Ks</span>
           </div>
-
           <div className="flex justify-between font-semibold text-lg border-t border-white/20 pt-2">
             <span>Grand Total</span>
             <span>{grandTotal.toLocaleString()} Ks</span>
           </div>
 
           <button
-            disabled={cart.length === 0 || !selectedDelivery}
+            disabled={
+              cart.length === 0 ||
+              !selectedDelivery ||
+              !customer.name ||
+              !customer.phone ||
+              !customer.address
+            }
             className="w-full bg-yellow-400 text-black py-2 rounded font-bold disabled:opacity-50"
           >
             Checkout

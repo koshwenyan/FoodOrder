@@ -14,6 +14,7 @@ import AdminShell from "./components/Adminshell.jsx";
 import Shop from "./Pages/Shop.jsx";
 import Category from "./Pages/Category.jsx";
 import  ShopDelivery  from "./Pages/Delivery.jsx";
+import OrdersLists from "./Pages/OrdersLists.jsx";
 export default function App() {
   return (
     <AuthProvider>
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="delivery" element={<ShopDelivery />} />
             <Route path="menu" element={<Menu />} />
+            <Route path="orderslists" element={<OrdersLists />} />
           </Route>
 
           {/* FALLBACK */}
