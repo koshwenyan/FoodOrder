@@ -136,7 +136,7 @@ export default function Menus() {
 
         <button
           onClick={() => setShowForm(true)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl flex items-center gap-2 font-semibold"
+          className="bg-[#3A3330] cursor-pointer text-white px-5 py-3 rounded-xl flex items-center gap-2 font-semibold"
         >
           <PlusIcon className="w-5 h-5" />
           Add Menu
@@ -224,7 +224,7 @@ export default function Menus() {
                   Available
                 </label>
 
-                <button className="bg-emerald-600 text-white py-3 rounded-xl font-semibold">
+                <button className="bg-[#3A3330] text-white py-3 rounded-xl font-semibold">
                   {isEditing ? "Update Menu" : "Create Menu"}
                 </button>
               </form>
@@ -249,8 +249,9 @@ export default function Menus() {
             </div>
 
             <h3 className="font-semibold">{menu.name}</h3>
-            <p className="text-sm text-gray-500">{menu.category?.name}</p>
-            <p className="text-sm mt-1">{menu.price} Ks</p>
+            <p className="text-sm text-gray-500 my-1">{menu.category?.name}</p>
+            <p className="text-sm font-semibold my-1">{menu.description}</p>
+            <p className=" text-emerald-600 mt-1">{menu.price} Ks</p>
 
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition">
               <button

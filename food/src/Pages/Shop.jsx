@@ -220,7 +220,7 @@ export default function Shops() {
               <img
                 src={shop.photo}
                 alt={shop.name}
-                className="w-full h-44 object-cover rounded-lg border mb-3"
+                className="w-full h-44 object-cover rounded-lg mb-3"
               />
             )}
 
