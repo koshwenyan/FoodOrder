@@ -23,6 +23,8 @@ export default function DeliveryCompanyStaff() {
             const res = await fetch(`${API_BASE}/company/${companyId}/staffs`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
+            console.log("staffData", res)
             const data = await res.json();
             setStaffs(data?.data?.staffs || []);
         } catch (err) {
@@ -50,7 +52,7 @@ export default function DeliveryCompanyStaff() {
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`${API_BASE}/company/staff/${staffId}`, {
+            const res = await fetch(`${API_BASE}/user/${staffId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -77,72 +79,35 @@ export default function DeliveryCompanyStaff() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // const handleUpdate = async () => {
-    //     const token = localStorage.getItem("token");
-    //     try {
-    //         const res = await fetch(`${API_BASE}/user/update/${selectedStaff._id}`, {
-    //             method: "PUT",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //             body: JSON.stringify(formData),
-    //         });
-    //         const data = await res.json();
-    //         if (data.success) {
-    //             alert("Staff updated successfully");
-    //             setStaffs(
-    //                 staffs.map((s) =>
-    //                     s._id === selectedStaff._id ? { ...s, ...formData } : s
-    //                 )
-    //             );
-    //             handleModalClose();
-    //         } else {
-    //             alert("Failed to update staff");
-    //         }
-    //     } catch (err) {
-    //         console.error("Error updating staff:", err);
-    //         alert("Error updating staff");
-    //     }
-    // };
     const handleUpdate = async () => {
         const token = localStorage.getItem("token");
-
         try {
-            const res = await fetch(
-                `${API_BASE}/company/staff/${selectedStaff._id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(formData),
-                }
-            );
-
+            const res = await fetch(`${API_BASE}/user/update/${selectedStaff._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
             const data = await res.json();
-            console.log("UPDATE RESPONSE:", data); // 👈 debug
-
             if (data.success) {
                 alert("Staff updated successfully");
-
-                // update UI instantly
-                setStaffs((prev) =>
-                    prev.map((s) =>
-                        s._id === selectedStaff._id ? data.data : s
+                setStaffs(
+                    staffs.map((s) =>
+                        s._id === selectedStaff._id ? { ...s, ...formData } : s
                     )
                 );
-
                 handleModalClose();
             } else {
-                alert(data.message || "Failed to update staff");
+                alert("Failed to update staff");
             }
         } catch (err) {
             console.error("Error updating staff:", err);
             alert("Error updating staff");
         }
     };
+
 
 
     if (loading) {

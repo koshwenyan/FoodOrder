@@ -117,32 +117,30 @@ export const getCompanyWithStaff = async (req, res) => {
         }
 
         const company = await DeliveryCompany.aggregate([
-            {
-                $match: { _id: new mongoose.Types.ObjectId(companyId) }
-            },
+            { $match: { _id: new mongoose.Types.ObjectId(companyId) } },
             {
                 $lookup: {
                     from: "users",
-                    localField: "_id",
-                    foreignField: "companyId",
+                    let: { companyId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$companyId", "$$companyId"] } // match types
+                            }
+                        }
+                    ],
                     as: "staffs"
                 }
             },
             {
-                // ✅ KEEP ONLY company-staff
                 $addFields: {
                     staffs: {
                         $filter: {
                             input: "$staffs",
                             as: "staff",
-                            cond: { $eq: ["$$staff.role", "company-staff"] }
+                            cond: { $eq: [{ $toLower: "$$staff.role" }, "company-staff"] }
                         }
-                    }
-                }
-            },
-            {
-                // ✅ COUNT ONLY company-staff
-                $addFields: {
+                    },
                     totalStaff: { $size: "$staffs" }
                 }
             },
@@ -153,15 +151,12 @@ export const getCompanyWithStaff = async (req, res) => {
                     serviceFee: 1,
                     staffCount: 1,
                     totalStaff: 1,
-                    staffs: {
-                        _id: 1,
-                        name: 1,
-                        email: 1,
-                        phone: 1
-                    }
+                    staffs: { _id: 1, name: 1, email: 1, phone: 1, role: 1 }
                 }
             }
         ]);
+
+
 
         if (!company.length) {
             return res.status(404).json({ message: "Company not found" });
