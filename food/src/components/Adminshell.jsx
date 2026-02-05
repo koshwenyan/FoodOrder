@@ -13,7 +13,7 @@ import {
     BuildingOffice2Icon,
     BuildingOfficeIcon,
     Squares2X2Icon,
-    ListBulletIcon
+    ListBulletIcon,
 } from "@heroicons/react/24/outline";
 
 export default function AdminShell() {
@@ -23,6 +23,8 @@ export default function AdminShell() {
 
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    /* ================= MENUS ================= */
 
     const adminMenu = [
         { name: "Dashboard", icon: HomeIcon, path: "dashboard" },
@@ -34,23 +36,49 @@ export default function AdminShell() {
 
     const shopAdminMenu = [
         { name: "Dashboard", icon: HomeIcon, path: "shopadmindashboard" },
-        { name: " Create Orders", icon: ClipboardDocumentListIcon, path: "orders" },
+        { name: "Create Orders", icon: ClipboardDocumentListIcon, path: "orders" },
         { name: "Delivery", icon: TruckIcon, path: "delivery" },
         { name: "Menu", icon: ShoppingCartIcon, path: "menu" },
         { name: "Orders Lists", icon: ListBulletIcon, path: "orderslists" },
     ];
 
-    const menu = user?.role === "shop-admin" ? shopAdminMenu : adminMenu;
+    const companyAdminMenu = [
+        { name: "Dashboard", icon: HomeIcon, path: "companyadmindashboard" }, // ✅ fixed path
+        { name: "Assigned Orders", icon: ClipboardDocumentListIcon, path: "AssignedOrder" },
+        { name: "Delivery Staff", icon: TruckIcon, path: "delivery-staff" },
+    ];
+
+    /* ================= ROLE MAP ================= */
+
+    const roleMenus = {
+        admin: adminMenu,
+        "shop-admin": shopAdminMenu,
+        "company-admin": companyAdminMenu,
+    };
+
+    const roleTitles = {
+        admin: "Admin",
+        "shop-admin": "Shop Admin",
+        "company-admin": "Company Admin",
+    };
+
+    const menu = roleMenus[user?.role] || adminMenu;
+    const panelTitle = roleTitles[user?.role] || "Admin";
+
+    /* ================= FETCH ME ================= */
 
     const API_ME = "http://localhost:3000/api/user/me";
 
     const fetchMe = async () => {
         try {
             const token = localStorage.getItem("token");
+
             const res = await fetch(API_ME, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             const data = await res.json();
+
             if (data.success) setMe(data.user);
         } catch {
             setMe(null);
@@ -60,6 +88,8 @@ export default function AdminShell() {
     useEffect(() => {
         fetchMe();
     }, []);
+
+    /* ================= CLOCK ================= */
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -75,16 +105,19 @@ export default function AdminShell() {
 
     const formattedTime = currentTime.toLocaleTimeString();
 
+    /* ================= LOGOUT ================= */
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         navigate("/login");
     };
 
+    /* ================= UI ================= */
+
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900">
-
-            {/* ================= SIDEBAR ================= */}
+            {/* ============ SIDEBAR ============ */}
             <aside
                 className={`${sidebarOpen ? "w-64" : "w-20"
                     } fixed inset-y-0 left-0 z-40
@@ -99,6 +132,7 @@ export default function AdminShell() {
                             DASHBOARD
                         </span>
                     )}
+
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className="p-2 rounded-lg hover:bg-gray-100"
@@ -122,10 +156,8 @@ export default function AdminShell() {
                             }
                             title={item.name}
                         >
-                            {/* ACTIVE INDICATOR BAR */}
                             <span
-                                className={`absolute left-0 top-0 h-full w-1 rounded-r
-                ${"bg-[#3A3330]"} ${sidebarOpen ? "" : "opacity-0"
+                                className={`absolute left-0 top-0 h-full w-1 rounded-r bg-[#3A3330] ${sidebarOpen ? "" : "opacity-0"
                                     }`}
                             />
 
@@ -136,34 +168,34 @@ export default function AdminShell() {
                 </nav>
             </aside>
 
-            {/* ================= MAIN ================= */}
-            <main
-                className={`flex flex-col
-        ${sidebarOpen ? "ml-64" : "ml-20"}`}
-            >
-                {/* TOP BAR (FIXED) */}
+            {/* ============ MAIN ============ */}
+            <main className={`flex flex-col ${sidebarOpen ? "ml-64" : "ml-20"}`}>
+                {/* TOP BAR */}
                 <header
                     className={`fixed top-0 right-0 z-30
           ${sidebarOpen ? "left-64" : "left-20"}
           h-16 flex items-center justify-between
           px-6 bg-white border-b border-gray-200 shadow-sm`}
                 >
-                    <h1 className="text-xl font-bold">
-                        {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
-                    </h1>
+                    {/* ✅ Dynamic Title */}
+                    <h1 className="text-xl font-bold">{panelTitle} Panel</h1>
 
                     <div className="flex items-center gap-6">
+                        {/* Clock */}
                         <div className="text-right text-sm">
                             <div className="text-gray-500">{formattedDate}</div>
                             <div className="font-semibold">{formattedTime}</div>
                         </div>
 
+                        {/* Profile */}
                         <div className="flex items-center gap-3">
                             <img
-                                src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}`}
+                                src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"
+                                    }`}
                                 className="w-10 h-10 rounded-full border border-gray-300"
                                 alt="profile"
                             />
+
                             {sidebarOpen && (
                                 <span className="text-sm font-medium">
                                     {me?.name || "Admin"}
@@ -171,6 +203,7 @@ export default function AdminShell() {
                             )}
                         </div>
 
+                        {/* Logout */}
                         <button
                             onClick={handleLogout}
                             className="flex items-center gap-2 text-red-600 hover:text-red-700"
@@ -181,8 +214,8 @@ export default function AdminShell() {
                     </div>
                 </header>
 
-                {/* PAGE CONTENT (SCROLLS) */}
-                <div className="pt-16 h-screen overflow-auto p-6 ">
+                {/* CONTENT */}
+                <div className="pt-16 h-screen overflow-auto p-6">
                     <Outlet />
                 </div>
             </main>
