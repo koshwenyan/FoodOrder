@@ -26,6 +26,7 @@ userRouter.delete("/:id", authMiddleware, deleteUser);
 // Auth
 userRouter.post("/login", login);
 userRouter.post("/logout", authMiddleware, logout);
-userRouter.post("/register", authMiddleware, register);
+// Public register for customer role; admin/staff roles still enforced in controller
+userRouter.post("/register", register);
 
 export default userRouter;

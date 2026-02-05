@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function CustomerLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -24,6 +24,8 @@ export default function Login() {
         navigate("/admin/dashboard");
       } else if (user.role === "shop-admin") {
         navigate("/shop-admin/shopadmindashboard");
+      } else if (user.role === "customer") {
+        navigate("/customer/home");
       } else {
         setError("Unauthorized role");
       }
@@ -42,11 +44,11 @@ export default function Login() {
       >
         <div className="rounded-2xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-5 border border-[#ead8c7] text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
-            Admin Access
+            Customer Access
           </p>
           <h1 className="text-3xl font-semibold mt-1">Login</h1>
           <p className="text-sm text-[#6c5645] mt-1">
-            Secure access to your dashboard
+            Welcome back. Sign in to continue.
           </p>
         </div>
 
@@ -56,7 +58,6 @@ export default function Login() {
           </div>
         )}
 
-        {/* Email */}
         <div className="mt-6 mb-4">
           <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
             Email
@@ -68,12 +69,11 @@ export default function Login() {
             text-[#1f1a17] placeholder-[#8b6b4f]/70
             focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
             transition"
-            placeholder="admin@email.com"
+            placeholder="you@email.com"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
-        {/* Password */}
         <div className="mb-6">
           <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
             Password
@@ -118,14 +118,7 @@ export default function Login() {
         </button>
 
         <p className="mt-5 text-center text-sm text-[#6c5645]">
-          Customer?{" "}
-          <Link
-            to="/customer/login"
-            className="font-semibold text-[#1f1a17] hover:underline"
-          >
-            Login here
-          </Link>{" "}
-          or{" "}
+          Don’t have an account?{" "}
           <Link
             to="/customer/register"
             className="font-semibold text-[#1f1a17] hover:underline"

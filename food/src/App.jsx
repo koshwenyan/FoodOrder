@@ -9,12 +9,15 @@ import Menu from "./Pages/Menu.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./routes/PrivateRoute.jsx";
 import Login from "./Pages/Login.jsx";
+import CustomerLogin from "./Pages/CustomerLogin.jsx";
+import CustomerRegister from "./Pages/CustomerRegister.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AdminShell from "./components/Adminshell.jsx";
 import Shop from "./Pages/Shop.jsx";
 import Category from "./Pages/Category.jsx";
 import  ShopDelivery  from "./Pages/Delivery.jsx";
 import OrdersLists from "./Pages/OrdersLists.jsx";
+import CustomerHome from "./Pages/CustomerHome.jsx";
 export default function App() {
   return (
     <AuthProvider>
@@ -23,6 +26,8 @@ export default function App() {
 
           {/* LOGIN */}
           <Route path="/login" element={<Login />} />
+          <Route path="/customer/login" element={<CustomerLogin />} />
+          <Route path="/customer/register" element={<CustomerRegister />} />
 
           {/* ADMIN */}
           <Route
@@ -56,6 +61,16 @@ export default function App() {
             <Route path="menu" element={<Menu />} />
             <Route path="orderslists" element={<OrdersLists />} />
           </Route>
+
+          {/* CUSTOMER */}
+          <Route
+            path="/customer/home"
+            element={
+              <PrivateRoute allowedRoles={["customer"]} redirectTo="/customer/login">
+                <CustomerHome />
+              </PrivateRoute>
+            }
+          />
 
           {/* FALLBACK */}
           <Route path="*" element={<Login />} />
