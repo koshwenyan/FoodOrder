@@ -42,6 +42,7 @@ const orderSchema = new mongoose.Schema(
                 "assigned",       // admin → delivery company
                 "picked-up",      // delivery staff
                 "delivered",
+                "complete",
                 "cancelled"
             ],
             default: "pending"

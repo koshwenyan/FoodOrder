@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import {
@@ -23,6 +23,7 @@ export default function AdminShell() {
 
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const adminMenu = [
         { name: "Dashboard", icon: HomeIcon, path: "dashboard" },
@@ -81,27 +82,31 @@ export default function AdminShell() {
         navigate("/login");
     };
 
+    const activeLabel =
+        menu.find((item) => location.pathname.includes(item.path))?.name ||
+        (user?.role === "shop-admin" ? "Shop Admin" : "Admin");
+
     return (
-        <div className="min-h-screen bg-gray-100 text-gray-900">
+        <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
 
             {/* ================= SIDEBAR ================= */}
             <aside
                 className={`${sidebarOpen ? "w-64" : "w-20"
                     } fixed inset-y-0 left-0 z-40
         transition-all duration-300
-        bg-white border-r border-gray-200 shadow-sm
+        bg-white/90 border-r border-[#ead8c7] shadow-sm
         flex flex-col`}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
+                <div className="flex items-center justify-between px-4 h-16 border-b border-[#ead8c7] bg-gradient-to-r from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7]">
                     {sidebarOpen && (
-                        <span className="text-lg font-bold tracking-wide">
+                        <span className="orders-title text-lg font-semibold tracking-wide">
                             DASHBOARD
                         </span>
                     )}
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="p-2 rounded-lg hover:bg-gray-100"
+                        className="p-2 rounded-lg hover:bg-white/70"
                     >
                         <Bars3Icon className="w-5 h-5" />
                     </button>
@@ -116,21 +121,30 @@ export default function AdminShell() {
                             className={({ isActive }) =>
                                 `relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
                 ${isActive
-                                    ? "bg-[#3A3330] text-white"
-                                    : "text-gray-700 hover:bg-gray-100"
+                                    ? "bg-[#1f1a17] text-[#f8f3ee]"
+                                    : "text-[#6c5645] hover:bg-white/70"
                                 }`
                             }
                             title={item.name}
                         >
-                            {/* ACTIVE INDICATOR BAR */}
-                            <span
-                                className={`absolute left-0 top-0 h-full w-1 rounded-r
-                ${"bg-[#3A3330]"} ${sidebarOpen ? "" : "opacity-0"
-                                    }`}
-                            />
+                            {({ isActive }) => (
+                                <>
+                                    {/* ACTIVE INDICATOR BAR */}
+                                    <span
+                                        className={`absolute left-0 top-0 h-full w-1 rounded-r
+                    ${"bg-[#1f1a17]"} ${sidebarOpen ? "" : "opacity-0"
+                                            }`}
+                                    />
 
-                            <item.icon className="w-5 h-5 flex-shrink-0" />
-                            {sidebarOpen && <span>{item.name}</span>}
+                                    <item.icon
+                                        className={`w-5 h-5 flex-shrink-0 ${isActive
+                                            ? "text-[#f8f3ee]"
+                                            : "text-[#8b6b4f]"
+                                            }`}
+                                    />
+                                    {sidebarOpen && <span>{item.name}</span>}
+                                </>
+                            )}
                         </NavLink>
                     ))}
                 </nav>
@@ -146,26 +160,34 @@ export default function AdminShell() {
                     className={`fixed top-0 right-0 z-30
           ${sidebarOpen ? "left-64" : "left-20"}
           h-16 flex items-center justify-between
-          px-6 bg-white border-b border-gray-200 shadow-sm`}
+          px-6 bg-white/90 border-b border-[#ead8c7] shadow-sm`}
                 >
-                    <h1 className="text-xl font-bold">
-                        {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
-                    </h1>
+                    <div className="relative">
+                        <div className="absolute -top-4 left-0 h-1 w-40 rounded-full bg-gradient-to-r from-[#f2ddc7] via-[#f8f3ee] to-[#f9e9d7]" />
+                        <div className="flex items-center gap-2 text-sm text-[#8b6b4f]">
+                            <span className="uppercase tracking-[0.2em]">Dashboard</span>
+                            <span>•</span>
+                            <span className="text-[#1f1a17] font-medium">{activeLabel}</span>
+                        </div>
+                        <h1 className="orders-title text-xl font-semibold">
+                            {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
+                        </h1>
+                    </div>
 
                     <div className="flex items-center gap-6">
                         <div className="text-right text-sm">
-                            <div className="text-gray-500">{formattedDate}</div>
+                            <div className="text-[#8b6b4f]">{formattedDate}</div>
                             <div className="font-semibold">{formattedTime}</div>
                         </div>
 
                         <div className="flex items-center gap-3">
                             <img
                                 src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}`}
-                                className="w-10 h-10 rounded-full border border-gray-300"
+                                className="w-10 h-10 rounded-full border border-[#ead8c7]"
                                 alt="profile"
                             />
                             {sidebarOpen && (
-                                <span className="text-sm font-medium">
+                                <span className="text-sm font-medium text-[#1f1a17]">
                                     {me?.name || "Admin"}
                                 </span>
                             )}
@@ -173,7 +195,7 @@ export default function AdminShell() {
 
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                            className="flex items-center gap-2 text-[#b53b2e] hover:text-[#922f25]"
                         >
                             <ArrowRightOnRectangleIcon className="w-5 h-5" />
                             {sidebarOpen && <span>Logout</span>}
@@ -182,7 +204,7 @@ export default function AdminShell() {
                 </header>
 
                 {/* PAGE CONTENT (SCROLLS) */}
-                <div className="pt-16 h-screen overflow-auto p-6 ">
+                <div className="pt-16 h-screen overflow-auto p-6">
                     <Outlet />
                 </div>
             </main>
