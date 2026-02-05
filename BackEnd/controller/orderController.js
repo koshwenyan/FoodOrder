@@ -111,8 +111,15 @@ export const updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
         const { status } = req.body;
 
-        const SHOP_ADMIN_STATUS = ["accepted", "preparing", "ready"];
-        const STAFF_STATUS = ["picked-up", "delivered"];
+        const SHOP_ADMIN_STATUS = [
+            "pending",
+            "accepted",
+            "preparing",
+            "ready",
+            "delivered",
+            "complete"
+        ];
+        const STAFF_STATUS = ["picked-up", "delivered", "complete"];
 
         const order = await Order.findById(orderId);
 

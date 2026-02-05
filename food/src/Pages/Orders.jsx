@@ -134,163 +134,219 @@ export default function OrderPage() {
 
 
   return (
-    <div className="flex h-screen bg-slate-100">
-      {/* ================= PRODUCTS ================= */}
-      <div className="w-3/4 p-6 overflow-y-auto">
-        <h1 className="text-2xl font-bold mb-6">Products</h1>
-        <div className="grid grid-cols-3 gap-6">
-          {products.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white rounded-xl shadow p-4 flex flex-col"
-            >
-              <img
-                src={p.image}
-                alt={p.name}
-                className="rounded-lg h-40 object-cover mb-3"
-              />
-              <h3 className="font-semibold">{p.name}</h3>
-              <p className="text-sm text-slate-600 mb-3">
-                {p.price.toLocaleString()} Ks
+    <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+                Phone Orders
               </p>
-              <button
-                disabled={cart.some((i) => i._id === p._id)}
-                onClick={() => addToCart(p)}
-                className={`mt-auto py-2 rounded text-white ${
-                  cart.some((i) => i._id === p._id)
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-slate-900 hover:bg-slate-800"
-                }`}
-              >
-                {cart.some((i) => i._id === p._id) ? "Added" : "Add To Cart"}
-              </button>
+              <h1 className="orders-title text-3xl sm:text-4xl font-semibold">
+                Create Order
+              </h1>
+              <p className="text-sm text-[#6c5645] mt-2">
+                Add items, capture customer info, and send to delivery.
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ================= CART ================= */}
-      <div className="w-1/4 bg-[#3b3430] text-white flex flex-col">
-
-        {/* CART HEADER */}
-        <div className="p-4 border-b border-white/20">
-          <h2 className="text-xl font-semibold">Cart</h2>
-        </div>
-
-        {/* CART ITEMS */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {cart.map((i) => (
-            <div key={i._id} className="flex items-center gap-3">
-              <img
-                src={i.image}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <div className="flex-1">
-                <p className="text-sm font-medium">{i.name}</p>
-                <p className="text-xs text-slate-300">
-                  {i.price.toLocaleString()} Ks
+            <div className="flex gap-3">
+              <div className="rounded-2xl bg-white/70 border border-[#e7d5c4] px-4 py-3">
+                <p className="text-xs text-[#8b6b4f]">Items in Cart</p>
+                <p className="text-xl font-semibold">{cart.length}</p>
+              </div>
+              <div className="rounded-2xl bg-white/70 border border-[#e7d5c4] px-4 py-3">
+                <p className="text-xs text-[#8b6b4f]">Grand Total</p>
+                <p className="text-xl font-semibold">
+                  {grandTotal.toLocaleString()} Ks
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => updateQty(i._id, -1)}
-                  className="px-2 bg-white/20 rounded"
-                >
-                  -
-                </button>
-                <span>{i.qty}</span>
-                <button
-                  onClick={() => updateQty(i._id, 1)}
-                  className="px-2 bg-white/20 rounded"
-                >
-                  +
-                </button>
-              </div>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* CUSTOMER INFO */}
-        <div className="p-4 border-t border-white/20 space-y-2">
-          <h3 className="text-sm font-semibold text-slate-200 mb-2">
-            Customer Info
-          </h3>
-          <input
-            type="text"
-            name="name"
-            value={customer.name}
-            onChange={handleCustomerChange}
-            placeholder="Name"
-            className="w-full px-2 py-1 rounded text-white border border-white"
-          />
-          <input
-            type="text"
-            name="phone"
-            value={customer.phone}
-            onChange={handleCustomerChange}
-            placeholder="Phone"
-            className="w-full px-2 py-1 rounded text-white border border-white"
-          />
-          <input
-            type="text"
-            name="address"
-            value={customer.address}
-            onChange={handleCustomerChange}
-            placeholder="Address"
-            className="w-full px-2 py-1 rounded text-white border border-white"
-          />
-        </div>
-
-        {/* DELIVERY */}
-        <div className="p-4 border-t border-white/20">
-          <label className="text-sm mb-1 block text-slate-300">
-            Delivery Company
-          </label>
-          <select
-            value={selectedDelivery?._id || ""}
-            onChange={(e) => {
-              const d = deliveryCompanies.find((x) => x._id === e.target.value);
-              setSelectedDelivery(d || null);
-            }}
-            className="w-full bg-white text-black rounded px-2 py-1"
-          >
-            <option value="">Select delivery</option>
-            {deliveryCompanies.map((d) => (
-              <option key={d._id} value={d._id}>
-                {d.name} ({d.serviceFee.toLocaleString()} Ks)
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* TOTAL */}
-        <div className="p-4 border-t border-white/20 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Items Total</span>
-            <span>{itemsTotal.toLocaleString()} Ks</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span>Delivery Fee</span>
-            <span>{selectedDelivery?.serviceFee?.toLocaleString() || 0} Ks</span>
-          </div>
-          <div className="flex justify-between font-semibold text-lg border-t border-white/20 pt-2">
-            <span>Grand Total</span>
-            <span>{grandTotal.toLocaleString()} Ks</span>
+        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          {/* ================= PRODUCTS ================= */}
+          <div className="rounded-3xl bg-white/80 border border-[#ead8c7] shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="orders-title text-2xl font-semibold">Products</h2>
+              <span className="text-sm text-[#6c5645]">
+                {products.length} items
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {products.map((p) => (
+                <div
+                  key={p._id}
+                  className="rounded-3xl bg-white/90 border border-[#ead8c7] shadow-sm p-4 flex flex-col"
+                >
+                  <div className="h-40 rounded-2xl bg-[#f9f4ef] border border-[#ead8c7] overflow-hidden mb-3">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <h3 className="orders-title text-lg font-semibold">
+                    {p.name}
+                  </h3>
+                  <p className="text-sm text-[#6c5645] mb-3">
+                    {p.price.toLocaleString()} Ks
+                  </p>
+                  <button
+                    disabled={cart.some((i) => i._id === p._id)}
+                    onClick={() => addToCart(p)}
+                    className={`mt-auto rounded-full px-4 py-2 text-sm font-medium border transition ${
+                      cart.some((i) => i._id === p._id)
+                        ? "bg-[#e7d5c4] text-[#8b6b4f] border-[#e7d5c4] cursor-not-allowed"
+                        : "bg-[#1f1a17] text-[#f8f3ee] border-[#1f1a17] hover:bg-[#2b241f]"
+                    }`}
+                  >
+                    {cart.some((i) => i._id === p._id) ? "Added" : "Add To Cart"}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button
-            disabled={
-              cart.length === 0 ||
-              !selectedDelivery ||
-              !customer.name ||
-              !customer.phone ||
-              !customer.address
-            }
-            onClick={handleSubmitOrder}
-            className="w-full bg-yellow-400 text-black py-2 rounded font-bold disabled:opacity-50"
-          >
-            Checkout
-          </button>
+          {/* ================= CART ================= */}
+          <div className="rounded-3xl bg-white/90 border border-[#ead8c7] shadow-sm p-6 flex flex-col">
+            <div className="flex items-center justify-between">
+              <h2 className="orders-title text-2xl font-semibold">Cart</h2>
+              <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                {cart.length} items
+              </span>
+            </div>
+
+            <div className="mt-4 flex-1 overflow-y-auto space-y-4">
+              {cart.length === 0 && (
+                <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-6 text-center text-sm text-[#6c5645]">
+                  Cart is empty. Add products to create an order.
+                </div>
+              )}
+              {cart.map((i) => (
+                <div
+                  key={i._id}
+                  className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={i.image}
+                      className="w-12 h-12 rounded-xl object-cover border border-[#ead8c7]"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-[#1f1a17]">
+                        {i.name}
+                      </p>
+                      <p className="text-xs text-[#8b6b4f]">
+                        {i.price.toLocaleString()} Ks
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => updateQty(i._id, -1)}
+                        className="rounded-full border border-[#e7d5c4] bg-white px-2 py-1 text-sm text-[#6c5645]"
+                      >
+                        -
+                      </button>
+                      <span className="text-sm font-medium">{i.qty}</span>
+                      <button
+                        onClick={() => updateQty(i._id, 1)}
+                        className="rounded-full border border-[#e7d5c4] bg-white px-2 py-1 text-sm text-[#6c5645]"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Customer Info
+                </p>
+                <div className="mt-2 space-y-2">
+                  <input
+                    type="text"
+                    name="name"
+                    value={customer.name}
+                    onChange={handleCustomerChange}
+                    placeholder="Name"
+                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                  />
+                  <input
+                    type="text"
+                    name="phone"
+                    value={customer.phone}
+                    onChange={handleCustomerChange}
+                    placeholder="Phone"
+                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                  />
+                  <input
+                    type="text"
+                    name="address"
+                    value={customer.address}
+                    onChange={handleCustomerChange}
+                    placeholder="Address"
+                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Delivery Company
+                </label>
+                <select
+                  value={selectedDelivery?._id || ""}
+                  onChange={(e) => {
+                    const d = deliveryCompanies.find((x) => x._id === e.target.value);
+                    setSelectedDelivery(d || null);
+                  }}
+                  className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                >
+                  <option value="">Select delivery</option>
+                  {deliveryCompanies.map((d) => (
+                    <option key={d._id} value={d._id}>
+                      {d.name} ({d.serviceFee.toLocaleString()} Ks)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-4 text-sm text-[#6c5645]">
+                <div className="flex justify-between">
+                  <span>Items Total</span>
+                  <span>{itemsTotal.toLocaleString()} Ks</span>
+                </div>
+                <div className="mt-2 flex justify-between">
+                  <span>Delivery Fee</span>
+                  <span>
+                    {selectedDelivery?.serviceFee?.toLocaleString() || 0} Ks
+                  </span>
+                </div>
+                <div className="mt-3 flex justify-between font-semibold text-base text-[#1f1a17] border-t border-[#e7d5c4] pt-2">
+                  <span>Grand Total</span>
+                  <span>{grandTotal.toLocaleString()} Ks</span>
+                </div>
+              </div>
+
+              <button
+                disabled={
+                  cart.length === 0 ||
+                  !selectedDelivery ||
+                  !customer.name ||
+                  !customer.phone ||
+                  !customer.address
+                }
+                onClick={handleSubmitOrder}
+                className="w-full rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] disabled:opacity-50"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
