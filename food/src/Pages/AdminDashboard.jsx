@@ -65,22 +65,30 @@ export default function AdminDashboard() {
     {
       name: "Customers",
       count: totals.users,
-      icon: <UsersIcon className="w-8 h-8 text-blue-600" />,
+      icon: <UsersIcon className="w-8 h-8 text-blue-500" />,
+      gradient: "bg-white",
+      textColor: "text-blue-500"
     },
     {
       name: "Restaurants",
       count: totals.shops,
-      icon: <BuildingStorefrontIcon className="w-8 h-8 text-orange-600" />,
+      icon: <BuildingStorefrontIcon className="w-8 h-8 text-orange-500" />,
+      gradient: "bg-white",
+      textColor: "text-orange-500"
     },
     {
       name: "Companies",
       count: totals.companies,
-      icon: <BuildingOffice2Icon className="w-8 h-8 text-indigo-600" />,
+      icon: <BuildingOffice2Icon className="w-8 h-8 text-indigo-500" />,
+      gradient: "bg-white",
+      textColor: "text-indigo-500"
     },
     {
       name: "Categories",
       count: totals.categories,
-      icon: <Squares2X2Icon className="w-8 h-8 text-purple-600" />,
+      icon: <Squares2X2Icon className="w-8 h-8 text-purple-500" />,
+      gradient: "bg-white",
+      textColor: "text-purple-500"
     },
   ];
 
@@ -91,36 +99,31 @@ export default function AdminDashboard() {
       </h1>
 
       {/* CARDS */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 place-items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card) => (
           <div
             key={card.name}
             onClick={() => navigate("#")}
-            className="
-              w-[260px]
-              bg-white
-              border border-gray-200
-              rounded-md
-              p-5
-              cursor-pointer
-              shadow-[0_6px_16px_rgba(0,0,0,0.1)]
-              transition
-              hover:-translate-y-1
-            "
+            className={`cursor-pointer relative p-6 rounded-3xl shadow-lg transform transition hover:-translate-y-2 hover:shadow-2xl ${card.gradient}`}
           >
-            {/* ICON */}
-            <div className="w-12 h-12 flex items-center justify-center rounded bg-gray-100">
+            {/* Icon */}
+            <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md">
               {card.icon}
             </div>
 
-            {/* TEXT */}
-            <p className="mt-4 text-sm text-gray-500">{card.name}</p>
-            <h2 className="text-3xl font-bold text-[#111827] mt-1">
-              {card.count}
-            </h2>
+            {/* Content */}
+           <div className="mt-8">
+  <p className={`${card.textColor} font-semibold text-lg`}>{card.name}</p>
+  <h2 className={`${card.textColor} text-3xl font-bold mt-2`}>{card.count}</h2>
+</div>
+
+            {/* Decorative bar */}
+            <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
           </div>
         ))}
       </div>
+
+
     </div>
   );
 }

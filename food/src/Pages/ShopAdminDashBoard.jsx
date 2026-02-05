@@ -52,34 +52,39 @@ const shopId = user?.shopId;
   }, []);
 
   const cards = [
-    {
-      name: "Orders",
-      count: totals.orders,
-      icon: <BookmarkIcon className="w-10 h-10 text-red-500" />,
-      gradient: "bg-gradient-to-r from-red-400 to-pink-500",
-    },
-    {
-      name: "Pending Orders",
-      count: totals.shops,
-      icon: <ClockIcon className="w-10 h-10 text-orange-500" />,
-      gradient: "bg-gradient-to-r from-yellow-400 to-orange-500",
-    },
-    {
-      name: "Completed Orders",
-      count: totals.companies,
-      icon: <TruckIcon className="w-10 h-10 text-emerald-500" />,
-      gradient: "bg-gradient-to-r from-green-400 to-teal-500",
-    },
-    {
-      name: "Total Menu Items",
-      count: totals.categories,
-      icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
-      gradient: "bg-gradient-to-r from-purple-400 to-indigo-500",
-    },
-  ];
+  {
+    name: "Orders",
+    count: totals.orders,
+    icon: <BookmarkIcon className="w-10 h-10 text-red-500" />,
+    gradient: "bg-white",
+    textColor: "text-red-500", // <-- add this
+  },
+  {
+    name: "Pending Orders",
+    count: totals.shops,
+    icon: <ClockIcon className="w-10 h-10 text-orange-500" />,
+    gradient: "bg-white",
+    textColor: "text-orange-500",
+  },
+  {
+    name: "Completed Orders",
+    count: totals.companies,
+    icon: <TruckIcon className="w-10 h-10 text-emerald-500" />,
+    gradient: "bg-white",
+    textColor: "text-emerald-500",
+  },
+  {
+    name: "Total Menu Items",
+    count: totals.categories,
+    icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
+    gradient: "bg-white",
+    textColor: "text-purple-500",
+  },
+];
+
 
   return (
-    <div className="p-8 min-h-screen bg-slate-900">
+    <div className="p-8 min-h-screen bg-[#ECEFF1]">
       <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
          Food Order Admin
       </h1>
@@ -97,10 +102,10 @@ const shopId = user?.shopId;
             </div>
 
             {/* Content */}
-            <div className="mt-8">
-              <p className="text-gray-100 font-semibold text-lg">{card.name}</p>
-              <h2 className="text-3xl font-bold text-white mt-2">{card.count}</h2>
-            </div>
+           <div className="mt-8">
+  <p className={`${card.textColor} font-semibold text-lg`}>{card.name}</p>
+  <h2 className={`${card.textColor} text-3xl font-bold mt-2`}>{card.count}</h2>
+</div>
 
             {/* Decorative bar */}
             <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
