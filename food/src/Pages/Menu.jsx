@@ -22,11 +22,13 @@ export default function Menus() {
     isAvailable: true,
   });
 
+  const [showForm, setShowForm] = useState(false);
+
   const API_MENU = "http://localhost:3000/api/menu";
   const API_CATEGORY = "http://localhost:3000/api/category";
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500";
+    "w-full px-4 py-3 rounded-2xl bg-[#f9f4ef] border border-[#ead8c7] text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20";
 
   /* ================= FETCH ================= */
   const fetchMenus = async () => {
@@ -35,8 +37,7 @@ export default function Menus() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
-    console.log("Menu data:", data);
-    // normalize isAvailable
+
     const normalizedMenus = (data.data || []).map((m) => ({
       ...m,
       isAvailable: m.isAvailable === true || m.isAvailable === "true",
@@ -52,7 +53,6 @@ export default function Menus() {
     });
     const data = await res.json();
     setCategories(data.data || []);
-    
   };
 
   useEffect(() => {
@@ -72,6 +72,7 @@ export default function Menus() {
     });
     setIsEditing(false);
     setEditingId(null);
+    setShowForm(false);
   };
 
   const handleChange = (e) => {
@@ -114,6 +115,7 @@ export default function Menus() {
     });
     setIsEditing(true);
     setEditingId(menu._id);
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -128,174 +130,158 @@ export default function Menus() {
 
   /* ================= UI ================= */
   return (
-    <div className="p-6 bg-[#ECEFF1] min-h-screen text-gray-900">
-      <h1 className="text-2xl font-bold text-center text-slate-900 mb-6">
-        Menu Management
-      </h1>
-
-      {/* FORM */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-10 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">
-          {isEditing ? "Update Menu" : "Create Menu"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Menu Name"
-            required
-            className={inputClass}
-          />
-
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            required
-            className={inputClass}
-          >
-            <option value="">Select Category</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            name="price"
-            type="number"
-            value={form.price}
-            onChange={handleChange}
-            placeholder="Price"
-            required
-            className={inputClass}
-          />
-
-          <input
-            name="image"
-            value={form.image}
-            onChange={handleChange}
-            placeholder="Image URL"
-            className={inputClass}
-          />
-
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Description"
-            className={`${inputClass} md:col-span-2`}
-          />
-
-          <label className="flex items-center gap-2 md:col-span-2 text-sm text-gray-900">
-            <input
-              type="checkbox"
-              name="isAvailable"
-              checked={form.isAvailable}
-              onChange={handleChange}
-              className="accent-emerald-500"
-            />
-            Available
-          </label>
-
-          <div className="flex gap-2 md:col-span-2">
-            <button className="bg-gray-900 hover:bg-black text-white font-semibold px-5 py-3 rounded-lg flex items-center gap-2">
-              <PlusIcon className="w-4 h-4" />
-              {isEditing ? "Update Menu" : "Create Menu"}
-            </button>
+    <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+                Menu Studio
+              </p>
+              <h1 className="orders-title text-3xl sm:text-4xl font-semibold">
+                Menu Management
+              </h1>
+              <p className="text-sm text-[#6c5645] mt-2">
+                Create, update, and organize your menu items.
+              </p>
+            </div>
 
             <button
-              type="button"
-              onClick={resetForm}
-              className="bg-gray-200 hover:bg-gray-300 px-5 py-3 rounded-lg flex items-center gap-2"
+              onClick={() => setShowForm(true)}
+              className="bg-[#1f1a17] hover:bg-[#2b2320] text-[#f8f3ee] px-5 py-3 rounded-full flex items-center gap-2 font-semibold"
             >
-              <XMarkIcon className="w-4 h-4" />
-              Cancel
+              <PlusIcon className="w-5 h-5" />
+              Add Menu
             </button>
           </div>
-        </form>
-      </div>
+        </div>
 
-      {/* MENU CARDS */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {menus.map((menu) => (
-          <div
-            key={menu._id}
-            className="relative group bg-white rounded-xl p-6 text-center shadow hover:shadow-lg"
-          >
-            {/* IMAGE */}
-            <div className="relative w-full h-48 flex items-center justify-center mb-4">
-              {menu.image ? (
-                <img
-                  src={menu.image}
-                  alt={menu.name}
-                  className="h-full object-contain transition-transform duration-300 group-hover:scale-105 rounded-xl"
-                />
-              ) : (
-                <div className="text-gray-400">No Image</div>
-              )}
+        {/* ================= DRAWER ================= */}
+        {showForm && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/40 z-40"
+              onClick={resetForm}
+            />
 
-              {/* AVAILABLE BADGE */}
-              <span
-                className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-full ${
-                  menu.isAvailable
-                    ? "bg-emerald-100 text-emerald-600"
-                    : "bg-red-100 text-red-600"
-                }`}
-              >
-                {menu.isAvailable ? "Available" : "Unavailable"}
-              </span>
+            <div className="fixed top-0 right-0 z-50 h-full w-full sm:w-[420px] bg-white shadow-2xl transform transition-transform duration-300">
+              <div className="p-6 border-b border-[#ead8c7] flex justify-between items-center bg-[#f9f4ef]">
+                <h2 className="orders-title text-lg font-semibold">
+                  {isEditing ? "Update Menu" : "Create Menu"}
+                </h2>
+                <button onClick={resetForm}>
+                  <XMarkIcon className="w-6 h-6 text-[#6c5645]" />
+                </button>
+              </div>
 
-              {/* ACTION ICONS */}
-              <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+              <div className="p-6 overflow-y-auto h-full">
+                <form onSubmit={handleSubmit} className="grid gap-4">
+                  <input
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Menu Name"
+                    className={inputClass}
+                    required
+                  />
+
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className={inputClass}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    name="price"
+                    type="number"
+                    value={form.price}
+                    onChange={handleChange}
+                    placeholder="Price"
+                    className={inputClass}
+                    required
+                  />
+
+                  <input
+                    name="image"
+                    value={form.image}
+                    onChange={handleChange}
+                    placeholder="Image URL"
+                    className={inputClass}
+                  />
+
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    placeholder="Description"
+                    className={inputClass}
+                  />
+
+                  <label className="flex items-center gap-2 text-sm text-[#6c5645]">
+                    <input
+                      type="checkbox"
+                      name="isAvailable"
+                      checked={form.isAvailable}
+                      onChange={handleChange}
+                      className="accent-[#1f1a17]"
+                    />
+                    Available
+                  </label>
+
+                <button className="bg-emerald-600 text-white py-3 rounded-xl font-semibold">
+                  {isEditing ? "Update Menu" : "Create Menu"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+
+        {/* ================= MENU LIST ================= */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+          {menus.map((menu) => (
+            <div
+              key={menu._id}
+              className="rounded-3xl bg-white/90 border border-[#ead8c7] p-6 shadow-sm hover:shadow-lg relative group"
+            >
+              <div className="h-40 flex items-center justify-center mb-4 rounded-2xl bg-[#f9f4ef] border border-[#ead8c7]">
+                {menu.image ? (
+                  <img src={menu.image} className="h-full object-contain" />
+                ) : (
+                  <span className="text-[#b5a397]">No Image</span>
+                )}
+              </div>
+
+            <h3 className="font-semibold">{menu.name}</h3>
+            <p className="text-sm text-gray-500">{menu.category?.name}</p>
+            <p className="text-sm mt-1">{menu.price} Ks</p>
+
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition">
                 <button
                   onClick={() => handleEdit(menu)}
-                  className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 shadow"
+                  className="p-2 bg-[#f9f4ef] text-[#1f1a17] rounded-full border border-[#ead8c7]"
                 >
                   <PencilIcon className="w-4 h-4" />
                 </button>
-
                 <button
                   onClick={() => handleDelete(menu._id)}
-                  className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 shadow"
+                  className="p-2 bg-[#fef2f2] text-[#b53b2e] rounded-full border border-[#f5cfc9]"
                 >
                   <TrashIcon className="w-4 h-4" />
                 </button>
               </div>
             </div>
-
-            {/* NAME */}
-            <h3 className="text-sm font-semibold text-gray-900 uppercase">
-              {menu.name}
-            </h3>
-             <h4 className="text-sm font-medium text-gray-400 uppercase">
-              {menu.category.name}
-            </h4>
-             <h5 className="text-sm font-semibold text-gray-900 uppercase">
-              {menu.description}
-            </h5>
-
-            {/* PRICE */}
-            <p className="text-sm text-gray-500 mt-1">
-              {menu.price.toLocaleString()} Ks
-            </p>
-
-            {/* BUTTON */}
-            <button
-              disabled={!menu.isAvailable}
-              className={`mt-4 w-full py-2 text-sm rounded transition font-semibold ${
-                menu.isAvailable
-                  ? "bg-emerald-500 text-white"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
-            >
-              Add To Cart
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

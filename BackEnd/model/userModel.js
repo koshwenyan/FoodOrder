@@ -17,6 +17,8 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "DeliveryCompany",
 
     },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
     isActive: { type: Boolean, default: true }
 }, { timestamps: true })
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
     const { login } = useAuth();
@@ -24,60 +24,49 @@ export default function Login() {
                 navigate("/admin/dashboard");
             } else if (user.role === "shop-admin") {
                 navigate("/shop-admin/shopadmindashboard");
-            }
-            else if (user.role === "company-admin") {
-                navigate("/company-admin/companyadmindashboard");
             } else {
                 setError("Unauthorized role");
             }
-        } catch {
-            setError("Invalid email or password");
+        } catch (err) {
+            setError(err.message || "Invalid email or password");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-black to-slate-950 px-4">
-
-            {/* Background Glow */}
-            <div className="absolute inset-0 flex justify-center items-center pointer-events-none bg-slate-800">
-                <div className="h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" />
-            </div>
-
+        <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17] px-4 flex items-center justify-center">
             <form
                 onSubmit={handleSubmit}
-                className="relative w-full max-w-sm rounded-2xl 
-        bg-white/5 backdrop-blur-xl
-        border border-white/10
-        shadow-[0_0_40px_rgba(16,185,129,0.15)]
-        p-8"
+                className="w-full max-w-md rounded-3xl bg-white/90 border border-[#ead8c7] shadow-lg p-8"
             >
-                <h1 className="text-3xl font-semibold text-center bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent mb-2">
-                    Admin Login
-                </h1>
-
-                <p className="text-center text-slate-400 mb-6 text-sm">
-                    Secure access to your dashboard
-                </p>
+                <div className="rounded-2xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-5 border border-[#ead8c7] text-center">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Admin Access
+                    </p>
+                    <h1 className="text-3xl font-semibold mt-1">Login</h1>
+                    <p className="text-sm text-[#6c5645] mt-1">
+                        Secure access to your dashboard
+                    </p>
+                </div>
 
                 {error && (
-                    <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 px-3 py-2 text-sm">
+                    <div className="mt-6 mb-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 px-4 py-3 text-sm">
                         {error}
                     </div>
                 )}
 
                 {/* Email */}
-                <div className="mb-4">
-                    <label className="block text-xs uppercase tracking-wide text-slate-400 mb-1">
+                <div className="mt-6 mb-4">
+                    <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
                         Email
                     </label>
                     <input
                         type="email"
                         required
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 
-            text-slate-200 placeholder-slate-500
-            focus:outline-none focus:ring-2 focus:ring-emerald-400/60 focus:border-emerald-400/40
+                        className="w-full rounded-xl bg-white/80 border border-[#ead8c7] px-3 py-2 
+            text-[#1f1a17] placeholder-[#8b6b4f]/70
+            focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
             transition"
                         placeholder="admin@email.com"
                         onChange={(e) => setEmail(e.target.value)}
@@ -86,16 +75,16 @@ export default function Login() {
 
                 {/* Password */}
                 <div className="mb-6">
-                    <label className="block text-xs uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
                         Password
                     </label>
                     <div className="relative">
                         <input
                             type={showPassword ? "text" : "password"}
                             required
-                            className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 pr-12 
-              text-slate-200 placeholder-slate-500
-              focus:outline-none focus:ring-2 focus:ring-emerald-400/60 focus:border-emerald-400/40
+                            className="w-full rounded-xl bg-white/80 border border-[#ead8c7] px-3 py-2 pr-12 
+              text-[#1f1a17] placeholder-[#8b6b4f]/70
+              focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
               transition"
                             placeholder="••••••••"
                             onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +92,7 @@ export default function Login() {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-emerald-300 transition"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8b6b4f] hover:text-[#1f1a17] transition"
                         >
                             {showPassword ? "HIDE" : "SHOW"}
                         </button>
@@ -112,21 +101,47 @@ export default function Login() {
 
                 <button
                     disabled={loading}
-                    className="w-full relative overflow-hidden rounded-lg
-          bg-gradient-to-r from-emerald-400 to-teal-400
-          py-2 font-semibold text-slate-900
-          transition hover:brightness-110 active:scale-[0.98]
+                    className="w-full relative overflow-hidden rounded-full
+          bg-[#1f1a17] text-[#f8f3ee]
+          py-2.5 font-semibold
+          transition hover:bg-[#2b241f] active:scale-[0.98]
           disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                     {loading ? (
                         <span className="flex items-center justify-center gap-2">
-                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-900 border-t-transparent" />
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#f8f3ee] border-t-transparent" />
                             Logging in...
                         </span>
                     ) : (
                         "Login"
                     )}
                 </button>
+
+                <p className="mt-5 text-center text-sm text-[#6c5645]">
+                    <Link
+                        to="/forgot-password"
+                        className="font-semibold text-[#1f1a17] hover:underline"
+                    >
+                        Forgot password?
+                    </Link>
+                </p>
+
+                <p className="mt-2 text-center text-sm text-[#6c5645]">
+                    Customer?{" "}
+                    <Link
+                        to="/customer/login"
+                        className="font-semibold text-[#1f1a17] hover:underline"
+                    >
+                        Login here
+                    </Link>{" "}
+                    or{" "}
+                    <Link
+                        to="/customer/register"
+                        className="font-semibold text-[#1f1a17] hover:underline"
+                    >
+                        Register
+                    </Link>
+                </p>
             </form>
         </div>
     );

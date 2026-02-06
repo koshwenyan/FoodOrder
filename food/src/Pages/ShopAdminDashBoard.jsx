@@ -52,60 +52,64 @@ const shopId = user?.shopId;
   }, []);
 
   const cards = [
-    {
-      name: "Orders",
-      count: totals.orders,
-      icon: <BookmarkIcon className="w-10 h-10 text-red-500" />,
-      gradient: "bg-gradient-to-r from-red-400 to-pink-500",
-    },
-    {
-      name: "Pending Orders",
-      count: totals.shops,
-      icon: <ClockIcon className="w-10 h-10 text-orange-500" />,
-      gradient: "bg-gradient-to-r from-yellow-400 to-orange-500",
-    },
-    {
-      name: "Completed Orders",
-      count: totals.companies,
-      icon: <TruckIcon className="w-10 h-10 text-emerald-500" />,
-      gradient: "bg-gradient-to-r from-green-400 to-teal-500",
-    },
-    {
-      name: "Total Menu Items",
-      count: totals.categories,
-      icon: <Squares2X2Icon className="w-10 h-10 text-purple-500" />,
-      gradient: "bg-gradient-to-r from-purple-400 to-indigo-500",
-    },
-  ];
+  {
+    name: "Orders",
+    count: totals.orders,
+    icon: <BookmarkIcon className="w-10 h-10 text-[#8b6b4f]" />,
+  },
+  {
+    name: "Pending Orders",
+    count: totals.shops,
+    icon: <ClockIcon className="w-10 h-10 text-[#8b6b4f]" />,
+  },
+  {
+    name: "Completed Orders",
+    count: totals.companies,
+    icon: <TruckIcon className="w-10 h-10 text-[#8b6b4f]" />,
+  },
+  {
+    name: "Total Menu Items",
+    count: totals.categories,
+    icon: <Squares2X2Icon className="w-10 h-10 text-[#8b6b4f]" />,
+  },
+];
+
 
   return (
-    <div className="p-8 min-h-screen bg-slate-900">
-      <h1 className="text-4xl font-bold text-gray-300 mb-12 text-center">
-         Food Order Admin
-      </h1>
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Shop Admin
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            Dashboard Overview
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Track orders, menus, and delivery activity.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {cards.map((card) => (
-          <div
-            key={card.name}
-            onClick={() => navigate("#")}
-            className={`cursor-pointer relative p-6 rounded-3xl shadow-lg transform transition hover:-translate-y-2 hover:shadow-2xl ${card.gradient}`}
-          >
-            {/* Icon */}
-            <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md">
-              {card.icon}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {cards.map((card) => (
+            <div
+              key={card.name}
+              onClick={() => navigate("#")}
+              className="cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#ead8c7] bg-white/90 transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md border border-[#ead8c7]">
+                {card.icon}
+              </div>
+              <div className="mt-8">
+                <p className="text-[#8b6b4f] font-semibold text-lg">{card.name}</p>
+                <h2 className="text-[#1f1a17] text-3xl font-bold mt-2">
+                  {card.count}
+                </h2>
+              </div>
+              <div className="mt-4 h-1 w-16 bg-[#ead8c7] rounded-full opacity-80"></div>
             </div>
-
-            {/* Content */}
-            <div className="mt-8">
-              <p className="text-gray-100 font-semibold text-lg">{card.name}</p>
-              <h2 className="text-3xl font-bold text-white mt-2">{card.count}</h2>
-            </div>
-
-            {/* Decorative bar */}
-            <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 {/* 
       <div className="mt-12 text-center text-gray-500">
