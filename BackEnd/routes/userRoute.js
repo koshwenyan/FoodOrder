@@ -12,7 +12,7 @@ import {
     getLoginUser
 } from "../controller/userController.js";
 
-import { authMiddleware, adminMiddleware, protect } from "../middleware/authMiddleware.js";
+import { authMiddleware, adminMiddleware, protect, optionalAuth } from "../middleware/authMiddleware.js";
 
 const userRouter = express.Router();
 

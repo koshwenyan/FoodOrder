@@ -4,6 +4,11 @@ import {
   TrashIcon,
   EyeIcon,
   XMarkIcon,
+  UsersIcon,
+  ShieldCheckIcon,
+  BuildingStorefrontIcon,
+  TruckIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Users() {
@@ -20,11 +25,14 @@ export default function Users() {
     role: "customer",
     shopId: null,
   });
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
 
@@ -68,29 +76,77 @@ export default function Users() {
       role: "customer",
       shopId: null,
     });
+    setFormError("");
     setIsEditing(false);
     setEditingId(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
     const token = localStorage.getItem("token");
 
     const url = isEditing
       ? `${API_BASE}/update/${editingId}`
       : `${API_BASE}/register`;
 
-    await fetch(url, {
-      method: isEditing ? "PUT" : "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
+    const trimmedName = form.name.trim();
+    const trimmedEmail = form.email.trim();
+    const trimmedPhone = form.phone.trim();
+    const trimmedAddress = form.address.trim();
+    const trimmedPassword = form.password.trim();
 
-    fetchUsers();
-    resetForm();
+    if (!trimmedName || !trimmedEmail) {
+      setFormError("Name and email are required.");
+      return;
+    }
+    if (!isEditing && !trimmedPassword) {
+      setFormError("Password is required for new users.");
+      return;
+    }
+    if (form.role === "shop-admin" && !form.shopId) {
+      setFormError("Please select a shop for Shop Admin.");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      name: trimmedName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      address: trimmedAddress,
+    };
+
+    if (isEditing && !trimmedPassword) {
+      delete payload.password;
+    } else if (!isEditing) {
+      payload.password = trimmedPassword;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setFormError(err.message || "Failed to save user.");
+        return;
+      }
+
+      await fetchUsers();
+      resetForm();
+    } catch (err) {
+      setFormError(err.message || "Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (u) => {
@@ -119,10 +175,17 @@ export default function Users() {
 
   /* ---------------- FILTER + PAGINATION ---------------- */
 
+  const matchesRole = (u) => {
+    if (roleFilter === "all") return true;
+    if (roleFilter === "company") return u.role?.startsWith("company-");
+    return u.role === roleFilter;
+  };
+
   const filtered = users.filter(
     (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      matchesRole(u) &&
+      (u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase()))
   );
 
   const totalPages = Math.ceil(filtered.length / perPage);
@@ -130,26 +193,152 @@ export default function Users() {
     (currentPage - 1) * perPage,
     currentPage * perPage
   );
+  const totalUsers = users.length;
+  const adminCount = users.filter((u) => u.role === "admin").length;
+  const shopAdminCount = users.filter((u) => u.role === "shop-admin").length;
+  const companyCount = users.filter((u) => u.role?.startsWith("company-")).length;
+  const customerCount = users.filter((u) => u.role === "customer").length;
 
   /* ---------------- ROLE COLORS ---------------- */
 
   const roleClasses = {
-    admin: "bg-red-100 text-red-600",
-    "shop-admin": "bg-green-100 text-green-600",
-    "company-admin": "bg-yellow-100 text-yellow-700",
-    "company-staff": "bg-purple-100 text-purple-600",
-    customer: "bg-blue-100 text-blue-600",
+    admin: "bg-[#f8d7cd] text-[#a4553a]",
+    "shop-admin": "bg-[#e7eddc] text-[#5b7a40]",
+    "company-admin": "bg-[#f5e6c8] text-[#a07a2f]",
+    "company-staff": "bg-[#ead8c7] text-[#8b6b4f]",
+    customer: "bg-[#e6f0f5] text-[#3f6c87]",
   };
 
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6">
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10 space-y-6">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Admin Console
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            User Management
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Create, update, and manage platform users.
+          </p>
+        </div>
 
-      <h1 className="text-3xl font-bold text-[#111827]">
-        User Management
-      </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <button
+            type="button"
+            onClick={() => setRoleFilter("all")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "all"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Total Users
+                </p>
+                <p className="text-2xl font-semibold mt-2">{totalUsers}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <UsersIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("admin")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "admin"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Admins
+                </p>
+                <p className="text-2xl font-semibold mt-2">{adminCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+                <ShieldCheckIcon className="w-6 h-6 text-[#a4553a]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("shop-admin")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "shop-admin"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Shop Admins
+                </p>
+                <p className="text-2xl font-semibold mt-2">{shopAdminCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+                <BuildingStorefrontIcon className="w-6 h-6 text-[#5b7a40]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("company")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "company"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Company Users
+                </p>
+                <p className="text-2xl font-semibold mt-2">{companyCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <TruckIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("customer")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "customer"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Customers
+                </p>
+                <p className="text-2xl font-semibold mt-2">{customerCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e6f0f5] border border-[#cfe0ea]">
+                <UserGroupIcon className="w-6 h-6 text-[#3f6c87]" />
+              </div>
+            </div>
+          </button>
+        </div>
 
-      {/* ---------------- FORM ---------------- */}
-      <div className="bg-white rounded-xl shadow-md p-6 grid md:grid-cols-3 gap-4 text-[#111827]">
+        {/* ---------------- FORM ---------------- */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 grid md:grid-cols-3 gap-4">
+        {formError && (
+          <div className="md:col-span-3 rounded-2xl border border-[#f3d7cf] bg-[#f9f4ef] px-4 py-3 text-sm text-[#a4553a]">
+            {formError}
+          </div>
+        )}
 
         {["name", "email", "phone", "address"].map((f) => (
           <input
@@ -157,7 +346,7 @@ export default function Users() {
             placeholder={f}
             value={form[f]}
             onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
           />
         ))}
 
@@ -166,13 +355,13 @@ export default function Users() {
           placeholder="password"
           disabled={isEditing}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
         />
 
         <select
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value })}
-          className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
         >
           <option value="admin">Admin</option>
           <option value="shop-admin">Shop Admin</option>
@@ -185,7 +374,7 @@ export default function Users() {
           <select
             value={form.shopId || ""}
             onChange={(e) => setForm({ ...form, shopId: e.target.value })}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
           >
             <option value="">Select Shop</option>
             {shops.map((s) => (
@@ -198,23 +387,24 @@ export default function Users() {
 
         <button
           onClick={handleSubmit}
-          className="bg-[#1F2933] hover:bg-black text-white rounded-lg py-2"
+          disabled={isSubmitting}
+          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] disabled:opacity-50"
         >
-          {isEditing ? "Update User" : "Create User"}
+          {isSubmitting ? "Saving..." : isEditing ? "Update User" : "Create User"}
         </button>
 
         <button
           onClick={resetForm}
-          className="bg-gray-200 hover:bg-gray-300 rounded-lg py-2"
+          className="rounded-full bg-white border border-[#e7d5c4] py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
         >
           Cancel
         </button>
       </div>
 
       {/* ---------------- TABLE ---------------- */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
+      <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+          <thead className="bg-[#f8f3ee] text-[#6c5645] uppercase text-xs">
             <tr>
               <th className="p-4 text-left">No</th>
               <th className="p-4 text-left">Name</th>
@@ -228,10 +418,10 @@ export default function Users() {
 
           <tbody>
             {currentUsers.map((u, i) => (
-              <tr key={u._id} className="border-t hover:bg-gray-50 text-[#111827]">
+              <tr key={u._id} className="border-t border-[#ead8c7] hover:bg-[#fbf7f2] text-[#1f1a17]">
                 <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
                 <td className="p-4 font-medium">{u.name}</td>
-                <td className="p-4 text-gray-500">{u.email}</td>
+                <td className="p-4 text-[#6c5645]">{u.email}</td>
                 <td className="p-4">{u.phone || "-"}</td>
                 <td className="p-4">{u.shopId?.name || "-"}</td>
                 <td className="p-4">
@@ -242,21 +432,21 @@ export default function Users() {
                 <td className="p-4 flex justify-end gap-2">
                   <button
                     onClick={() => setModalUser(u)}
-                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded"
+                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
                   >
-                    <EyeIcon className="w-4 h-4 text-green-600" />
+                    <EyeIcon className="w-4 h-4 text-[#8b6b4f]" />
                   </button>
                   <button
                     onClick={() => handleEdit(u)}
-                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded"
+                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
                   >
-                    <PencilIcon className="w-4 h-4 text-blue-600" />
+                    <PencilIcon className="w-4 h-4 text-[#6c5645]" />
                   </button>
                   <button
                     onClick={() => handleDelete(u._id)}
-                    className="p-2 bg-red-100 hover:bg-red-200 rounded"
+                    className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
                   >
-                    <TrashIcon className="w-4 h-4 text-red-600" />
+                    <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                   </button>
                 </td>
               </tr>
@@ -266,11 +456,11 @@ export default function Users() {
       </div>
 
       {/* ---------------- PAGINATION ---------------- */}
-      <div className="flex justify-center gap-4 text-[#111827]">
+      <div className="flex justify-center gap-4 text-[#1f1a17]">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(p => p - 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40"
+          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
         >
           Prev
         </button>
@@ -280,10 +470,11 @@ export default function Users() {
         <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(p => p + 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40"
+          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
         >
           Next
         </button>
+      </div>
       </div>
     </div>
   );

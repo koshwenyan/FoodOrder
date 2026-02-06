@@ -4,6 +4,9 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  BuildingStorefrontIcon,
+  CheckBadgeIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Shops() {
@@ -11,6 +14,9 @@ export default function Shops() {
   const [categories, setCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -106,157 +112,312 @@ export default function Shops() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this shop?")) return;
     const token = localStorage.getItem("token");
     await fetch(`${API_SHOP}/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
     setShops(shops.filter((s) => s._id !== id));
+    setConfirmDelete(null);
   };
 
   /* ================= UI ================= */
+  const term = search.trim().toLowerCase();
+  const filteredShops = shops.filter((shop) => {
+    if (statusFilter === "active" && !shop.isActive) return false;
+    if (statusFilter === "inactive" && shop.isActive) return false;
+    if (!term) return true;
+    return (
+      shop.name?.toLowerCase().includes(term) ||
+      shop.address?.toLowerCase().includes(term) ||
+      shop.category?.[0]?.name?.toLowerCase().includes(term)
+    );
+  });
+  const totalShops = shops.length;
+  const activeShops = shops.filter((s) => s.isActive).length;
+  const inactiveShops = totalShops - activeShops;
+
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6 text-[#111827]">
-      <h1 className="text-3xl font-bold">Shop Management</h1>
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10 space-y-6">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Admin Console
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            Shop Management
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Create, update, and manage restaurant profiles.
+          </p>
+        </div>
 
-      {/* FORM */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-lg font-semibold mb-4">
-          {isEditing ? "Update Shop" : "Create Shop"}
-        </h2>
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            type="button"
+            onClick={() => setStatusFilter("all")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "all"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Total Shops
+                </p>
+                <p className="text-2xl font-semibold mt-2">{totalShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <BuildingStorefrontIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter("active")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "active"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Active
+                </p>
+                <p className="text-2xl font-semibold mt-2">{activeShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+                <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter("inactive")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "inactive"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Inactive
+                </p>
+                <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+                <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
+              </div>
+            </div>
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Shop Name"
-            required
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
+        {/* FORM */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6">
+          <h2 className="text-lg font-semibold mb-4">
+            {isEditing ? "Update Shop" : "Create Shop"}
+          </h2>
 
-          <input
-            name="photo"
-            value={form.photo}
-            onChange={handleChange}
-            placeholder="Photo URL"
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
+          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Shop Name"
+              required
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+
+            <input
+              name="photo"
+              value={form.photo}
+              onChange={handleChange}
+              placeholder="Photo URL"
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            >
+              <option value="">Select Category</option>
+              {categories.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="Address"
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+
+            <input
+              type="time"
+              name="OpenTime"
+              value={form.OpenTime}
+              onChange={handleChange}
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+
+            <input
+              type="time"
+              name="CloseTime"
+              value={form.CloseTime}
+              onChange={handleChange}
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Description"
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15 md:col-span-2"
+            />
+
+            <div className="flex gap-3 md:col-span-2">
+              <button className="rounded-full bg-[#1f1a17] text-[#f8f3ee] px-5 py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] flex items-center gap-2">
+                <PlusIcon className="w-4 h-4" />
+                {isEditing ? "Update Shop" : "Create Shop"}
+              </button>
+
+              <button
+                type="button"
+                onClick={resetForm}
+                className="rounded-full bg-white border border-[#e7d5c4] px-5 py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2] flex items-center gap-2"
+              >
+                <XMarkIcon className="w-4 h-4" />
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
+            <span className="text-sm text-[#8b6b4f]">Search</span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Name, address, category"
+              className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-60"
+            />
+          </div>
 
           <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            required
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-full border border-[#e7d5c4] bg-white/80 px-4 py-2 text-sm text-[#6c5645] focus:outline-none"
           >
-            <option value="">Select Category</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
+        </div>
 
-          <input
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            placeholder="Address"
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
-
-          <input
-            type="time"
-            name="OpenTime"
-            value={form.OpenTime}
-            onChange={handleChange}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
-
-          <input
-            type="time"
-            name="CloseTime"
-            value={form.CloseTime}
-            onChange={handleChange}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
-
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Description"
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2 md:col-span-2"
-          />
-
-          <div className="flex gap-3 md:col-span-2">
-            <button className="bg-[#1F2933] hover:bg-black text-white rounded-lg px-5 py-2 flex items-center gap-2">
-              <PlusIcon className="w-4 h-4" />
-              {isEditing ? "Update Shop" : "Create Shop"}
-            </button>
-
-            <button
-              type="button"
-              onClick={resetForm}
-              className="bg-gray-200 hover:bg-gray-300 rounded-lg px-5 py-2 flex items-center gap-2"
+        {/* SHOP CARDS */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredShops.map((shop) => (
+            <div
+              key={shop._id}
+              className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm hover:shadow-md transition p-4"
             >
-              <XMarkIcon className="w-4 h-4" />
-              Cancel
-            </button>
+              {shop.photo && (
+                <img
+                  src={shop.photo}
+                  alt={shop.name}
+                  className="w-full h-44 object-cover rounded-2xl mb-3 border border-[#ead8c7]"
+                />
+              )}
+
+              <h3 className="text-lg font-semibold text-[#1f1a17]">{shop.name}</h3>
+
+              <p className="text-sm text-[#6c5645] mt-1 line-clamp-2">
+                {shop.description}
+              </p>
+
+              <div className="flex justify-between items-center mt-3 text-xs text-[#8b6b4f]">
+                <span>
+                  {shop.OpenTime} – {shop.CloseTime}
+                </span>
+                <span
+                  className={`px-2 py-1 rounded-full font-medium ${
+                    shop.isActive
+                      ? "bg-[#e7eddc] text-[#5b7a40]"
+                      : "bg-[#f3d7cf] text-[#a4553a]"
+                  }`}
+                >
+                  {shop.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => handleEdit(shop)}
+                  className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
+                >
+                  <PencilIcon className="w-4 h-4 text-[#6c5645]" />
+                </button>
+
+                <button
+                  onClick={() => setConfirmDelete(shop)}
+                  className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
+                >
+                  <TrashIcon className="w-4 h-4 text-[#a4553a]" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredShops.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+            No shops match your search.
           </div>
-        </form>
+        )}
       </div>
 
-      {/* SHOP CARDS */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {shops.map((shop) => (
-          <div
-            key={shop._id}
-            className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4"
-          >
-            {shop.photo && (
-              <img
-                src={shop.photo}
-                alt={shop.name}
-                className="w-full h-44 object-cover rounded-lg mb-3"
-              />
-            )}
-
-            <h3 className="text-lg font-semibold">{shop.name}</h3>
-
-            <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-              {shop.description}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#1f1a17]">
+              Delete shop?
+            </h3>
+            <p className="mt-2 text-sm text-[#6c5645]">
+              This will permanently remove{" "}
+              <span className="font-semibold">{confirmDelete.name}</span>.
             </p>
-
-            <div className="flex justify-between items-center mt-3 text-xs text-gray-400">
-              <span>
-                {shop.OpenTime} – {shop.CloseTime}
-              </span>
-              <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
-                Active
-              </span>
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4">
+            <div className="mt-6 flex gap-3 justify-end">
               <button
-                onClick={() => handleEdit(shop)}
-                className="p-2 bg-gray-100 hover:bg-gray-200 rounded"
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-full bg-white border border-[#e7d5c4] px-4 py-2 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
               >
-                <PencilIcon className="w-4 h-4 text-blue-600" />
+                Cancel
               </button>
-
               <button
-                onClick={() => handleDelete(shop._id)}
-                className="p-2 bg-red-100 hover:bg-red-200 rounded"
+                onClick={() => handleDelete(confirmDelete._id)}
+                className="rounded-full bg-[#a4553a] text-white px-4 py-2 text-sm font-semibold hover:bg-[#8f4a34]"
               >
-                <TrashIcon className="w-4 h-4 text-red-600" />
+                Delete
               </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
