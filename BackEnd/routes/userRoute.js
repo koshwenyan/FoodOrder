@@ -12,7 +12,7 @@ import {
     getLoginUser
 } from "../controller/userController.js";
 
-import { authMiddleware, adminMiddleware, protect } from "../middleware/authMiddleware.js";
+import { authMiddleware, adminMiddleware, protect, optionalAuth } from "../middleware/authMiddleware.js";
 
 const userRouter = express.Router();
 
@@ -28,8 +28,8 @@ userRouter.delete("/:id", authMiddleware, deleteUser);
 // Auth
 userRouter.post("/login", login);
 userRouter.post("/logout", authMiddleware, logout);
-// Public register for customer role; admin/staff roles still enforced in controller
-userRouter.post("/register", register);
+// Public register for customer role; admin/staff roles enforced in controller if token is present
+userRouter.post("/register", optionalAuth, register);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password", resetPassword);
 

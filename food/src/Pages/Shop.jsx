@@ -4,6 +4,9 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  BuildingStorefrontIcon,
+  CheckBadgeIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Shops() {
@@ -149,6 +152,72 @@ export default function Shops() {
           </p>
         </div>
 
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            type="button"
+            onClick={() => setStatusFilter("all")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "all"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Total Shops
+                </p>
+                <p className="text-2xl font-semibold mt-2">{totalShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <BuildingStorefrontIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter("active")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "active"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Active
+                </p>
+                <p className="text-2xl font-semibold mt-2">{activeShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+                <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter("inactive")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              statusFilter === "inactive"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Inactive
+                </p>
+                <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+                <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
+              </div>
+            </div>
+          </button>
+        </div>
+
         {/* FORM */}
         <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6">
           <h2 className="text-lg font-semibold mb-4">
@@ -236,27 +305,6 @@ export default function Shops() {
               </button>
             </div>
           </form>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
-              Total Shops
-            </p>
-            <p className="text-2xl font-semibold mt-2">{totalShops}</p>
-          </div>
-          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
-              Active
-            </p>
-            <p className="text-2xl font-semibold mt-2">{activeShops}</p>
-          </div>
-          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
-              Inactive
-            </p>
-            <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
-          </div>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

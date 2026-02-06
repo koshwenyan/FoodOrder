@@ -4,10 +4,15 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  Squares2X2Icon,
+  PhotoIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
+  const [photoFilter, setPhotoFilter] = useState("all");
+  const [search, setSearch] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
@@ -83,6 +88,14 @@ export default function Categories() {
   };
 
   /* ================= UI ================= */
+  const term = search.trim().toLowerCase();
+  const filteredCategories = categories.filter((c) => {
+    if (photoFilter === "with") return !!c.photo;
+    if (photoFilter === "without") return !c.photo;
+    if (!term) return true;
+    return c.name?.toLowerCase().includes(term);
+  });
+
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
@@ -96,6 +109,90 @@ export default function Categories() {
           <p className="text-sm text-[#6c5645] mt-2">
             Create, edit, and organize menu categories.
           </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            type="button"
+            onClick={() => setPhotoFilter("all")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              photoFilter === "all"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Total Categories
+                </p>
+                <p className="text-2xl font-semibold mt-2">
+                  {categories.length}
+                </p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <Squares2X2Icon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setPhotoFilter("with")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              photoFilter === "with"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  With Photos
+                </p>
+                <p className="text-2xl font-semibold mt-2">
+                  {categories.filter((c) => c.photo).length}
+                </p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+                <PhotoIcon className="w-6 h-6 text-[#5b7a40]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setPhotoFilter("without")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              photoFilter === "without"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  No Photo
+                </p>
+                <p className="text-2xl font-semibold mt-2">
+                  {categories.filter((c) => !c.photo).length}
+                </p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+                <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
+            <span className="text-sm text-[#8b6b4f]">Search</span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Category name"
+              className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-60"
+            />
+          </div>
         </div>
 
         {/* FORM */}
@@ -143,7 +240,7 @@ export default function Categories() {
 
         {/* CATEGORY CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {categories.map((cat) => (
+          {filteredCategories.map((cat) => (
             <div
               key={cat._id}
               className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 flex flex-col"
@@ -188,6 +285,12 @@ export default function Categories() {
             </div>
           ))}
         </div>
+
+        {filteredCategories.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+            No categories match the current filter.
+          </div>
+        )}
       </div>
     </div>
   );

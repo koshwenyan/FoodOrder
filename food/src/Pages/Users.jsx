@@ -4,6 +4,11 @@ import {
   TrashIcon,
   EyeIcon,
   XMarkIcon,
+  UsersIcon,
+  ShieldCheckIcon,
+  BuildingStorefrontIcon,
+  TruckIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Users() {
@@ -20,11 +25,14 @@ export default function Users() {
     role: "customer",
     shopId: null,
   });
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 5;
 
@@ -68,29 +76,77 @@ export default function Users() {
       role: "customer",
       shopId: null,
     });
+    setFormError("");
     setIsEditing(false);
     setEditingId(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
     const token = localStorage.getItem("token");
 
     const url = isEditing
       ? `${API_BASE}/update/${editingId}`
       : `${API_BASE}/register`;
 
-    await fetch(url, {
-      method: isEditing ? "PUT" : "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
+    const trimmedName = form.name.trim();
+    const trimmedEmail = form.email.trim();
+    const trimmedPhone = form.phone.trim();
+    const trimmedAddress = form.address.trim();
+    const trimmedPassword = form.password.trim();
 
-    fetchUsers();
-    resetForm();
+    if (!trimmedName || !trimmedEmail) {
+      setFormError("Name and email are required.");
+      return;
+    }
+    if (!isEditing && !trimmedPassword) {
+      setFormError("Password is required for new users.");
+      return;
+    }
+    if (form.role === "shop-admin" && !form.shopId) {
+      setFormError("Please select a shop for Shop Admin.");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      name: trimmedName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      address: trimmedAddress,
+    };
+
+    if (isEditing && !trimmedPassword) {
+      delete payload.password;
+    } else if (!isEditing) {
+      payload.password = trimmedPassword;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setFormError(err.message || "Failed to save user.");
+        return;
+      }
+
+      await fetchUsers();
+      resetForm();
+    } catch (err) {
+      setFormError(err.message || "Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (u) => {
@@ -119,10 +175,17 @@ export default function Users() {
 
   /* ---------------- FILTER + PAGINATION ---------------- */
 
+  const matchesRole = (u) => {
+    if (roleFilter === "all") return true;
+    if (roleFilter === "company") return u.role?.startsWith("company-");
+    return u.role === roleFilter;
+  };
+
   const filtered = users.filter(
     (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      matchesRole(u) &&
+      (u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase()))
   );
 
   const totalPages = Math.ceil(filtered.length / perPage);
@@ -130,6 +193,11 @@ export default function Users() {
     (currentPage - 1) * perPage,
     currentPage * perPage
   );
+  const totalUsers = users.length;
+  const adminCount = users.filter((u) => u.role === "admin").length;
+  const shopAdminCount = users.filter((u) => u.role === "shop-admin").length;
+  const companyCount = users.filter((u) => u.role?.startsWith("company-")).length;
+  const customerCount = users.filter((u) => u.role === "customer").length;
 
   /* ---------------- ROLE COLORS ---------------- */
 
@@ -156,8 +224,121 @@ export default function Users() {
           </p>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <button
+            type="button"
+            onClick={() => setRoleFilter("all")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "all"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Total Users
+                </p>
+                <p className="text-2xl font-semibold mt-2">{totalUsers}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <UsersIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("admin")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "admin"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Admins
+                </p>
+                <p className="text-2xl font-semibold mt-2">{adminCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+                <ShieldCheckIcon className="w-6 h-6 text-[#a4553a]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("shop-admin")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "shop-admin"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Shop Admins
+                </p>
+                <p className="text-2xl font-semibold mt-2">{shopAdminCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+                <BuildingStorefrontIcon className="w-6 h-6 text-[#5b7a40]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("company")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "company"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Company Users
+                </p>
+                <p className="text-2xl font-semibold mt-2">{companyCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
+                <TruckIcon className="w-6 h-6 text-[#8b6b4f]" />
+              </div>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleFilter("customer")}
+            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+              roleFilter === "customer"
+                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
+                : "border-[#e7d5c4]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                  Customers
+                </p>
+                <p className="text-2xl font-semibold mt-2">{customerCount}</p>
+              </div>
+              <div className="p-3 rounded-full bg-[#e6f0f5] border border-[#cfe0ea]">
+                <UserGroupIcon className="w-6 h-6 text-[#3f6c87]" />
+              </div>
+            </div>
+          </button>
+        </div>
+
         {/* ---------------- FORM ---------------- */}
         <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 grid md:grid-cols-3 gap-4">
+        {formError && (
+          <div className="md:col-span-3 rounded-2xl border border-[#f3d7cf] bg-[#f9f4ef] px-4 py-3 text-sm text-[#a4553a]">
+            {formError}
+          </div>
+        )}
 
         {["name", "email", "phone", "address"].map((f) => (
           <input
@@ -206,9 +387,10 @@ export default function Users() {
 
         <button
           onClick={handleSubmit}
-          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f]"
+          disabled={isSubmitting}
+          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] disabled:opacity-50"
         >
-          {isEditing ? "Update User" : "Create User"}
+          {isSubmitting ? "Saving..." : isEditing ? "Update User" : "Create User"}
         </button>
 
         <button
