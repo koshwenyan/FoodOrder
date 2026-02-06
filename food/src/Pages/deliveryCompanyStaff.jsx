@@ -81,32 +81,41 @@ export default function DeliveryCompanyStaff() {
 
     const handleUpdate = async () => {
         const token = localStorage.getItem("token");
+
         try {
-            const res = await fetch(`${API_BASE}/user/update/${selectedStaff._id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(formData),
-            });
+            const res = await fetch(
+                `${API_BASE}/user/update/${selectedStaff._id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+
             const data = await res.json();
+
             if (data.success) {
                 alert("Staff updated successfully");
+
                 setStaffs(
                     staffs.map((s) =>
-                        s._id === selectedStaff._id ? { ...s, ...formData } : s
+                        s._id === selectedStaff._id ? data.data : s
                     )
                 );
+
                 handleModalClose();
             } else {
-                alert("Failed to update staff");
+                alert(data.message || "Failed to update staff");
             }
         } catch (err) {
             console.error("Error updating staff:", err);
             alert("Error updating staff");
         }
     };
+
 
 
 

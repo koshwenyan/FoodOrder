@@ -170,53 +170,74 @@ export const updateUser = async (req, res) => {
         const userId = req.params.id;
         const updates = { ...req.body };
 
-        console.log("Updating user:", userId, updates);
-
         const userToUpdate = await User.findById(userId);
-        if (!userToUpdate)
-            return res.status(404).json({ message: "User not found" });
+        if (!userToUpdate) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
 
-        // ================= PERMISSION CHECK =================
+        // ===== Permission =====
         if (
             userToUpdate.role === "company-staff" &&
             !["admin", "company-admin"].includes(req.user.role)
         ) {
-            return res
-                .status(403)
-                .json({
-                    message: "Only admin or company-admin can update company-staff",
-                });
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Only admin or company-admin can update company-staff",
+            });
         }
 
-        // ================= HASH PASSWORD IF PROVIDED =================
+        // ===== Hash password =====
         if (updates.password) {
-            updates.password = await bcrypt.hash(updates.password, 10);
+            updates.password = await bcrypt.hash(
+                updates.password,
+                10
+            );
         }
 
-        // ================= NORMALIZE companyId & shopId =================
-        if (!updates.companyId || updates.companyId === "")
-            updates.companyId = null;
-        if (!updates.shopId || updates.shopId === "") updates.shopId = null;
+        // ===== Normalize ONLY if provided =====
+        if ("companyId" in updates) {
+            updates.companyId =
+                updates.companyId && updates.companyId !== ""
+                    ? updates.companyId
+                    : null;
+        }
 
-        // ================= UPDATE USER =================
+        if ("shopId" in updates) {
+            updates.shopId =
+                updates.shopId && updates.shopId !== ""
+                    ? updates.shopId
+                    : null;
+        }
+
+        // ===== Update =====
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             updates,
-            { new: true, runValidators: true, writeConcern: { w: "majority" } }, // <- ဒီလိုပြောင်း
+            { new: true, runValidators: true }
         )
             .select("-password")
-            .populate("shopId", "name")
-            .populate("companyId", "name");
+            .populate("companyId", "name")
+            .populate("shopId", "name");
 
         res.status(200).json({
+            success: true,
             message: "User updated successfully",
             data: updatedUser,
         });
     } catch (error) {
-        console.error("Update user error:", error);
-        res.status(500).json({ message: "Update failed", error: error.message });
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Update failed",
+            error: error.message,
+        });
     }
 };
+
 
 // export const deleteUser = async (req, res) => {
 //     try {
