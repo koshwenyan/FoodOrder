@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.jsx";
-import PrivateRoute from "./routes/PrivateRoute.jsx";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import { AuthProvider } from "./context/AuthContext.jsx";
+// import PrivateRoute from "./routes/PrivateRoute.jsx";
 
 /* ========== PAGES ========== */
 
-import Login from "./Pages/Login.jsx";
+// import Login from "./Pages/Login.jsx";
 
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
 import ShopAdminDashboard from "./Pages/ShopAdminDashBoard.jsx";
@@ -28,6 +28,8 @@ import Shop from "./Pages/Shop.jsx";
 import Category from "./Pages/Category.jsx";
 import OrdersLists from "./Pages/OrdersLists.jsx";
 import CustomerHome from "./Pages/CustomerHome.jsx";
+import DeliveryOrder from "./Pages/deliveryCompanyOrder.jsx"
+import DeliveryStaff from "./Pages/deliveryCompanyStaff.jsx"
 export default function App() {
     return (
         <AuthProvider>
