@@ -24,6 +24,9 @@ export default function Login() {
                 navigate("/admin/dashboard");
             } else if (user.role === "shop-admin") {
                 navigate("/shop-admin/shopadmindashboard");
+            }
+            else if (user.role === "company-admin") {
+                navigate("/company-admin/companyadmindashboard");
             } else {
                 setError("Unauthorized role");
             }

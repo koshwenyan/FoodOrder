@@ -120,73 +120,101 @@ export default function DeliveryCompanyStaff() {
 
 
     if (loading) {
-        return <div className="p-8 text-gray-200">Loading staff...</div>;
+        return <div className="px-6 py-6 sm:px-10 text-[#6c5645]">Loading staff...</div>;
     }
 
     return (
-        <div className="p-8 min-h-screen bg-slate-900 text-gray-200">
-            <h1 className="text-3xl font-bold mb-6">
-                Delivery Staff List ({staffs.length})
-            </h1>
-
-            {staffs.length === 0 ? (
-                <p>No staff found for your company.</p>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto border border-gray-700 rounded-lg overflow-hidden">
-                        <thead className="bg-gray-800 text-left">
-                            <tr>
-                                <th className="px-4 py-2 border-b border-gray-700">#</th>
-                                <th className="px-4 py-2 border-b border-gray-700">Name</th>
-                                <th className="px-4 py-2 border-b border-gray-700">Email</th>
-                                <th className="px-4 py-2 border-b border-gray-700">Phone</th>
-                                <th className="px-4 py-2 border-b border-gray-700">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {staffs.map((staff, index) => (
-                                <tr key={staff._id} className="hover:bg-gray-700">
-                                    <td className="px-4 py-2 border-b border-gray-700">{index + 1}</td>
-                                    <td className="px-4 py-2 border-b border-gray-700">{staff.name}</td>
-                                    <td className="px-4 py-2 border-b border-gray-700">{staff.email}</td>
-                                    <td className="px-4 py-2 border-b border-gray-700">{staff.phone}</td>
-                                    <td className="px-4 py-2 border-b border-gray-700 flex gap-4">
-                                        <button
-                                            onClick={() => handleEdit(staff)}
-                                            className="hover:text-blue-400"
-                                            title="Edit Staff"
-                                        >
-                                            <PencilIcon className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(staff._id)}
-                                            className="hover:text-red-500"
-                                            title="Delete Staff"
-                                        >
-                                            <TrashIcon className="w-5 h-5" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+        <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+            <div className="px-6 py-6 sm:px-10">
+                <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+                    <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Delivery Company Admin
+                    </p>
+                    <h1 className="text-3xl sm:text-4xl font-semibold">
+                        Delivery Staff
+                    </h1>
+                    <p className="text-sm text-[#6c5645] mt-2">
+                        Manage staff members and keep contact details updated.
+                    </p>
                 </div>
-            )}
+
+                <div className="mt-8 rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-hidden">
+                    <div className="px-6 py-4 border-b border-[#ead8c7] flex flex-wrap items-center justify-between gap-2">
+                        <h2 className="text-lg font-semibold text-[#1f1a17]">
+                            Staff List ({staffs.length})
+                        </h2>
+                        <span className="text-sm text-[#8b6b4f]">
+                            Company staff directory
+                        </span>
+                    </div>
+
+                    {staffs.length === 0 ? (
+                        <div className="px-6 py-8 text-[#6c5645]">
+                            No staff found for your company.
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full table-auto">
+                                <thead className="bg-[#f8f3ee] text-left">
+                                    <tr>
+                                        <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">#</th>
+                                        <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">Name</th>
+                                        <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">Email</th>
+                                        <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">Phone</th>
+                                        <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {staffs.map((staff, index) => (
+                                        <tr
+                                            key={staff._id}
+                                            className="border-t border-[#ead8c7] hover:bg-[#fbf7f2]"
+                                        >
+                                            <td className="px-4 py-3 text-sm text-[#1f1a17]">{index + 1}</td>
+                                            <td className="px-4 py-3 text-sm text-[#1f1a17]">{staff.name}</td>
+                                            <td className="px-4 py-3 text-sm text-[#1f1a17]">{staff.email}</td>
+                                            <td className="px-4 py-3 text-sm text-[#1f1a17]">{staff.phone}</td>
+                                            <td className="px-4 py-3 text-sm">
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={() => handleEdit(staff)}
+                                                        className="text-[#8b6b4f] hover:text-[#6c5645]"
+                                                        title="Edit Staff"
+                                                    >
+                                                        <PencilIcon className="w-5 h-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(staff._id)}
+                                                        className="text-[#c97a5a] hover:text-[#a75f44]"
+                                                        title="Delete Staff"
+                                                    >
+                                                        <TrashIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </div>
 
             {/* ================= UPDATE MODAL ================= */}
             {/* ================= UPDATE MODAL ================= */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="relative bg-gray-800 p-6 rounded-lg w-full max-w-md text-gray-200 shadow-lg">
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+                    <div className="relative bg-white p-6 rounded-3xl w-full max-w-md text-[#1f1a17] shadow-xl border border-[#ead8c7]">
                         {/* Close button */}
                         <button
                             onClick={handleModalClose}
-                            className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                            className="absolute top-3 right-3 text-[#8b6b4f] hover:text-[#6c5645]"
                         >
                             <XMarkIcon className="w-6 h-6" />
                         </button>
 
-                        <h2 className="text-2xl font-bold mb-4 text-center">Update Staff</h2>
+                        <h2 className="text-2xl font-semibold mb-4 text-center">Update Staff</h2>
 
                         <div className="flex flex-col gap-4">
                             <input
@@ -195,7 +223,7 @@ export default function DeliveryCompanyStaff() {
                                 placeholder="Name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="p-2 rounded bg-gray-700 text-white"
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
                             />
                             <input
                                 type="email"
@@ -203,7 +231,7 @@ export default function DeliveryCompanyStaff() {
                                 placeholder="Email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className="p-2 rounded bg-gray-700 text-white"
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
                             />
                             <input
                                 type="text"
@@ -211,11 +239,11 @@ export default function DeliveryCompanyStaff() {
                                 placeholder="Phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                className="p-2 rounded bg-gray-700 text-white"
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
                             />
                             <button
                                 onClick={handleUpdate}
-                                className="bg-blue-500 hover:bg-blue-600 text-white py-2 rounded mt-2"
+                                className="bg-[#8b6b4f] hover:bg-[#6c5645] text-white py-3 rounded-xl mt-2"
                             >
                                 Save Changes
                             </button>
