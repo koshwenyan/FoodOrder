@@ -91,94 +91,131 @@ export default function DeliveryCompanies() {
   const currentCompanies = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6">
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10 space-y-6">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Admin Console
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            Delivery Companies
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Manage delivery partners, fees, and staffing.
+          </p>
+        </div>
 
-      <h1 className="text-3xl font-bold text-[#111827] text-center">Delivery Companies Management</h1>
+        {/* FORM */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 grid md:grid-cols-3 gap-4">
+          {["name", "email", "serviceFee", "staffCount"].map((f) => (
+            <input
+              key={f}
+              type={f === "serviceFee" || f === "staffCount" ? "number" : "text"}
+              placeholder={f}
+              value={form[f]}
+              onChange={(e) => setForm({ ...form, [f]: e.target.value })}
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
+          ))}
 
-      {/* FORM */}
-      <div className="bg-white rounded-xl shadow-md p-6 grid md:grid-cols-3 gap-4 text-[#111827]">
+          <select
+            value={form.isActive ? "active" : "inactive"}
+            onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
+            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
 
-        {["name", "email", "serviceFee", "staffCount"].map((f) => (
-          <input
-            key={f}
-            type={f === "serviceFee" || f === "staffCount" ? "number" : "text"}
-            placeholder={f}
-            value={form[f]}
-            onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
-        ))}
+          <button
+            onClick={handleSubmit}
+            className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f]"
+          >
+            {isEditing ? "Update Company" : "Create Company"}
+          </button>
 
-        <select
-          value={form.isActive ? "active" : "inactive"}
-          onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
-          className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-        >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+          <button
+            onClick={resetForm}
+            className="rounded-full bg-white border border-[#e7d5c4] py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
+          >
+            Cancel
+          </button>
+        </div>
 
-        <button onClick={handleSubmit} className="bg-[#1F2933] hover:bg-black text-white rounded-lg py-2">
-          {isEditing ? "Update Company" : "Create Company"}
-        </button>
+        {/* SEARCH */}
+        <div className="max-w-md">
+          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
+            <span className="text-sm text-[#8b6b4f]">Search</span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Name or email"
+              className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-full"
+            />
+          </div>
+        </div>
 
-        <button onClick={resetForm} className="bg-gray-200 hover:bg-gray-300 rounded-lg py-2">Cancel</button>
-      </div>
-
-      {/* SEARCH */}
-      <div className="max-w-md mx-auto">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or email..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-[#F5F6F7]"
-        />
-      </div>
-
-      {/* TABLE */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-            <tr>
-              <th className="p-4 text-left">No</th>
-              <th className="p-4 text-left">Name</th>
-              <th className="p-4 text-left">Email</th>
-              <th className="p-4 text-left">Service Fee</th>
-              <th className="p-4 text-left">Staff Count</th>
-              <th className="p-4 text-left">Status</th>
-              <th className="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentCompanies.map((c, i) => (
-              <tr key={c._id} className="border-t hover:bg-gray-50 text-[#111827]">
-                <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
-                <td className="p-4 font-medium">{c.name}</td>
-                <td className="p-4 text-gray-500">{c.email}</td>
-                <td className="p-4">{c.serviceFee}</td>
-                <td className="p-4">{c.staffCount}</td>
-                <td className="p-4">{c.isActive ? "Active" : "Inactive"}</td>
-                <td className="p-4 flex justify-end gap-2">
-                  <button onClick={() => handleEdit(c)} className="p-2 bg-gray-100 hover:bg-gray-200 rounded">
-                    <PencilIcon className="w-4 h-4 text-blue-600" />
-                  </button>
-                  <button onClick={() => handleDelete(c._id)} className="p-2 bg-red-100 hover:bg-red-200 rounded">
-                    <TrashIcon className="w-4 h-4 text-red-600" />
-                  </button>
-                </td>
+        {/* TABLE */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-[#f8f3ee] text-[#6c5645] uppercase text-xs">
+              <tr>
+                <th className="p-4 text-left">No</th>
+                <th className="p-4 text-left">Name</th>
+                <th className="p-4 text-left">Email</th>
+                <th className="p-4 text-left">Service Fee</th>
+                <th className="p-4 text-left">Staff Count</th>
+                <th className="p-4 text-left">Status</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {currentCompanies.map((c, i) => (
+                <tr key={c._id} className="border-t border-[#ead8c7] hover:bg-[#fbf7f2] text-[#1f1a17]">
+                  <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
+                  <td className="p-4 font-medium">{c.name}</td>
+                  <td className="p-4 text-[#6c5645]">{c.email}</td>
+                  <td className="p-4">{c.serviceFee}</td>
+                  <td className="p-4">{c.staffCount}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs ${c.isActive ? "bg-[#e7eddc] text-[#5b7a40]" : "bg-[#f3d7cf] text-[#a4553a]"}`}>
+                      {c.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="p-4 flex justify-end gap-2">
+                    <button onClick={() => handleEdit(c)} className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded">
+                      <PencilIcon className="w-4 h-4 text-[#6c5645]" />
+                    </button>
+                    <button onClick={() => handleDelete(c._id)} className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded">
+                      <TrashIcon className="w-4 h-4 text-[#a4553a]" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* PAGINATION */}
-      <div className="flex justify-center gap-4 text-[#111827]">
-        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40">Prev</button>
-        <span className="px-4 py-2">{currentPage} / {totalPages}</span>
-        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40">Next</button>
+        {/* PAGINATION */}
+        <div className="flex justify-center gap-4 text-[#1f1a17]">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(p => p - 1)}
+            className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
+          >
+            Prev
+          </button>
+          <span className="px-4 py-2">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(p => p + 1)}
+            className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

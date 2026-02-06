@@ -65,65 +65,72 @@ export default function AdminDashboard() {
     {
       name: "Customers",
       count: totals.users,
-      icon: <UsersIcon className="w-8 h-8 text-blue-500" />,
-      gradient: "bg-white",
-      textColor: "text-blue-500"
+      icon: <UsersIcon className="w-10 h-10 text-[#8b6b4f]" />,
+      gradient: "bg-white/90",
+      textColor: "text-[#1f1a17]"
     },
     {
       name: "Restaurants",
       count: totals.shops,
-      icon: <BuildingStorefrontIcon className="w-8 h-8 text-orange-500" />,
-      gradient: "bg-white",
-      textColor: "text-orange-500"
+      icon: <BuildingStorefrontIcon className="w-10 h-10 text-[#8b6b4f]" />,
+      gradient: "bg-white/90",
+      textColor: "text-[#1f1a17]"
     },
     {
       name: "Companies",
       count: totals.companies,
-      icon: <BuildingOffice2Icon className="w-8 h-8 text-indigo-500" />,
-      gradient: "bg-white",
-      textColor: "text-indigo-500"
+      icon: <BuildingOffice2Icon className="w-10 h-10 text-[#8b6b4f]" />,
+      gradient: "bg-white/90",
+      textColor: "text-[#1f1a17]"
     },
     {
       name: "Categories",
       count: totals.categories,
-      icon: <Squares2X2Icon className="w-8 h-8 text-purple-500" />,
-      gradient: "bg-white",
-      textColor: "text-purple-500"
+      icon: <Squares2X2Icon className="w-10 h-10 text-[#8b6b4f]" />,
+      gradient: "bg-white/90",
+      textColor: "text-[#1f1a17]"
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8">
-      <h1 className="text-3xl font-bold text-[#111827] mb-8">
-        Dashboard Overview
-      </h1>
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Platform Admin
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            Dashboard Overview
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Track users, restaurants, companies, and categories at a glance.
+          </p>
+        </div>
 
-      {/* CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {cards.map((card) => (
-          <div
-            key={card.name}
-            onClick={() => navigate("#")}
-            className={`cursor-pointer relative p-6 rounded-3xl shadow-lg transform transition hover:-translate-y-2 hover:shadow-2xl ${card.gradient}`}
-          >
-            {/* Icon */}
-            <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md">
-              {card.icon}
+        {/* CARDS */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {cards.map((card) => (
+            <div
+              key={card.name}
+              onClick={() => navigate("#")}
+              className={`cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#ead8c7] transition hover:-translate-y-1 hover:shadow-md ${card.gradient}`}
+            >
+              <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md border border-[#ead8c7]">
+                {card.icon}
+              </div>
+
+              <div className="mt-8">
+                <p className="text-[#8b6b4f] font-semibold text-lg">{card.name}</p>
+                <h2 className={`${card.textColor} text-3xl font-bold mt-2`}>
+                  {card.count}
+                </h2>
+              </div>
+
+              <div className="mt-4 h-1 w-16 bg-[#ead8c7] rounded-full opacity-80"></div>
             </div>
-
-            {/* Content */}
-           <div className="mt-8">
-  <p className={`${card.textColor} font-semibold text-lg`}>{card.name}</p>
-  <h2 className={`${card.textColor} text-3xl font-bold mt-2`}>{card.count}</h2>
-</div>
-
-            {/* Decorative bar */}
-            <div className="mt-4 h-1 w-16 bg-white rounded-full opacity-70"></div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-
     </div>
   );
 }

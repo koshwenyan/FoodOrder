@@ -134,22 +134,30 @@ export default function Users() {
   /* ---------------- ROLE COLORS ---------------- */
 
   const roleClasses = {
-    admin: "bg-red-100 text-red-600",
-    "shop-admin": "bg-green-100 text-green-600",
-    "company-admin": "bg-yellow-100 text-yellow-700",
-    "company-staff": "bg-purple-100 text-purple-600",
-    customer: "bg-blue-100 text-blue-600",
+    admin: "bg-[#f8d7cd] text-[#a4553a]",
+    "shop-admin": "bg-[#e7eddc] text-[#5b7a40]",
+    "company-admin": "bg-[#f5e6c8] text-[#a07a2f]",
+    "company-staff": "bg-[#ead8c7] text-[#8b6b4f]",
+    customer: "bg-[#e6f0f5] text-[#3f6c87]",
   };
 
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6">
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10 space-y-6">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Admin Console
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            User Management
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Create, update, and manage platform users.
+          </p>
+        </div>
 
-      <h1 className="text-3xl font-bold text-[#111827]">
-        User Management
-      </h1>
-
-      {/* ---------------- FORM ---------------- */}
-      <div className="bg-white rounded-xl shadow-md p-6 grid md:grid-cols-3 gap-4 text-[#111827]">
+        {/* ---------------- FORM ---------------- */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 grid md:grid-cols-3 gap-4">
 
         {["name", "email", "phone", "address"].map((f) => (
           <input
@@ -157,7 +165,7 @@ export default function Users() {
             placeholder={f}
             value={form[f]}
             onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
           />
         ))}
 
@@ -166,13 +174,13 @@ export default function Users() {
           placeholder="password"
           disabled={isEditing}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
         />
 
         <select
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value })}
-          className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
         >
           <option value="admin">Admin</option>
           <option value="shop-admin">Shop Admin</option>
@@ -185,7 +193,7 @@ export default function Users() {
           <select
             value={form.shopId || ""}
             onChange={(e) => setForm({ ...form, shopId: e.target.value })}
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
+            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
           >
             <option value="">Select Shop</option>
             {shops.map((s) => (
@@ -198,23 +206,23 @@ export default function Users() {
 
         <button
           onClick={handleSubmit}
-          className="bg-[#1F2933] hover:bg-black text-white rounded-lg py-2"
+          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f]"
         >
           {isEditing ? "Update User" : "Create User"}
         </button>
 
         <button
           onClick={resetForm}
-          className="bg-gray-200 hover:bg-gray-300 rounded-lg py-2"
+          className="rounded-full bg-white border border-[#e7d5c4] py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
         >
           Cancel
         </button>
       </div>
 
       {/* ---------------- TABLE ---------------- */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
+      <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+          <thead className="bg-[#f8f3ee] text-[#6c5645] uppercase text-xs">
             <tr>
               <th className="p-4 text-left">No</th>
               <th className="p-4 text-left">Name</th>
@@ -228,10 +236,10 @@ export default function Users() {
 
           <tbody>
             {currentUsers.map((u, i) => (
-              <tr key={u._id} className="border-t hover:bg-gray-50 text-[#111827]">
+              <tr key={u._id} className="border-t border-[#ead8c7] hover:bg-[#fbf7f2] text-[#1f1a17]">
                 <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
                 <td className="p-4 font-medium">{u.name}</td>
-                <td className="p-4 text-gray-500">{u.email}</td>
+                <td className="p-4 text-[#6c5645]">{u.email}</td>
                 <td className="p-4">{u.phone || "-"}</td>
                 <td className="p-4">{u.shopId?.name || "-"}</td>
                 <td className="p-4">
@@ -242,21 +250,21 @@ export default function Users() {
                 <td className="p-4 flex justify-end gap-2">
                   <button
                     onClick={() => setModalUser(u)}
-                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded"
+                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
                   >
-                    <EyeIcon className="w-4 h-4 text-green-600" />
+                    <EyeIcon className="w-4 h-4 text-[#8b6b4f]" />
                   </button>
                   <button
                     onClick={() => handleEdit(u)}
-                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded"
+                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
                   >
-                    <PencilIcon className="w-4 h-4 text-blue-600" />
+                    <PencilIcon className="w-4 h-4 text-[#6c5645]" />
                   </button>
                   <button
                     onClick={() => handleDelete(u._id)}
-                    className="p-2 bg-red-100 hover:bg-red-200 rounded"
+                    className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
                   >
-                    <TrashIcon className="w-4 h-4 text-red-600" />
+                    <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                   </button>
                 </td>
               </tr>
@@ -266,11 +274,11 @@ export default function Users() {
       </div>
 
       {/* ---------------- PAGINATION ---------------- */}
-      <div className="flex justify-center gap-4 text-[#111827]">
+      <div className="flex justify-center gap-4 text-[#1f1a17]">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(p => p - 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40"
+          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
         >
           Prev
         </button>
@@ -280,10 +288,11 @@ export default function Users() {
         <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(p => p + 1)}
-          className="px-4 py-2 bg-white border rounded disabled:opacity-40"
+          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
         >
           Next
         </button>
+      </div>
       </div>
     </div>
   );

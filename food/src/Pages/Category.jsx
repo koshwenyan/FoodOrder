@@ -84,113 +84,111 @@ export default function Categories() {
 
   /* ================= UI ================= */
   return (
-    <div className="min-h-screen bg-[#ECEFF1] p-8 space-y-6">
+    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+      <div className="px-6 py-6 sm:px-10 space-y-6">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+            Admin Console
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-semibold">
+            Category Management
+          </h1>
+          <p className="text-sm text-[#6c5645] mt-2">
+            Create, edit, and organize menu categories.
+          </p>
+        </div>
 
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold text-[#111827]">
-        Category Management
-      </h1>
+        {/* FORM */}
+        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6">
+          <h2 className="text-lg font-semibold mb-4">
+            {isEditing ? "Update Category" : "Create Category"}
+          </h2>
 
-      {/* FORM */}
-      <div className="bg-white rounded-xl shadow-md p-6 text-[#111827]">
-        <h2 className="text-lg font-semibold mb-4">
-          {isEditing ? "Update Category" : "Create Category"}
-        </h2>
+          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Category Name"
+              required
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
 
-        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Category Name"
-            required
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
+            <input
+              name="photo"
+              value={form.photo}
+              onChange={handleChange}
+              placeholder="Photo URL"
+              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            />
 
-          <input
-            name="photo"
-            value={form.photo}
-            onChange={handleChange}
-            placeholder="Photo URL"
-            className="bg-[#F5F6F7] border border-gray-300 rounded-lg px-3 py-2"
-          />
+            <div className="flex gap-2 md:col-span-2">
+              <button
+                className="rounded-full bg-[#1f1a17] text-[#f8f3ee] px-5 py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] flex items-center gap-2"
+              >
+                <PlusIcon className="w-4 h-4" />
+                {isEditing ? "Update Category" : "Create Category"}
+              </button>
 
-          <div className="flex gap-2 md:col-span-2">
-            <button
-              className="bg-[#1F2933] hover:bg-black text-white rounded-lg px-5 py-2 flex items-center gap-2"
+              <button
+                type="button"
+                onClick={resetForm}
+                className="rounded-full bg-white border border-[#e7d5c4] px-5 py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2] flex items-center gap-2"
+              >
+                <XMarkIcon className="w-4 h-4" /> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* CATEGORY CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {categories.map((cat) => (
+            <div
+              key={cat._id}
+              className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 flex flex-col"
             >
-              <PlusIcon className="w-4 h-4" />
-              {isEditing ? "Update Category" : "Create Category"}
-            </button>
+              <div className="flex justify-center mb-4">
+                <div className="w-36 h-36 rounded-full overflow-hidden bg-[#f9f4ef] border border-[#ead8c7] flex items-center justify-center">
+                  {cat.photo ? (
+                    <img
+                      src={cat.photo}
+                      alt={cat.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-[#8b6b4f] text-sm">No Image</span>
+                  )}
+                </div>
+              </div>
 
-            <button
-              type="button"
-              onClick={resetForm}
-              className="bg-gray-200 hover:bg-gray-300 rounded-lg px-5 py-2 flex items-center gap-2"
-            >
-              <XMarkIcon className="w-4 h-4" /> Cancel
-            </button>
-          </div>
-        </form>
+              <h3 className="text-sm font-semibold text-center text-[#1f1a17]">
+                {cat.name}
+              </h3>
+
+              <p className="text-xs text-center text-[#6c5645] mt-1">
+                Category
+              </p>
+
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => handleEdit(cat)}
+                  className="flex-1 rounded-full bg-[#1f1a17] text-[#f8f3ee] py-2 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f]"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => handleDelete(cat._id)}
+                  className="flex-1 rounded-full bg-white border border-[#e7d5c4] text-[#6c5645] py-2 text-sm font-semibold hover:bg-[#fbf7f2]"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-
-     
-      {/* CATEGORY CARDS */}
-{/* CATEGORY CARDS */}
-<div className="flex flex-wrap gap-24">
-  {categories.map((cat) => (
-    <div
-      key={cat._id}
-      className="w-[260px] bg-[#E5E7E7] rounded-md shadow-md p-4"
-    >
-      {/* IMAGE */}
-     {/* IMAGE */}
-<div className="flex justify-center mb-4">
-  <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-    {cat.photo ? (
-      <img
-        src={cat.photo}
-        alt={cat.name}
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <span className="text-gray-500 text-sm">No Image</span>
-    )}
-  </div>
-</div>
-
-
-      {/* NAME */}
-      <h3 className="text-sm font-semibold text-center text-[#111827]">
-        {cat.name}
-      </h3>
-
-      <p className="text-xs text-center text-gray-500 mt-1">
-        Category
-      </p>
-
-      {/* ACTION BAR */}
-      <div className="mt-4 flex gap-2">
-        <button
-          onClick={() => handleEdit(cat)}
-          className="flex-1 bg-[#1F2933] hover:bg-black text-white py-2 text-sm rounded"
-        >
-          Edit
-        </button>
-
-        <button
-          onClick={() => handleDelete(cat._id)}
-          className="flex-1 bg-gray-300 hover:bg-gray-400 text-[#111827] py-2 text-sm rounded"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-
-
-
     </div>
   );
 }
