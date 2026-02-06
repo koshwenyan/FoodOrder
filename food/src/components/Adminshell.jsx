@@ -38,7 +38,7 @@ export default function AdminShell() {
         { name: " Create Orders", icon: ClipboardDocumentListIcon, path: "orders" },
         { name: "Delivery", icon: TruckIcon, path: "delivery" },
         { name: "Menu", icon: ShoppingCartIcon, path: "menu" },
-        { name: "Orders Lists", icon: ListBulletIcon, path: "orderslists" },
+        { name: "Phone-Orders Lists", icon: ListBulletIcon, path: "orderslists" },
     ];
 
     const menu = user?.role === "shop-admin" ? shopAdminMenu : adminMenu;
