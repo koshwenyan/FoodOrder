@@ -14,6 +14,8 @@ export default function DeliveryCompanies() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const perPage = 6;
 
   const API_BASE = "http://localhost:3000/api/company";
@@ -67,10 +69,10 @@ export default function DeliveryCompanies() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this company?")) return;
     const token = localStorage.getItem("token");
     await fetch(`${API_BASE}/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
     fetchCompanies();
+    setConfirmDelete(null);
   };
 
   const toggleActive = async (company) => {
@@ -83,12 +85,20 @@ export default function DeliveryCompanies() {
     fetchCompanies();
   };
 
-  const filtered = companies.filter(
-    (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = companies.filter((c) => {
+    if (statusFilter === "active" && !c.isActive) return false;
+    if (statusFilter === "inactive" && c.isActive) return false;
+    return (
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.email.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   const totalPages = Math.ceil(filtered.length / perPage);
   const currentCompanies = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+  const totalCompanies = companies.length;
+  const activeCompanies = companies.filter((c) => c.isActive).length;
+  const inactiveCompanies = totalCompanies - activeCompanies;
 
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
@@ -142,17 +152,49 @@ export default function DeliveryCompanies() {
           </button>
         </div>
 
-        {/* SEARCH */}
-        <div className="max-w-md">
-          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
-            <span className="text-sm text-[#8b6b4f]">Search</span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Name or email"
-              className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-full"
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Total Companies
+            </p>
+            <p className="text-2xl font-semibold mt-2">{totalCompanies}</p>
           </div>
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Active
+            </p>
+            <p className="text-2xl font-semibold mt-2">{activeCompanies}</p>
+          </div>
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Inactive
+            </p>
+            <p className="text-2xl font-semibold mt-2">{inactiveCompanies}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-md w-full">
+            <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
+              <span className="text-sm text-[#8b6b4f]">Search</span>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Name or email"
+                className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-full"
+              />
+            </div>
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-full border border-[#e7d5c4] bg-white/80 px-4 py-2 text-sm text-[#6c5645] focus:outline-none"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
         </div>
 
         {/* TABLE */}
@@ -186,7 +228,7 @@ export default function DeliveryCompanies() {
                     <button onClick={() => handleEdit(c)} className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded">
                       <PencilIcon className="w-4 h-4 text-[#6c5645]" />
                     </button>
-                    <button onClick={() => handleDelete(c._id)} className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded">
+                    <button onClick={() => setConfirmDelete(c)} className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded">
                       <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                     </button>
                   </td>
@@ -195,6 +237,12 @@ export default function DeliveryCompanies() {
             </tbody>
           </table>
         </div>
+
+        {currentCompanies.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+            No delivery companies match your search.
+          </div>
+        )}
 
         {/* PAGINATION */}
         <div className="flex justify-center gap-4 text-[#1f1a17]">
@@ -217,6 +265,34 @@ export default function DeliveryCompanies() {
           </button>
         </div>
       </div>
+
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#1f1a17]">
+              Delete company?
+            </h3>
+            <p className="mt-2 text-sm text-[#6c5645]">
+              This will permanently remove{" "}
+              <span className="font-semibold">{confirmDelete.name}</span>.
+            </p>
+            <div className="mt-6 flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-full bg-white border border-[#e7d5c4] px-4 py-2 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(confirmDelete._id)}
+                className="rounded-full bg-[#a4553a] text-white px-4 py-2 text-sm font-semibold hover:bg-[#8f4a34]"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,6 +11,9 @@ export default function Shops() {
   const [categories, setCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -106,16 +109,31 @@ export default function Shops() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this shop?")) return;
     const token = localStorage.getItem("token");
     await fetch(`${API_SHOP}/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
     setShops(shops.filter((s) => s._id !== id));
+    setConfirmDelete(null);
   };
 
   /* ================= UI ================= */
+  const term = search.trim().toLowerCase();
+  const filteredShops = shops.filter((shop) => {
+    if (statusFilter === "active" && !shop.isActive) return false;
+    if (statusFilter === "inactive" && shop.isActive) return false;
+    if (!term) return true;
+    return (
+      shop.name?.toLowerCase().includes(term) ||
+      shop.address?.toLowerCase().includes(term) ||
+      shop.category?.[0]?.name?.toLowerCase().includes(term)
+    );
+  });
+  const totalShops = shops.length;
+  const activeShops = shops.filter((s) => s.isActive).length;
+  const inactiveShops = totalShops - activeShops;
+
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
@@ -220,9 +238,52 @@ export default function Shops() {
           </form>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Total Shops
+            </p>
+            <p className="text-2xl font-semibold mt-2">{totalShops}</p>
+          </div>
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Active
+            </p>
+            <p className="text-2xl font-semibold mt-2">{activeShops}</p>
+          </div>
+          <div className="rounded-2xl bg-white/80 border border-[#e7d5c4] px-4 py-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              Inactive
+            </p>
+            <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
+            <span className="text-sm text-[#8b6b4f]">Search</span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Name, address, category"
+              className="bg-transparent text-sm outline-none placeholder:text-[#b5a397] w-60"
+            />
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-full border border-[#e7d5c4] bg-white/80 px-4 py-2 text-sm text-[#6c5645] focus:outline-none"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
         {/* SHOP CARDS */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {shops.map((shop) => (
+          {filteredShops.map((shop) => (
             <div
               key={shop._id}
               className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm hover:shadow-md transition p-4"
@@ -245,8 +306,14 @@ export default function Shops() {
                 <span>
                   {shop.OpenTime} – {shop.CloseTime}
                 </span>
-                <span className="px-2 py-1 rounded-full bg-[#e7eddc] text-[#5b7a40] font-medium">
-                  Active
+                <span
+                  className={`px-2 py-1 rounded-full font-medium ${
+                    shop.isActive
+                      ? "bg-[#e7eddc] text-[#5b7a40]"
+                      : "bg-[#f3d7cf] text-[#a4553a]"
+                  }`}
+                >
+                  {shop.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
 
@@ -259,7 +326,7 @@ export default function Shops() {
                 </button>
 
                 <button
-                  onClick={() => handleDelete(shop._id)}
+                  onClick={() => setConfirmDelete(shop)}
                   className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
                 >
                   <TrashIcon className="w-4 h-4 text-[#a4553a]" />
@@ -268,7 +335,41 @@ export default function Shops() {
             </div>
           ))}
         </div>
+
+        {filteredShops.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+            No shops match your search.
+          </div>
+        )}
       </div>
+
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#1f1a17]">
+              Delete shop?
+            </h3>
+            <p className="mt-2 text-sm text-[#6c5645]">
+              This will permanently remove{" "}
+              <span className="font-semibold">{confirmDelete.name}</span>.
+            </p>
+            <div className="mt-6 flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-full bg-white border border-[#e7d5c4] px-4 py-2 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(confirmDelete._id)}
+                className="rounded-full bg-[#a4553a] text-white px-4 py-2 text-sm font-semibold hover:bg-[#8f4a34]"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
