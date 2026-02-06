@@ -11,6 +11,8 @@ import PrivateRoute from "./routes/PrivateRoute.jsx";
 import Login from "./Pages/Login.jsx";
 import CustomerLogin from "./Pages/CustomerLogin.jsx";
 import CustomerRegister from "./Pages/CustomerRegister.jsx";
+import ForgotPassword from "./Pages/ForgotPassword.jsx";
+import ResetPassword from "./Pages/ResetPassword.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AdminShell from "./components/Adminshell.jsx";
 import Shop from "./Pages/Shop.jsx";
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/customer/login" element={<CustomerLogin />} />
           <Route path="/customer/register" element={<CustomerRegister />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* ADMIN */}
           <Route

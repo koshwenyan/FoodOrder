@@ -29,8 +29,8 @@ export default function CustomerLogin() {
       } else {
         setError("Unauthorized role");
       }
-    } catch {
-      setError("Invalid email or password");
+    } catch (err) {
+      setError(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -118,6 +118,15 @@ export default function CustomerLogin() {
         </button>
 
         <p className="mt-5 text-center text-sm text-[#6c5645]">
+          <Link
+            to="/forgot-password"
+            className="font-semibold text-[#1f1a17] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </p>
+
+        <p className="mt-2 text-center text-sm text-[#6c5645]">
           Don’t have an account?{" "}
           <Link
             to="/customer/register"

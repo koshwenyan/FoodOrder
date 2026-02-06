@@ -1,34 +1,32 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import api from "../api/axios";
 
-export default function Login() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+export default function ResetPassword() {
+  const [token, setToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
-      const user = await login(email, password);
-
-      if (user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (user.role === "shop-admin") {
-        navigate("/shop-admin/shopadmindashboard");
-      } else {
-        setError("Unauthorized role");
-      }
+      const res = await api.post("/user/reset-password", {
+        token,
+        newPassword,
+      });
+      setSuccess(res.data.message || "Password reset successful");
+      setToken("");
+      setNewPassword("");
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      const msg = err?.response?.data?.message || "Reset failed";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -42,11 +40,11 @@ export default function Login() {
       >
         <div className="rounded-2xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-5 border border-[#ead8c7] text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
-            Admin Access
+            Reset Password
           </p>
-          <h1 className="text-3xl font-semibold mt-1">Login</h1>
+          <h1 className="text-3xl font-semibold mt-1">Set New Password</h1>
           <p className="text-sm text-[#6c5645] mt-1">
-            Secure access to your dashboard
+            Paste your reset token and choose a new password.
           </p>
         </div>
 
@@ -56,27 +54,40 @@ export default function Login() {
           </div>
         )}
 
-        {/* Email */}
+        {success && (
+          <div className="mt-6 mb-4 rounded-2xl bg-green-500/10 border border-green-500/30 text-green-700 px-4 py-3 text-sm">
+            {success}
+            <div className="mt-2">
+              <Link
+                to="/login"
+                className="font-semibold text-[#1f1a17] hover:underline"
+              >
+                Go to Login
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="mt-6 mb-4">
           <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
-            Email
+            Reset Token
           </label>
           <input
-            type="email"
+            type="text"
             required
             className="w-full rounded-xl bg-white/80 border border-[#ead8c7] px-3 py-2 
             text-[#1f1a17] placeholder-[#8b6b4f]/70
             focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
             transition"
-            placeholder="admin@email.com"
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Paste token here"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
           />
         </div>
 
-        {/* Password */}
         <div className="mb-6">
           <label className="block text-xs uppercase tracking-wide text-[#8b6b4f] mb-1">
-            Password
+            New Password
           </label>
           <div className="relative">
             <input
@@ -87,7 +98,8 @@ export default function Login() {
               focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
               transition"
               placeholder="••••••••"
-              onChange={(e) => setPassword(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
             <button
               type="button"
@@ -107,39 +119,16 @@ export default function Login() {
           transition hover:bg-[#2b241f] active:scale-[0.98]
           disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#f8f3ee] border-t-transparent" />
-              Logging in...
-            </span>
-          ) : (
-            "Login"
-          )}
+          {loading ? "Resetting..." : "Reset Password"}
         </button>
 
         <p className="mt-5 text-center text-sm text-[#6c5645]">
+          Back to{" "}
           <Link
-            to="/forgot-password"
+            to="/login"
             className="font-semibold text-[#1f1a17] hover:underline"
           >
-            Forgot password?
-          </Link>
-        </p>
-
-        <p className="mt-2 text-center text-sm text-[#6c5645]">
-          Customer?{" "}
-          <Link
-            to="/customer/login"
-            className="font-semibold text-[#1f1a17] hover:underline"
-          >
-            Login here
-          </Link>{" "}
-          or{" "}
-          <Link
-            to="/customer/register"
-            className="font-semibold text-[#1f1a17] hover:underline"
-          >
-            Register
+            Login
           </Link>
         </p>
       </form>

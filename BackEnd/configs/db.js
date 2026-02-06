@@ -8,7 +8,7 @@ const connnectedDB = async () => {
         try {
             const url = new URL(baseUrl);
             // Always set DB name cleanly to avoid breaking query params
-            url.pathname = "/food_order";
+            url.pathname = "/test";
             mongoUrl = url.toString();
         } catch {
             // Fallback: if URL parsing fails, use the original env value
