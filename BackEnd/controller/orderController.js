@@ -453,50 +453,77 @@ export const getMyDeliveryOrders = async (req, res) => {
 };
 
 // ============ Delivery company order counts (assigned & delivered) ============
+
+
 export const getCompanyOrderCounts = async (req, res) => {
     try {
         // 🔐 Only company-admin
         if (req.user.role !== "company-admin") {
             return res.status(403).json({
-                message: "Only company-admin can view order counts"
+                success: false,
+                message: "Only company-admin can view order counts",
             });
         }
 
+        // 🏢 Must have company
         if (!req.user.companyId) {
             return res.status(400).json({
-                message: "Company not assigned to user"
+                success: false,
+                message: "Company not assigned to user",
             });
         }
 
+        const companyId = req.user.companyId;
+
+        /* ================= COUNT ================= */
+
         const assignedCount = await Order.countDocuments({
-            deliveryCompany: req.user.companyId,
-            status: "assigned"
+            deliveryCompany: companyId,
+            status: "assigned",
         });
 
-        const pickupedCount = await Order.countDocuments({
-            deliveryCompany: req.user.companyId,
-            status: "picked-up"
+        const pickedUpCount = await Order.countDocuments({
+            deliveryCompany: companyId,
+            status: "picked-up",
         });
 
         const deliveredCount = await Order.countDocuments({
-            deliveryCompany: req.user.companyId,
-            status: "delivered"
+            deliveryCompany: companyId,
+            status: "delivered",
         });
+
+        /* ================= ORDERS ================= */
+
+        const orders = await Order.find({
+            deliveryCompany: companyId,   // 🔥 FIXED
+        })
+            .populate("customer", "name phone")
+            .populate("shopId", "name address")
+            .populate("deliveryStaff", "name phone")
+            .populate("items.menuId", "name price")
+            .sort({ createdAt: -1 });
+
+        /* ================= RESPONSE ================= */
 
         res.status(200).json({
             success: true,
-            data: {
+            counts: {
                 assigned: assignedCount,
+                pickedUp: pickedUpCount,
                 delivered: deliveredCount,
-                pickup: pickupedCount
-            }
+            },
+            data: orders,
         });
 
     } catch (error) {
         console.error("Get company order counts error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
     }
 };
+
 
 // ============ Delivery staff picked-up & delivered orders ============
 export const getStaffPickedAndDeliveredOrders = async (req, res) => {

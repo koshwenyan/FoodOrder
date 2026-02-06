@@ -29,7 +29,7 @@ userRouter.delete("/:id", authMiddleware, deleteUser);
 userRouter.post("/login", login);
 userRouter.post("/logout", authMiddleware, logout);
 // Public register for customer role; admin/staff roles still enforced in controller
-userRouter.post("/register", register);
+userRouter.post("/register", authMiddleware, register);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password", resetPassword);
 

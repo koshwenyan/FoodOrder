@@ -7,8 +7,16 @@ export default function DeliveryCompanyStaff() {
 
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+    const [createForm, setCreateForm] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        password: "",
+    });
 
     const user = JSON.parse(localStorage.getItem("user"));
     const companyId = user?.companyId;
@@ -74,9 +82,25 @@ export default function DeliveryCompanyStaff() {
         setSelectedStaff(null);
     };
 
+    const handleCreateModalClose = () => {
+        setIsCreateModalOpen(false);
+        setCreateForm({
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+            password: "",
+        });
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleCreateInputChange = (e) => {
+        const { name, value } = e.target;
+        setCreateForm((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleUpdate = async () => {
@@ -116,11 +140,46 @@ export default function DeliveryCompanyStaff() {
         }
     };
 
+    const handleCreateStaff = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Authentication required to create this role");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/user/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ...createForm,
+                    role: "company-staff",
+                    companyId,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert("Staff created successfully");
+                setStaffs((prev) => [data.data, ...prev]);
+                handleCreateModalClose();
+            } else {
+                alert(data.message || "Failed to create staff");
+            }
+        } catch (err) {
+            console.error("Error creating staff:", err);
+            alert("Error creating staff");
+        }
+    };
 
 
 
     if (loading) {
-        return <div className="px-6 py-6 sm:px-10 text-[#6c5645]">Loading staff...</div>;
+        return <div className="px-6 py-6 sm:px-10 text-[#423d38]">Loading staff...</div>;
     }
 
     return (
@@ -143,9 +202,17 @@ export default function DeliveryCompanyStaff() {
                         <h2 className="text-lg font-semibold text-[#1f1a17]">
                             Staff List ({staffs.length})
                         </h2>
-                        <span className="text-sm text-[#8b6b4f]">
-                            Company staff directory
-                        </span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-[#8b6b4f]">
+                                Company staff directory
+                            </span>
+                            <button
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="bg-[#8b6b4f] hover:bg-[#6c5645] text-white text-sm px-4 py-2 rounded-full"
+                            >
+                                Add Staff
+                            </button>
+                        </div>
                     </div>
 
                     {staffs.length === 0 ? (
@@ -246,6 +313,71 @@ export default function DeliveryCompanyStaff() {
                                 className="bg-[#8b6b4f] hover:bg-[#6c5645] text-white py-3 rounded-xl mt-2"
                             >
                                 Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ================= CREATE MODAL ================= */}
+            {isCreateModalOpen && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+                    <div className="relative bg-white p-6 rounded-3xl w-full max-w-md text-[#1f1a17] shadow-xl border border-[#ead8c7]">
+                        <button
+                            onClick={handleCreateModalClose}
+                            className="absolute top-3 right-3 text-[#8b6b4f] hover:text-[#6c5645]"
+                        >
+                            <XMarkIcon className="w-6 h-6" />
+                        </button>
+
+                        <h2 className="text-2xl font-semibold mb-4 text-center">Add Staff</h2>
+
+                        <div className="flex flex-col gap-4">
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Name"
+                                value={createForm.name}
+                                onChange={handleCreateInputChange}
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
+                            />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={createForm.email}
+                                onChange={handleCreateInputChange}
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
+                            />
+                            <input
+                                type="text"
+                                name="phone"
+                                placeholder="Phone"
+                                value={createForm.phone}
+                                onChange={handleCreateInputChange}
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
+                            />
+                            <input
+                                type="text"
+                                name="address"
+                                placeholder="Address"
+                                value={createForm.address}
+                                onChange={handleCreateInputChange}
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
+                            />
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={createForm.password}
+                                onChange={handleCreateInputChange}
+                                className="p-3 rounded-xl bg-[#fbf7f2] border border-[#ead8c7] text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#ead8c7]"
+                            />
+                            <button
+                                onClick={handleCreateStaff}
+                                className="bg-[#8b6b4f] hover:bg-[#6c5645] text-white py-3 rounded-xl mt-2"
+                            >
+                                Create Staff
                             </button>
                         </div>
                     </div>
