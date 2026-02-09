@@ -128,17 +128,17 @@ const DeliveryCompanyOrder = () => {
           <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
             Delivery Company
           </p>
-          <h1 className="text-3xl sm:text-4xl font-semibold">
+          <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
             Company Orders
           </h1>
-          <p className="text-sm text-[#6c5645] mt-2">
+          <p className="text-sm text-[#6c5645] mt-2 max-w-2xl">
             Track assigned orders and delivery progress.
           </p>
         </div>
 
         <div className="mt-8 rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-[#ead8c7] flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[#1f1a17]">
+            <h2 className="text-lg font-semibold text-[#1f1a17] tracking-tight">
               Orders ({filteredOrders.length})
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -194,104 +194,97 @@ const DeliveryCompanyOrder = () => {
           )}
 
           {!loading && !error && filteredOrders.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full table-auto">
-                <thead className="bg-[#f8f3ee] text-left">
-                  <tr>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      #
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Customer
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Shop
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Address
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Total
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Staff
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Actions
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#6c5645]">
-                      Created
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrders.map((order, index) => (
-                    <tr
-                      key={order._id}
-                      className="border-t border-[#ead8c7] hover:bg-[#fbf7f2]"
-                    >
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
-                        {index + 1}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
+            <div className="grid gap-4 lg:grid-cols-2">
+              {filteredOrders.map((order, index) => (
+                <div
+                  key={order._id}
+                  className="rounded-3xl border border-[#ead8c7] bg-white/95 p-5 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Order #{index + 1}
+                      </p>
+                      <h3 className="mt-2 text-2xl font-semibold leading-tight">
                         {order.customer?.name || "N/A"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
+                      </h3>
+                      <p className="text-sm text-[#6c5645] mt-1">
                         {order.shopId?.name || "N/A"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645]">
+                      {order.status}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Address
+                      </p>
+                      <p className="mt-2 text-[#1f1a17]">
                         {order.deliveryAddress || "N/A"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Total
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-[#1f1a17]">
                         {formatMoney(order.totalAmount)}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        <span className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645]">
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#1f1a17]">
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#6c5645]">
+                    <div>
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Staff
+                      </span>
+                      <p className="mt-1 text-sm text-[#1f1a17]">
                         {order.deliveryStaff?.name || "Unassigned"}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
-                          >
-                            Details
-                          </button>
-                          {user?.role === "company-admin" && (
-                            <select
-                              value={order.deliveryStaff?._id || ""}
-                              onChange={(event) =>
-                                handleAssignStaff(order._id, event.target.value)
-                              }
-                              disabled={assigningId === order._id}
-                              className="rounded-full border border-[#ead8c7] bg-white px-3 py-1 text-xs outline-none focus:border-[#1f1a17]"
-                            >
-                              <option value="">Assign staff</option>
-                              {staffs.map((staff) => (
-                                <option key={staff._id} value={staff._id}>
-                                  {staff.name}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-xs text-[#6c5645]">
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                        Created
+                      </span>
+                      <p className="mt-1 text-xs text-[#6c5645]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "N/A"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                    >
+                      Details
+                    </button>
+                    {user?.role === "company-admin" &&
+                      order.status !== "complete" && (
+                      <select
+                        value={order.deliveryStaff?._id || ""}
+                        onChange={(event) =>
+                          handleAssignStaff(order._id, event.target.value)
+                        }
+                        disabled={assigningId === order._id || Boolean(order.deliveryStaff?._id)}
+                        className="rounded-full border border-[#ead8c7] bg-white px-3 py-1 text-xs outline-none focus:border-[#1f1a17]"
+                      >
+                        <option value="">Assign staff</option>
+                        {staffs.map((staff) => (
+                          <option key={staff._id} value={staff._id}>
+                            {staff.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -359,7 +352,8 @@ const DeliveryCompanyOrder = () => {
                 </div>
               </div>
 
-              {user?.role === "company-staff" && (
+              {user?.role === "company-staff" &&
+                selectedOrder.status !== "complete" && (
                 <div className="rounded-2xl border border-[#ead8c7] bg-white p-4">
                   <h4 className="text-sm font-semibold">Update status</h4>
                   <div className="mt-3 flex flex-wrap gap-2">
