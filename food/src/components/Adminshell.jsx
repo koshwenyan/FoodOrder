@@ -20,6 +20,7 @@ export default function AdminShell() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [me, setMe] = useState(null);
+    const [shopName, setShopName] = useState("");
 
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -67,6 +68,7 @@ export default function AdminShell() {
     /* ================= FETCH ME ================= */
 
     const API_ME = "http://localhost:3000/api/user/me";
+    const API_SHOP = "http://localhost:3000/api/shop";
 
     const fetchMe = async () => {
         try {
@@ -78,9 +80,29 @@ export default function AdminShell() {
 
             const data = await res.json();
 
-            if (data.success) setMe(data.user);
+            if (data.success) {
+                setMe(data.user);
+
+                const shopId =
+                    typeof data.user?.shopId === "object"
+                        ? data.user?.shopId?._id
+                        : data.user?.shopId;
+
+                if (data.user?.role === "shop-admin" && shopId) {
+                    try {
+                        const shopRes = await fetch(`${API_SHOP}/${shopId}`);
+                        const shopData = await shopRes.json();
+                        setShopName(shopData?.data?.name || "");
+                    } catch {
+                        setShopName("");
+                    }
+                } else {
+                    setShopName("");
+                }
+            }
         } catch {
             setMe(null);
+            setShopName("");
         }
     };
 
@@ -117,6 +139,9 @@ export default function AdminShell() {
     const activeLabel =
         menu.find((item) => location.pathname.includes(item.path))?.name ||
         (user?.role === "shop-admin" ? "Shop Admin" : "Admin");
+
+    const shopAdminLabel =
+        user?.role === "shop-admin" && shopName ? `• ${shopName}` : "";
 
     return (
         <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
@@ -198,9 +223,17 @@ export default function AdminShell() {
                             <span className="uppercase tracking-[0.2em]">Dashboard</span>
                             <span>•</span>
                             <span className="text-[#1f1a17] font-medium">{activeLabel}</span>
+                            {shopAdminLabel && (
+                                <span className="text-[#8b6b4f]">{shopAdminLabel}</span>
+                            )}
                         </div>
                         <h1 className="orders-title text-xl font-semibold">
                             {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
+                            {shopName && (
+                                <span className="ml-2 text-sm font-medium text-[#8b6b4f]">
+                                    · {shopName}
+                                </span>
+                            )}
                         </h1>
                     </div>
 

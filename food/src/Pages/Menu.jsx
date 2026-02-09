@@ -5,10 +5,12 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../context/AuthContext";
 
 export default function Menus() {
   const [menus, setMenus] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -23,6 +25,7 @@ export default function Menus() {
   });
 
   const [showForm, setShowForm] = useState(false);
+  const { user } = useAuth();
 
   const API_MENU = "http://localhost:3000/api/menu";
   const API_CATEGORY = "http://localhost:3000/api/category";
@@ -32,11 +35,22 @@ export default function Menus() {
 
   /* ================= FETCH ================= */
   const fetchMenus = async () => {
+    setError("");
     const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You are not logged in.");
+      return;
+    }
+
     const res = await fetch(`${API_MENU}/my-shop`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
+
+    if (!res.ok) {
+      setError(data?.message || "Failed to load menu.");
+      return;
+    }
 
     const normalizedMenus = (data.data || []).map((m) => ({
       ...m,
@@ -52,7 +66,9 @@ export default function Menus() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
-    setCategories(data.data || []);
+    if (res.ok) {
+      setCategories(data.data || []);
+    }
   };
 
   useEffect(() => {
@@ -83,12 +99,22 @@ export default function Menus() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+    setError("");
+
+    if (!token) {
+      setError("You are not logged in.");
+      return;
+    }
+    if (user?.role !== "shop-admin") {
+      setError("Only shop-admin can create menu items.");
+      return;
+    }
 
     const url = isEditing
       ? `${API_MENU}/update/${editingId}`
       : `${API_MENU}/create`;
 
-    await fetch(url, {
+    const res = await fetch(url, {
       method: isEditing ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
@@ -99,6 +125,12 @@ export default function Menus() {
         price: Number(form.price),
       }),
     });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(data?.message || "Failed to save menu.");
+      return;
+    }
 
     fetchMenus();
     resetForm();
@@ -155,6 +187,12 @@ export default function Menus() {
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {error}
+          </div>
+        )}
 
         {/* ================= DRAWER ================= */}
         {showForm && (
