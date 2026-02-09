@@ -474,7 +474,10 @@ export const getAllUsers = async (req, res) => {
 //get login user data
 export const getLoginUser = async (req, res) => {
     try {
-        const user = req.user;
+        const user = await User.findById(req.user._id)
+            .select("-password")
+            .populate("shopId", "name")
+            .populate("companyId", "name");
 
         res.status(200).json({
             success: true,

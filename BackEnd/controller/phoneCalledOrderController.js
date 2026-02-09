@@ -110,3 +110,154 @@ export const getPhoneCalledOrderById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getPhoneCalledOrdersByCompany = async (req, res) => {
+    try {
+        if (req.user.role !== "company-admin") {
+            return res.status(403).json({
+                message: "Only company-admin can view company phone orders",
+            });
+        }
+
+        if (!req.user.companyId) {
+            return res.status(400).json({
+                message: "Company not assigned to this admin",
+            });
+        }
+
+        const orders = await PhoneCalledOrder.find({
+            deliveryCompany: req.user.companyId,
+        })
+            .populate("deliveryCompany", "name phone")
+            .populate("items.menu", "name price")
+            .populate("createdBy", "name email")
+            .populate("deliveryStaff", "name phone")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            totalOrders: orders.length,
+            data: orders,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const assignPhoneCalledOrderStaff = async (req, res) => {
+    try {
+        if (req.user.role !== "company-admin") {
+            return res.status(403).json({
+                message: "Only company-admin can assign staff",
+            });
+        }
+
+        const { orderId } = req.params;
+        const { staffId } = req.body;
+
+        const order = await PhoneCalledOrder.findById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        if (order.deliveryCompany?.toString() !== req.user.companyId?.toString()) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        order.deliveryStaff = staffId;
+        if (order.status === "confirmed") {
+            order.status = "assigned";
+        }
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Order assigned to delivery staff",
+            data: order,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updatePhoneCalledOrderStatus = async (req, res) => {
+    try {
+        if (!["company-admin", "company-staff"].includes(req.user.role)) {
+            return res.status(403).json({
+                message: "Only company-admin or company-staff can update status",
+            });
+        }
+
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        const allowedStatuses = [
+            "confirmed",
+            "assigned",
+            "picked-up",
+            "delivered",
+            "complete",
+            "cancelled",
+        ];
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid status" });
+        }
+
+        const order = await PhoneCalledOrder.findById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        if (req.user.role === "company-admin") {
+            if (order.deliveryCompany?.toString() !== req.user.companyId?.toString()) {
+                return res.status(403).json({ message: "Access denied" });
+            }
+        } else if (req.user.role === "company-staff") {
+            if (order.deliveryStaff?.toString() !== req.user._id?.toString()) {
+                return res.status(403).json({ message: "Access denied" });
+            }
+        }
+
+        order.status = status;
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Status updated successfully",
+            data: order,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getPhoneCalledOrdersByStaff = async (req, res) => {
+    try {
+        if (req.user.role !== "company-staff") {
+            return res.status(403).json({
+                message: "Only delivery staff can access this",
+            });
+        }
+
+        const orders = await PhoneCalledOrder.find({
+            deliveryStaff: req.user._id,
+        })
+            .populate("deliveryCompany", "name phone")
+            .populate("items.menu", "name price")
+            .populate("createdBy", "name email")
+            .populate("shopId", "name address")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            totalOrders: orders.length,
+            data: orders,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

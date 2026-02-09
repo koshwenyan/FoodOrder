@@ -44,6 +44,7 @@ export default function AdminShell() {
     const companyAdminMenu = [
         { name: "Dashboard", icon: HomeIcon, path: "companyadmindashboard" }, // ✅ fixed path
         { name: "Assigned Orders", icon: ClipboardDocumentListIcon, path: "AssignedOrder" },
+        { name: "Phone Orders", icon: ListBulletIcon, path: "phone-orders" },
         { name: "Delivery Staff", icon: TruckIcon, path: "delivery-staff" },
     ];
 
@@ -210,6 +211,16 @@ export default function AdminShell() {
                             <div className="text-[#8b6b4f]">{formattedDate}</div>
                             <div className="font-semibold">{formattedTime}</div>
                         </div>
+
+                        {/* Company */}
+                        {me?.companyId?.name && (
+                            <div className="text-right text-sm">
+                                <div className="text-[#8b6b4f]">Company</div>
+                                <div className="font-semibold text-[#1f1a17]">
+                                    {me.companyId.name}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Profile */}
                         <div className="flex items-center gap-3">

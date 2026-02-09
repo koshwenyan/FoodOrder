@@ -72,8 +72,21 @@ const phoneCalledOrderSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: ["confirmed", "delivered",],
+            enum: [
+                "confirmed",
+                "assigned",
+                "picked-up",
+                "delivered",
+                "complete",
+                "cancelled",
+            ],
             default: "confirmed",
+        },
+
+        deliveryStaff: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null,
         },
     },
     { timestamps: true }
