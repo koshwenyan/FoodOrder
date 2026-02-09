@@ -146,6 +146,7 @@ export const login = async (req, res) => {
                 role: user.role,
                 shopId: user.shopId,
                 companyId: user.companyId,
+                walletBalance: user.walletBalance ?? 0,
             },
         });
     } catch (error) {
@@ -490,6 +491,7 @@ export const getLoginUser = async (req, res) => {
                 phone: user.phone,
                 shopId: user.shopId,
                 companyId: user.companyId,
+                walletBalance: user.walletBalance ?? 0,
             },
         });
     } catch (error) {
@@ -497,6 +499,35 @@ export const getLoginUser = async (req, res) => {
             message: "Failed to get logged in user",
             error: error.message,
         });
+    }
+};
+
+// ================= Wallet Top-up (Mock KPay) =================
+export const walletTopUpMock = async (req, res) => {
+    try {
+        if (req.user.role !== "customer") {
+            return res.status(403).json({ message: "Only customers can top up wallet" });
+        }
+
+        const amount = Number(req.body.amount);
+        if (Number.isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: "Invalid top-up amount" });
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.walletBalance = Number(user.walletBalance || 0) + amount;
+        await user.save();
+
+        res.status(200).json({
+            message: "Top-up successful",
+            data: { walletBalance: user.walletBalance }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Top-up failed", error: error.message });
     }
 };
 

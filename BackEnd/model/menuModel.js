@@ -23,6 +23,24 @@ const menuSchema = new mongoose.Schema(
         image: {
             type: String
         },
+        tags: [
+            {
+                type: String,
+                trim: true
+            }
+        ],
+        allergens: [
+            {
+                type: String,
+                trim: true
+            }
+        ],
+        addOns: [
+            {
+                name: { type: String, trim: true },
+                price: { type: Number, default: 0 }
+            }
+        ],
         isAvailable: {
             type: Boolean,
             default: true

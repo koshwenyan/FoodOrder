@@ -24,7 +24,8 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    walletBalance: { type: Number, default: 0 }
 }, { timestamps: true })
 
 const User = mongoose.model("User", userSchema);

@@ -15,13 +15,15 @@ import {
     getOrdersByCompany,
     getCompanyOrderCounts,
     getStaffPickedAndDeliveredOrders,
-    getShopOrderStatusTotals
+    getShopOrderStatusTotals,
+    mockPayOrder
 } from "../controller/orderController.js";
 
 const router = express.Router();
 
 // customer
 router.post("/create", protect, createOrder);
+router.post("/:orderId/pay-mock", protect, mockPayOrder);
 
 // shop-admin and staff
 router.put("/:orderId/status", protect, updateOrderStatus);

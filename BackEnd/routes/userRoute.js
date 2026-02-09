@@ -10,7 +10,8 @@ import {
     getAllUsers,
     getUserById,
     getLoginUser,
-    updateMyLocation
+    updateMyLocation,
+    walletTopUpMock
 } from "../controller/userController.js";
 
 import { authMiddleware, adminMiddleware, protect, optionalAuth } from "../middleware/authMiddleware.js";
@@ -20,6 +21,7 @@ const userRouter = express.Router();
 // 👈 ALWAYS put static routes FIRST
 userRouter.get("/me", protect, getLoginUser);
 userRouter.put("/location", protect, updateMyLocation);
+userRouter.post("/wallet/topup-mock", protect, walletTopUpMock);
 
 // User CRUD
 userRouter.get("/all", authMiddleware, adminMiddleware("admin"), getAllUsers);

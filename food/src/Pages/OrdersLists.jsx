@@ -236,25 +236,41 @@ export default function OrdersLists() {
                 Items
               </p>
               <div className="mt-2 space-y-3">
-                {(drawerOrder.items || []).map((item) => (
-                  <div
-                    key={item._id}
-                    className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
-                  >
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium text-[#1f1a17]">
-                        {item.menu?.name || "Item"}
-                      </span>
-                      <span className="text-[#6c5645]">
-                        {item.price?.toLocaleString()} Ks
-                      </span>
+                {(drawerOrder.items || []).map((item) => {
+                  const unitPrice =
+                    Number(item.price || 0) + Number(item.addOnsTotal || 0);
+                  const lineTotal =
+                    Number(item.lineTotal || unitPrice * (item.quantity || 0));
+                  return (
+                    <div
+                      key={item._id}
+                      className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
+                    >
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium text-[#1f1a17]">
+                          {item.menu?.name || item.name || "Item"}
+                        </span>
+                        <span className="text-[#6c5645]">
+                          {unitPrice.toLocaleString()} Ks
+                        </span>
+                      </div>
+                      {item.addOns?.length > 0 && (
+                        <div className="mt-1 text-xs text-[#6c5645]">
+                          Add-ons: {item.addOns.map((addOn) => addOn.name).join(", ")}
+                        </div>
+                      )}
+                      {item.note && (
+                        <div className="mt-1 text-xs text-[#6c5645]">
+                          Note: {item.note}
+                        </div>
+                      )}
+                      <div className="mt-1 text-xs text-[#8b6b4f]">
+                        Qty: {item.quantity} · Subtotal:{" "}
+                        {lineTotal.toLocaleString()} Ks
+                      </div>
                     </div>
-                    <div className="mt-1 text-xs text-[#8b6b4f]">
-                      Qty: {item.quantity} · Subtotal:{" "}
-                      {(item.price * item.quantity).toLocaleString()} Ks
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

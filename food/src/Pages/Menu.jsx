@@ -21,6 +21,9 @@ export default function Menus() {
     description: "",
     price: "",
     image: "",
+    tagsInput: "",
+    allergensInput: "",
+    addOnsInput: "",
     isAvailable: true,
   });
 
@@ -84,6 +87,9 @@ export default function Menus() {
       description: "",
       price: "",
       image: "",
+      tagsInput: "",
+      allergensInput: "",
+      addOnsInput: "",
       isAvailable: true,
     });
     setIsEditing(false);
@@ -123,6 +129,31 @@ export default function Menus() {
       body: JSON.stringify({
         ...form,
         price: Number(form.price),
+        tags: form.tagsInput
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        allergens: form.allergensInput
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+        addOns: form.addOnsInput
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => {
+            const separator = line.includes("|")
+              ? "|"
+              : line.includes(":")
+              ? ":"
+              : ",";
+            const [namePart, pricePart] = line.split(separator);
+            return {
+              name: namePart?.trim() || "",
+              price: Number(pricePart?.trim() || 0),
+            };
+          })
+          .filter((addOn) => addOn.name),
       }),
     });
 
@@ -143,6 +174,15 @@ export default function Menus() {
       description: menu.description,
       price: menu.price,
       image: menu.image,
+      tagsInput: Array.isArray(menu.tags) ? menu.tags.join(", ") : "",
+      allergensInput: Array.isArray(menu.allergens)
+        ? menu.allergens.join(", ")
+        : "",
+      addOnsInput: Array.isArray(menu.addOns)
+        ? menu.addOns
+            .map((addOn) => `${addOn.name}|${Number(addOn.price || 0)}`)
+            .join("\n")
+        : "",
       isAvailable: menu.isAvailable,
     });
     setIsEditing(true);
@@ -262,6 +302,31 @@ export default function Menus() {
                     onChange={handleChange}
                     placeholder="Description"
                     className={inputClass}
+                  />
+
+                  <input
+                    name="tagsInput"
+                    value={form.tagsInput}
+                    onChange={handleChange}
+                    placeholder="Tags (comma separated)"
+                    className={inputClass}
+                  />
+
+                  <input
+                    name="allergensInput"
+                    value={form.allergensInput}
+                    onChange={handleChange}
+                    placeholder="Allergens (comma separated)"
+                    className={inputClass}
+                  />
+
+                  <textarea
+                    name="addOnsInput"
+                    value={form.addOnsInput}
+                    onChange={handleChange}
+                    placeholder={`Add-ons (one per line, e.g.)\nCheese|500\nExtra sauce|300`}
+                    className={inputClass}
+                    rows={4}
                   />
 
                   <label className="flex items-center gap-2 text-sm text-[#6c5645]">

@@ -331,24 +331,40 @@ const DeliveryCompanyOrder = () => {
               <div className="rounded-2xl border border-[#ead8c7] bg-white p-4">
                 <h4 className="text-sm font-semibold">Items</h4>
                 <div className="mt-3 space-y-2">
-                  {selectedOrder.items?.map((item, idx) => (
-                    <div
-                      key={`${item.menuId?._id || idx}`}
-                      className="flex items-center justify-between text-sm"
-                    >
-                      <div>
-                        <p className="font-semibold">
-                          {item.menuId?.name || item.name || "Menu item"}
-                        </p>
-                        <p className="text-xs text-[#8b6b4f]">
-                          Qty: {item.quantity}
+                  {selectedOrder.items?.map((item, idx) => {
+                    const unitPrice =
+                      Number(item.menuId?.price || item.price || 0) +
+                      Number(item.addOnsTotal || 0);
+                    return (
+                      <div
+                        key={`${item.menuId?._id || idx}`}
+                        className="flex items-center justify-between text-sm"
+                      >
+                        <div>
+                          <p className="font-semibold">
+                            {item.menuId?.name || item.name || "Menu item"}
+                          </p>
+                          <p className="text-xs text-[#8b6b4f]">
+                            Qty: {item.quantity}
+                          </p>
+                          {item.addOns?.length > 0 && (
+                            <p className="text-xs text-[#6c5645]">
+                              Add-ons:{" "}
+                              {item.addOns.map((addOn) => addOn.name).join(", ")}
+                            </p>
+                          )}
+                          {item.note && (
+                            <p className="text-xs text-[#6c5645]">
+                              Note: {item.note}
+                            </p>
+                          )}
+                        </div>
+                        <p className="text-sm font-semibold">
+                          {formatMoney(unitPrice)}
                         </p>
                       </div>
-                      <p className="text-sm font-semibold">
-                        {formatMoney(item.menuId?.price || item.price || 0)}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
