@@ -321,16 +321,34 @@ export default function CustomerHome() {
                         : "border-[#ead8c7] bg-white hover:border-[#1f1a17]"
                     }`}
                   >
-                    <p className="font-semibold">{shop.name}</p>
-                    <p
-                      className={`text-xs ${
-                        selectedShop?._id === shop._id
-                          ? "text-[#f2ddc7]"
-                          : "text-[#6c5645]"
-                      }`}
-                    >
-                      {shop.address}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 overflow-hidden rounded-xl border border-[#ead8c7] bg-[#f8f3ee]">
+                        {shop.photo ? (
+                          <img
+                            src={shop.photo}
+                            alt={shop.name}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] text-[#8b6b4f]">
+                            No image
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold truncate">{shop.name}</p>
+                        <p
+                          className={`text-xs ${
+                            selectedShop?._id === shop._id
+                              ? "text-[#f2ddc7]"
+                              : "text-[#6c5645]"
+                          }`}
+                        >
+                          {shop.address}
+                        </p>
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -431,6 +449,20 @@ export default function CustomerHome() {
                     key={menu._id}
                     className="rounded-2xl border border-[#ead8c7] bg-white p-4"
                   >
+                    <div className="mb-3 overflow-hidden rounded-2xl border border-[#ead8c7] bg-[#f8f3ee]">
+                      {menu.image ? (
+                        <img
+                          src={menu.image}
+                          alt={menu.name}
+                          className="h-36 w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-36 items-center justify-center text-xs text-[#8b6b4f]">
+                          No image
+                        </div>
+                      )}
+                    </div>
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-semibold">{menu.name}</p>

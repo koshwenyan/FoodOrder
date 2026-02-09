@@ -27,6 +27,8 @@ export default function Login() {
             }
             else if (user.role === "company-admin") {
                 navigate("/company-admin/companyadmindashboard");
+            } else if (user.role === "company-staff") {
+                navigate("/delivery-staff/orders");
             } else {
                 setError("Unauthorized role");
             }

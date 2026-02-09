@@ -30,6 +30,7 @@ import OrdersLists from "./Pages/OrdersLists.jsx";
 import CustomerHome from "./Pages/CustomerHome.jsx";
 import DeliveryOrder from "./Pages/deliveryCompanyOrder.jsx"
 import DeliveryStaff from "./Pages/deliveryCompanyStaff.jsx"
+import DeliveryStaffOrders from "./Pages/DeliveryStaffOrders.jsx";
 export default function App() {
     return (
         <AuthProvider>
@@ -104,6 +105,16 @@ export default function App() {
                         <Route path="AssignedOrder" element={<DeliveryOrder />} />
                         <Route path="delivery-staff" element={<DeliveryStaff />} />
                     </Route>
+
+                    {/* ================= DELIVERY STAFF ================= */}
+                    <Route
+                        path="/delivery-staff/orders"
+                        element={
+                            <PrivateRoute allowedRoles={["company-staff"]} redirectTo="/login">
+                                <DeliveryStaffOrders />
+                            </PrivateRoute>
+                        }
+                    />
 
                     {/* ================= FALLBACK ================= */}
                     <Route path="*" element={<Login />} />
