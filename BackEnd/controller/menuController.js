@@ -132,6 +132,35 @@ export const getAllMenus = async (req, res) => {
     }
 };
 
+// get menus by shop (public / customer)
+export const getMenusByShop = async (req, res) => {
+    try {
+        const { shopId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(shopId)) {
+            return res.status(400).json({ message: "Invalid shop ID" });
+        }
+
+        const filter = {
+            shopId,
+            isActive: true,
+            isAvailable: true
+        };
+
+        const menus = await Menu.find(filter)
+            .populate("category", "name")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            total: menus.length,
+            data: menus
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 

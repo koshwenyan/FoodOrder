@@ -357,6 +357,7 @@ export default function Delivery() {
                           type="checkbox"
                           checked={selectedOrders.includes(order._id)}
                           onChange={() => toggleSelect(order._id)}
+                          disabled={status === "complete"}
                           className="h-4 w-4 accent-[#1f1a17]"
                         />
                         <h3 className="orders-title text-2xl font-semibold">
@@ -396,38 +397,45 @@ export default function Delivery() {
 
                   <div className="mt-5">
                     <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">
-                      Assign Delivery Company
+                      Delivery Company
                     </p>
-                    <select
-                      value={order.deliveryCompany?._id || ""}
-                      onChange={(e) => handleCompanyUpdate(order._id, e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
-                    >
-                      <option value="" disabled>
-                        Choose delivery company
-                      </option>
-                      {companies.map((c) => (
-                        <option key={c._id} value={c._id}>
-                          {c.name}
+                    {status === "complete" ? (
+                      <div className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-[#f9f4ef] px-4 py-3 text-sm text-[#1f1a17]">
+                        {order.deliveryCompany?.name || "Unassigned"}
+                      </div>
+                    ) : (
+                      <select
+                        value={order.deliveryCompany?._id || ""}
+                        onChange={(e) => handleCompanyUpdate(order._id, e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                      >
+                        <option value="" disabled>
+                          Choose delivery company
                         </option>
-                      ))}
-                    </select>
+                        {companies.map((c) => (
+                          <option key={c._id} value={c._id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
                   </div>
 
                   <div className="mt-5 flex flex-wrap gap-2">
-                    {["pending", "delivered", "complete"].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => handleStatusUpdate(order._id, s)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
-                          status === s
-                            ? "bg-[#1f1a17] text-[#f8f3ee] border-[#1f1a17]"
-                            : "bg-white text-[#6c5645] border-[#e7d5c4] hover:bg-[#f6f1eb]"
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                    {status !== "complete" &&
+                      ["pending", "delivered", "complete"].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => handleStatusUpdate(order._id, s)}
+                          className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
+                            status === s
+                              ? "bg-[#1f1a17] text-[#f8f3ee] border-[#1f1a17]"
+                              : "bg-white text-[#6c5645] border-[#e7d5c4] hover:bg-[#f6f1eb]"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
                     <button
                       onClick={() => setDrawerOrder(order)}
                       className="rounded-full border border-[#e7d5c4] bg-white px-4 py-2 text-sm text-[#6c5645]"
