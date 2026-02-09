@@ -10,6 +10,7 @@ import {
     getOrdersByShop,
     getMyOrders,
     getMyOrderById,
+    getOrderStaffLocation,
     getMyDeliveryOrders,
     getOrdersByCompany,
     getCompanyOrderCounts,
@@ -54,6 +55,7 @@ router.get("/myorders", protect, getMyOrders);
 
 // Get a specific order by ID for logged-in customer
 router.get("/myorders/:orderId", protect, getMyOrderById);
+router.get("/myorders/:orderId/staff-location", protect, getOrderStaffLocation);
 
 // Company (company-admin)
 router.get(

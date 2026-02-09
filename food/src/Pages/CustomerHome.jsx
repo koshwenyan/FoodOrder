@@ -37,6 +37,8 @@ export default function CustomerHome() {
   const [cartItems, setCartItems] = useState([]);
   const [cartShopId, setCartShopId] = useState(null);
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [staffLocation, setStaffLocation] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
   const [loading, setLoading] = useState({
     shops: false,
     menus: false,
@@ -111,6 +113,19 @@ export default function CustomerHome() {
       );
     } finally {
       setLoading((prev) => ({ ...prev, menus: false }));
+    }
+  };
+
+  const fetchStaffLocation = async (orderId) => {
+    if (!orderId) return;
+    setLocationLoading(true);
+    try {
+      const res = await api.get(`/order/myorders/${orderId}/staff-location`);
+      setStaffLocation(res.data?.data || null);
+    } catch (err) {
+      setStaffLocation(null);
+    } finally {
+      setLocationLoading(false);
     }
   };
 
@@ -236,6 +251,18 @@ export default function CustomerHome() {
   const latestStatusIndex = latestOrder
     ? STATUS_STEPS.indexOf(latestOrder.status)
     : -1;
+
+  useEffect(() => {
+    if (!latestOrder?._id) {
+      setStaffLocation(null);
+      return;
+    }
+    fetchStaffLocation(latestOrder._id);
+    const timer = setInterval(() => {
+      fetchStaffLocation(latestOrder._id);
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [latestOrder?._id]);
 
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17] px-6 py-8">
@@ -386,6 +413,66 @@ export default function CustomerHome() {
                         {index <= latestStatusIndex ? "Done" : "Pending"}
                       </div>
                     ))}
+                  </div>
+                  <div className="rounded-2xl border border-[#ead8c7] bg-white p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      Delivery Staff Location
+                    </p>
+                    {locationLoading && (
+                      <p className="mt-2 text-sm text-[#6c5645]">
+                        Loading location...
+                      </p>
+                    )}
+                    {!locationLoading && !staffLocation && (
+                      <p className="mt-2 text-sm text-[#6c5645]">
+                        Location not available yet.
+                      </p>
+                    )}
+                    {!locationLoading &&
+                      staffLocation?.location &&
+                      typeof staffLocation.location.lat === "number" &&
+                      typeof staffLocation.location.lng === "number" && (
+                      <div className="mt-3 space-y-3">
+                        <div className="text-sm text-[#6c5645]">
+                          <div>
+                            Staff:{" "}
+                            <span className="font-semibold text-[#1f1a17]">
+                              {staffLocation.name || "Delivery staff"}
+                            </span>
+                          </div>
+                          <div>
+                            Coordinates:{" "}
+                            {staffLocation.location.lat.toFixed(5)},{" "}
+                            {staffLocation.location.lng.toFixed(5)}
+                          </div>
+                          {staffLocation.location.updatedAt && (
+                            <div>
+                              Updated:{" "}
+                              {new Date(
+                                staffLocation.location.updatedAt
+                              ).toLocaleTimeString()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="overflow-hidden rounded-2xl border border-[#ead8c7]">
+                          <iframe
+                            title="Delivery staff location"
+                            className="h-48 w-full"
+                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${
+                              staffLocation.location.lng - 0.005
+                            },${
+                              staffLocation.location.lat - 0.005
+                            },${
+                              staffLocation.location.lng + 0.005
+                            },${
+                              staffLocation.location.lat + 0.005
+                            }&marker=${staffLocation.location.lat},${
+                              staffLocation.location.lng
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (

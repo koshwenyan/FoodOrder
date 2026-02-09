@@ -17,6 +17,10 @@ export default function DeliveryStaffOrders() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sharing, setSharing] = useState(false);
+  const [geoError, setGeoError] = useState("");
+  const [lastSent, setLastSent] = useState(null);
+  const [watchId, setWatchId] = useState(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -50,6 +54,53 @@ export default function DeliveryStaffOrders() {
     fetchOrders();
     fetchMe();
   }, []);
+
+  const sendLocation = async (position) => {
+    const { latitude, longitude } = position.coords;
+    try {
+      await api.put("/user/location", {
+        lat: latitude,
+        lng: longitude,
+      });
+      setLastSent(new Date());
+    } catch (err) {
+      setGeoError(err?.response?.data?.message || "Failed to send location.");
+    }
+  };
+
+  const startSharing = () => {
+    if (!navigator.geolocation) {
+      setGeoError("Geolocation is not supported on this device.");
+      return;
+    }
+    setGeoError("");
+    const id = navigator.geolocation.watchPosition(
+      (pos) => sendLocation(pos),
+      (err) => {
+        setGeoError(err.message || "Location permission denied.");
+        setSharing(false);
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 }
+    );
+    setWatchId(id);
+    setSharing(true);
+  };
+
+  const stopSharing = () => {
+    if (watchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(watchId);
+    }
+    setWatchId(null);
+    setSharing(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (watchId !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [watchId]);
 
   const fetchMe = async () => {
     try {
@@ -147,6 +198,26 @@ export default function DeliveryStaffOrders() {
           <p className="text-sm text-[#6c5645] mt-2 max-w-2xl">
             View your orders and update delivery status.
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              onClick={sharing ? stopSharing : startSharing}
+              className={`rounded-full px-4 py-2 text-xs font-semibold ${
+                sharing
+                  ? "bg-[#1f1a17] text-[#f8f3ee]"
+                  : "border border-[#ead8c7] text-[#6c5645]"
+              }`}
+            >
+              {sharing ? "Stop sharing location" : "Share live location"}
+            </button>
+            {lastSent && (
+              <span className="text-xs text-[#8b6b4f]">
+                Last update: {lastSent.toLocaleTimeString()}
+              </span>
+            )}
+            {geoError && (
+              <span className="text-xs text-[#c97a5a]">{geoError}</span>
+            )}
+          </div>
         </div>
 
         <div className="mt-8 rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-hidden">

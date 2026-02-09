@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "DeliveryCompany",
 
     },
+    lastLocation: {
+        lat: { type: Number },
+        lng: { type: Number },
+        updatedAt: { type: Date }
+    },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
     isActive: { type: Boolean, default: true }

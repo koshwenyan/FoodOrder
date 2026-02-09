@@ -381,6 +381,64 @@ export const getMyOrderById = async (req, res) => {
     }
 };
 
+// ================= Get delivery staff location for an order =================
+export const getOrderStaffLocation = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid order ID" });
+        }
+
+        const order = await Order.findById(orderId)
+            .populate("deliveryStaff", "name lastLocation")
+            .populate("customer", "_id")
+            .populate("shopId", "_id")
+            .populate("deliveryCompany", "_id");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        const role = req.user.role;
+        const userId = req.user._id.toString();
+
+        const canView =
+            (role === "customer" && order.customer?._id?.toString() === userId) ||
+            (role === "company-staff" && order.deliveryStaff?._id?.toString() === userId) ||
+            (role === "company-admin" &&
+                req.user.companyId &&
+                order.deliveryCompany?._id?.toString() === req.user.companyId.toString()) ||
+            (role === "shop-admin" &&
+                req.user.shopId &&
+                order.shopId?._id?.toString() === req.user.shopId.toString()) ||
+            role === "admin";
+
+        if (!canView) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        const staff = order.deliveryStaff;
+        if (!staff || !staff.lastLocation) {
+            return res.status(200).json({
+                success: true,
+                data: null
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                staffId: staff._id,
+                name: staff.name,
+                location: staff.lastLocation
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to load staff location", error: error.message });
+    }
+};
+
 //view company admin total orders
 
 export const getOrdersByCompany = async (req, res) => {

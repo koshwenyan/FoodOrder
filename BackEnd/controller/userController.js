@@ -499,3 +499,38 @@ export const getLoginUser = async (req, res) => {
         });
     }
 };
+
+// update delivery staff live location
+export const updateMyLocation = async (req, res) => {
+    try {
+        if (req.user.role !== "company-staff") {
+            return res.status(403).json({ message: "Only delivery staff can update location" });
+        }
+
+        const { lat, lng } = req.body;
+        const latitude = Number(lat);
+        const longitude = Number(lng);
+
+        if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+            return res.status(400).json({ message: "lat and lng are required" });
+        }
+
+        req.user.lastLocation = {
+            lat: latitude,
+            lng: longitude,
+            updatedAt: new Date()
+        };
+        await req.user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Location updated",
+            data: req.user.lastLocation
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to update location",
+            error: error.message
+        });
+    }
+};
