@@ -5,6 +5,7 @@ import {
     getMenuById,
     updateMenu,
     deleteMenu,
+    getMenusByShop,
 
 } from "../controller/menuController.js";
 import { protect } from "../middleware/authMiddleware.js";
@@ -17,7 +18,7 @@ menuRouter.put("/update/:id", protect, updateMenu);
 menuRouter.delete("/delete/:id", protect, deleteMenu);
 
 // public / authenticated
-// menuRouter.get("/shop/:shopId", getAllMenus);
+menuRouter.get("/shop/:shopId", getMenusByShop);
 menuRouter.get("/my-shop", protect, getAllMenus);
 
 menuRouter.get("/:id", getMenuById);
