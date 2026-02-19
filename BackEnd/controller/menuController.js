@@ -7,7 +7,7 @@ export const createMenu = async (req, res) => {
             return res.status(403).json({ message: "Only shop-admin can create menu items" });
         }
 
-        const { name, category, price, description, image, tags, allergens, addOns } = req.body;
+        const { name, category, price, description, image, tags, allergens, addOns, isAvailable } = req.body;
 
         if (!name || !price) {
             return res.status(400).json({ message: "Name and price are required" });
@@ -27,6 +27,7 @@ export const createMenu = async (req, res) => {
             tags: Array.isArray(tags) ? tags : [],
             allergens: Array.isArray(allergens) ? allergens : [],
             addOns: Array.isArray(addOns) ? addOns : [],
+            isAvailable: typeof isAvailable === "boolean" ? isAvailable : true,
             shopId: req.user.shopId, // 🔥 auto from shop-admin
             createdBy: req.user._id
         });

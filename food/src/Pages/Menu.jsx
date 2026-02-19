@@ -11,6 +11,8 @@ export default function Menus() {
   const [menus, setMenus] = useState([]);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -200,6 +202,50 @@ export default function Menus() {
     setMenus(menus.filter((m) => m._id !== id));
   };
 
+  const handleToggleAvailability = async (menu) => {
+    const token = localStorage.getItem("token");
+    setError("");
+
+    try {
+      const res = await fetch(`${API_MENU}/update/${menu._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isAvailable: !menu.isAvailable }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to update availability");
+      }
+
+      setMenus((prev) =>
+        prev.map((item) =>
+          item._id === menu._id ? { ...item, isAvailable: !menu.isAvailable } : item
+        )
+      );
+    } catch (toggleError) {
+      setError(toggleError.message || "Failed to update availability.");
+    }
+  };
+
+  const filteredMenus = menus.filter((menu) => {
+    if (availabilityFilter === "available" && !menu.isAvailable) return false;
+    if (availabilityFilter === "soldout" && menu.isAvailable) return false;
+
+    const term = search.trim().toLowerCase();
+    if (!term) return true;
+    return (
+      menu.name?.toLowerCase().includes(term) ||
+      menu.category?.name?.toLowerCase().includes(term)
+    );
+  });
+
+  const availableCount = menus.filter((menu) => menu.isAvailable).length;
+  const soldOutCount = menus.length - availableCount;
+
   /* ================= UI ================= */
   return (
     <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
@@ -233,6 +279,52 @@ export default function Menus() {
             {error}
           </div>
         )}
+
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 px-4 py-3">
+            <p className="text-xs text-[#8b6b4f]">Total</p>
+            <p className="text-2xl font-semibold">{menus.length}</p>
+          </div>
+          <div className="rounded-2xl border border-[#cde8d6] bg-[#edf8f1] px-4 py-3">
+            <p className="text-xs text-[#2f6a46]">Available</p>
+            <p className="text-2xl font-semibold text-[#2f6a46]">{availableCount}</p>
+          </div>
+          <div className="rounded-2xl border border-[#f2d5cb] bg-[#fff0eb] px-4 py-3">
+            <p className="text-xs text-[#a13a2f]">Sold Out</p>
+            <p className="text-2xl font-semibold text-[#a13a2f]">{soldOutCount}</p>
+          </div>
+          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 px-4 py-3">
+            <p className="text-xs text-[#8b6b4f]">Categories</p>
+            <p className="text-2xl font-semibold">{categories.length}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search menu by name or category"
+            className="rounded-xl border border-[#ead8c7] bg-white/90 px-4 py-3 text-sm"
+          />
+          <select
+            value={availabilityFilter}
+            onChange={(e) => setAvailabilityFilter(e.target.value)}
+            className="rounded-xl border border-[#ead8c7] bg-white/90 px-4 py-3 text-sm"
+          >
+            <option value="all">All items</option>
+            <option value="available">Available only</option>
+            <option value="soldout">Sold out only</option>
+          </select>
+          <button
+            onClick={() => {
+              setSearch("");
+              setAvailabilityFilter("all");
+            }}
+            className="rounded-xl border border-[#ead8c7] bg-white px-4 py-3 text-sm text-[#6c5645]"
+          >
+            Reset filters
+          </button>
+        </div>
 
         {/* ================= DRAWER ================= */}
         {showForm && (
@@ -351,7 +443,7 @@ export default function Menus() {
 
         {/* ================= MENU LIST ================= */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-          {menus.map((menu) => (
+          {filteredMenus.map((menu) => (
             <div
               key={menu._id}
               className="rounded-3xl bg-white/90 border border-[#ead8c7] p-6 shadow-sm hover:shadow-lg relative group"
@@ -367,6 +459,16 @@ export default function Menus() {
             <h3 className="font-semibold">{menu.name}</h3>
             <p className="text-sm text-gray-500">{menu.category?.name}</p>
             <p className="text-sm mt-1">{menu.price} Ks</p>
+            <button
+              onClick={() => handleToggleAvailability(menu)}
+              className={`mt-3 inline-flex rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] ${
+                menu.isAvailable
+                  ? "border-[#cde8d6] bg-[#edf8f1] text-[#2f6a46]"
+                  : "border-[#f2d5cb] bg-[#fff0eb] text-[#a13a2f]"
+              }`}
+            >
+              {menu.isAvailable ? "Available" : "Sold Out"}
+            </button>
 
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition">
                 <button
@@ -385,6 +487,11 @@ export default function Menus() {
             </div>
           ))}
         </div>
+        {!filteredMenus.length && (
+          <div className="mt-8 rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+            No menu items found for current filters.
+          </div>
+        )}
       </div>
     </div>
   );

@@ -82,6 +82,47 @@ export const getPhoneCalledOrderTotalByShop = async (req, res) => {
     }
 };
 
+export const assignPhoneCalledOrderCompanyByShop = async (req, res) => {
+    try {
+        if (req.user.role !== "shop-admin") {
+            return res.status(403).json({
+                message: "Only shop-admin can assign delivery company",
+            });
+        }
+
+        const { orderId } = req.params;
+        const { companyId } = req.body;
+
+        if (!companyId) {
+            return res.status(400).json({ message: "companyId is required" });
+        }
+
+        const order = await PhoneCalledOrder.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        if (order.shopId.toString() !== req.user.shopId.toString()) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        order.deliveryCompany = companyId;
+        if (order.status === "confirmed") {
+            order.status = "assigned";
+        }
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Delivery company assigned successfully",
+            data: order,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 export const getPhoneCalledOrderById = async (req, res) => {
@@ -184,9 +225,9 @@ export const assignPhoneCalledOrderStaff = async (req, res) => {
 
 export const updatePhoneCalledOrderStatus = async (req, res) => {
     try {
-        if (!["company-admin", "company-staff"].includes(req.user.role)) {
+        if (!["shop-admin", "company-admin", "company-staff"].includes(req.user.role)) {
             return res.status(403).json({
-                message: "Only company-admin or company-staff can update status",
+                message: "Only shop-admin, company-admin or company-staff can update status",
             });
         }
 
@@ -212,7 +253,11 @@ export const updatePhoneCalledOrderStatus = async (req, res) => {
             return res.status(404).json({ message: "Order not found" });
         }
 
-        if (req.user.role === "company-admin") {
+        if (req.user.role === "shop-admin") {
+            if (order.shopId?.toString() !== req.user.shopId?.toString()) {
+                return res.status(403).json({ message: "Access denied" });
+            }
+        } else if (req.user.role === "company-admin") {
             if (order.deliveryCompany?.toString() !== req.user.companyId?.toString()) {
                 return res.status(403).json({ message: "Access denied" });
             }

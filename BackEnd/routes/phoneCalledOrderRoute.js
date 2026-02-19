@@ -4,6 +4,7 @@ import {
 
     getPhoneCalledOrderById,
     getPhoneCalledOrderTotalByShop,
+    assignPhoneCalledOrderCompanyByShop,
     getPhoneCalledOrdersByCompany,
     assignPhoneCalledOrderStaff,
     updatePhoneCalledOrderStatus,
@@ -16,6 +17,7 @@ const phoneRouter = express.Router();
 
 phoneRouter.post("/", protect, createPhoneCalledOrder);
 phoneRouter.get("/shop/:shopId", protect, getPhoneCalledOrderTotalByShop);
+phoneRouter.put("/:orderId/assign-company", protect, assignPhoneCalledOrderCompanyByShop);
 phoneRouter.get("/company/orders", protect, getPhoneCalledOrdersByCompany);
 phoneRouter.get("/delivery/my-orders", protect, getPhoneCalledOrdersByStaff);
 phoneRouter.put("/:orderId/assign-staff", protect, assignPhoneCalledOrderStaff);
