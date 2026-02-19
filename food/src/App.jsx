@@ -31,6 +31,7 @@ import CustomerHome from "./Pages/CustomerHome.jsx";
 import DeliveryOrder from "./Pages/deliveryCompanyOrder.jsx"
 import DeliveryStaff from "./Pages/deliveryCompanyStaff.jsx"
 import DeliveryStaffOrders from "./Pages/DeliveryStaffOrders.jsx";
+import CompanyPhoneOrders from "./Pages/CompanyPhoneOrders.jsx";
 export default function App() {
     return (
         <AuthProvider>
@@ -103,6 +104,7 @@ export default function App() {
 
                         {/* reuse pages if needed */}
                         <Route path="AssignedOrder" element={<DeliveryOrder />} />
+                        <Route path="phone-orders" element={<CompanyPhoneOrders />} />
                         <Route path="delivery-staff" element={<DeliveryStaff />} />
                     </Route>
 

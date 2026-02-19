@@ -23,7 +23,16 @@ const orderSchema = new mongoose.Schema(
                 },
                 name: String,
                 price: Number,
-                quantity: Number
+                quantity: Number,
+                addOns: [
+                    {
+                        name: String,
+                        price: Number
+                    }
+                ],
+                note: String,
+                addOnsTotal: Number,
+                lineTotal: Number
             }
         ],
 
@@ -65,6 +74,27 @@ const orderSchema = new mongoose.Schema(
         isPaid: {
             type: Boolean,
             default: false
+        },
+        paymentMethod: {
+            type: String,
+            enum: ["cash", "card", "wallet", "kpay"],
+            default: "cash"
+        },
+        paymentReference: {
+            type: String
+        },
+        paidAt: {
+            type: Date
+        },
+        walletAmount: {
+            type: Number,
+            default: 0
+        },
+        walletDeductedAt: {
+            type: Date
+        },
+        walletRefundedAt: {
+            type: Date
         }
     },
     { timestamps: true }

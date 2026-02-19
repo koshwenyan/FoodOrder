@@ -12,6 +12,40 @@ const normalizeStatus = (status) => {
   return status;
 };
 
+const getMinutesSince = (dateValue) => {
+  if (!dateValue) return 0;
+  const created = new Date(dateValue).getTime();
+  if (Number.isNaN(created)) return 0;
+  return Math.max(0, Math.floor((Date.now() - created) / 60000));
+};
+
+const getSlaMeta = (order) => {
+  const status = normalizeStatus(order?.status);
+  if (["complete", "cancelled"].includes(status)) {
+    return { label: "Closed", tone: "text-[#6c5645] bg-[#f3ede7] border-[#ead8c7]" };
+  }
+
+  const minutes = getMinutesSince(order?.createdAt);
+  if (minutes >= 60) {
+    return {
+      label: `${minutes}m late`,
+      tone: "text-[#a13a2f] bg-[#fdecea] border-[#efc8c2]",
+      isLate: true,
+    };
+  }
+  if (minutes >= 30) {
+    return {
+      label: `${minutes}m warning`,
+      tone: "text-[#8a5c1e] bg-[#fff4df] border-[#f0d8ad]",
+      isWarning: true,
+    };
+  }
+  return {
+    label: `${minutes}m on-time`,
+    tone: "text-[#2f6a46] bg-[#edf8f1] border-[#bfe2cb]",
+  };
+};
+
 export default function Delivery() {
   const [orders, setOrders] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -20,6 +54,7 @@ export default function Delivery() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filterCompany, setFilterCompany] = useState("all");
+  const [slaFilter, setSlaFilter] = useState("all");
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [bulkCompany, setBulkCompany] = useState("");
   const [bulkStatus, setBulkStatus] = useState("");
@@ -109,7 +144,7 @@ export default function Delivery() {
 
   const filteredOrders = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return orders.filter((o) => {
+    const filtered = orders.filter((o) => {
       const status = normalizeStatus(o.status);
       if (activeTab !== "all") {
         if (activeTab === "pending") {
@@ -125,6 +160,11 @@ export default function Delivery() {
         if (filterCompany !== "unassigned" && o.deliveryCompany?._id !== filterCompany)
           return false;
       }
+      if (slaFilter !== "all") {
+        const minutes = getMinutesSince(o.createdAt);
+        if (slaFilter === "warning" && (minutes < 30 || minutes >= 60)) return false;
+        if (slaFilter === "late" && minutes < 60) return false;
+      }
       if (!term) return true;
       return (
         o.customer?.name?.toLowerCase().includes(term) ||
@@ -132,18 +172,23 @@ export default function Delivery() {
         o.deliveryAddress?.toLowerCase().includes(term)
       );
     });
-  }, [orders, activeTab, search, filterCompany]);
+    return filtered.sort((a, b) => getMinutesSince(b.createdAt) - getMinutesSince(a.createdAt));
+  }, [orders, activeTab, search, filterCompany, slaFilter]);
 
   const counts = useMemo(() => {
-    const base = { all: orders.length, pending: 0, delivered: 0, complete: 0 };
+    const base = { all: orders.length, pending: 0, delivered: 0, complete: 0, late: 0 };
     orders.forEach((o) => {
       const status = normalizeStatus(o.status);
+      const minutes = getMinutesSince(o.createdAt);
       if (status === "delivered") {
         base.delivered += 1;
       } else if (status === "complete") {
         base.complete += 1;
       } else if (status !== "cancelled") {
         base.pending += 1;
+      }
+      if (!["complete", "cancelled"].includes(status) && minutes >= 60) {
+        base.late += 1;
       }
     });
     return base;
@@ -230,6 +275,10 @@ export default function Delivery() {
                 <p className="text-xs text-[#8b6b4f]">Complete</p>
                 <p className="text-xl font-semibold">{counts.complete}</p>
               </div>
+              <div className="rounded-2xl bg-[#fff0eb] border border-[#f1d0c6] px-4 py-3">
+                <p className="text-xs text-[#a13a2f]">SLA Late</p>
+                <p className="text-xl font-semibold text-[#a13a2f]">{counts.late}</p>
+              </div>
             </div>
           </div>
 
@@ -274,6 +323,15 @@ export default function Delivery() {
                     {c.name}
                   </option>
                 ))}
+              </select>
+              <select
+                value={slaFilter}
+                onChange={(e) => setSlaFilter(e.target.value)}
+                className="rounded-full border border-[#e7d5c4] bg-white/80 px-4 py-2 text-sm text-[#6c5645]"
+              >
+                <option value="all">All SLA</option>
+                <option value="warning">Warning (30-59m)</option>
+                <option value="late">Late (60m+)</option>
               </select>
             </div>
           </div>
@@ -340,6 +398,7 @@ export default function Delivery() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {filteredOrders.map((order) => {
               const status = normalizeStatus(order.status);
+              const sla = getSlaMeta(order);
               return (
                 <div
                   key={order._id}
@@ -372,6 +431,10 @@ export default function Delivery() {
                     <div className="rounded-full bg-[#f6f1eb] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#8b6b4f]">
                       {status}
                     </div>
+                  </div>
+
+                  <div className={`mt-4 inline-flex rounded-full border px-3 py-1 text-xs font-medium ${sla.tone}`}>
+                    SLA: {sla.label}
                   </div>
 
                   <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-[#6c5645]">
@@ -409,8 +472,8 @@ export default function Delivery() {
                         onChange={(e) => handleCompanyUpdate(order._id, e.target.value)}
                         className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
                       >
-                        <option value="" disabled>
-                          Choose delivery company
+                        <option value="">
+                          {order.deliveryCompany?._id ? "Reassign delivery company" : "Choose delivery company"}
                         </option>
                         {companies.map((c) => (
                           <option key={c._id} value={c._id}>
@@ -483,25 +546,41 @@ export default function Delivery() {
                 Items
               </p>
               <div className="mt-2 space-y-3">
-                {(drawerOrder.items || []).map((item) => (
-                  <div
-                    key={item._id}
-                    className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
-                  >
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium text-[#1f1a17]">
-                        {item.menuId?.name || item.name || "Item"}
-                      </span>
-                      <span className="text-[#6c5645]">
-                        {item.price?.toLocaleString()} Ks
-                      </span>
+                {(drawerOrder.items || []).map((item) => {
+                  const unitPrice =
+                    Number(item.price || 0) + Number(item.addOnsTotal || 0);
+                  const lineTotal =
+                    Number(item.lineTotal || unitPrice * (item.quantity || 0));
+                  return (
+                    <div
+                      key={item._id}
+                      className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
+                    >
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium text-[#1f1a17]">
+                          {item.menuId?.name || item.name || "Item"}
+                        </span>
+                        <span className="text-[#6c5645]">
+                          {unitPrice.toLocaleString()} Ks
+                        </span>
+                      </div>
+                      {item.addOns?.length > 0 && (
+                        <div className="mt-1 text-xs text-[#6c5645]">
+                          Add-ons: {item.addOns.map((addOn) => addOn.name).join(", ")}
+                        </div>
+                      )}
+                      {item.note && (
+                        <div className="mt-1 text-xs text-[#6c5645]">
+                          Note: {item.note}
+                        </div>
+                      )}
+                      <div className="mt-1 text-xs text-[#8b6b4f]">
+                        Qty: {item.quantity} · Subtotal:{" "}
+                        {lineTotal.toLocaleString()} Ks
+                      </div>
                     </div>
-                    <div className="mt-1 text-xs text-[#8b6b4f]">
-                      Qty: {item.quantity} · Subtotal:{" "}
-                      {(item.price * item.quantity).toLocaleString()} Ks
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

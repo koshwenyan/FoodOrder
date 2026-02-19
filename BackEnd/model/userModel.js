@@ -17,9 +17,15 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "DeliveryCompany",
 
     },
+    lastLocation: {
+        lat: { type: Number },
+        lng: { type: Number },
+        updatedAt: { type: Date }
+    },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    walletBalance: { type: Number, default: 0 }
 }, { timestamps: true })
 
 const User = mongoose.model("User", userSchema);

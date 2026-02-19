@@ -10,17 +10,20 @@ import {
     getOrdersByShop,
     getMyOrders,
     getMyOrderById,
+    getOrderStaffLocation,
     getMyDeliveryOrders,
     getOrdersByCompany,
     getCompanyOrderCounts,
     getStaffPickedAndDeliveredOrders,
-    getShopOrderStatusTotals
+    getShopOrderStatusTotals,
+    mockPayOrder
 } from "../controller/orderController.js";
 
 const router = express.Router();
 
 // customer
 router.post("/create", protect, createOrder);
+router.post("/:orderId/pay-mock", protect, mockPayOrder);
 
 // shop-admin and staff
 router.put("/:orderId/status", protect, updateOrderStatus);
@@ -54,6 +57,7 @@ router.get("/myorders", protect, getMyOrders);
 
 // Get a specific order by ID for logged-in customer
 router.get("/myorders/:orderId", protect, getMyOrderById);
+router.get("/myorders/:orderId/staff-location", protect, getOrderStaffLocation);
 
 // Company (company-admin)
 router.get(

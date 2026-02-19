@@ -2,11 +2,12 @@ import mongoose from "mongoose";
 import Order from "../model/orderModel.js";
 import Menu from "../model/menuModel.js";
 import Shop from "../model/shopModel.js";
+import User from "../model/userModel.js";
 
 // Create a new order
 export const createOrder = async (req, res) => {
     try {
-        const { shopId, items, deliveryAddress } = req.body;
+        const { shopId, items, deliveryAddress, paymentMethod, paymentReference } = req.body;
 
         // Check required fields
         if (!shopId || !items || items.length === 0 || !deliveryAddress) {
@@ -42,22 +43,75 @@ export const createOrder = async (req, res) => {
                 return res.status(400).json({ message: `Invalid quantity for menu: ${menu.name}` });
             }
 
+            const requestedAddOns = Array.isArray(i.addOns) ? i.addOns : [];
+            const menuAddOns = Array.isArray(menu.addOns) ? menu.addOns : [];
+            const addOnMap = new Map(
+                menuAddOns.map((addOn) => [addOn.name, addOn])
+            );
+
+            const normalizedAddOns = [];
+            let addOnsTotal = 0;
+            const seenAddOns = new Set();
+
+            for (const addOn of requestedAddOns) {
+                const addOnName = typeof addOn?.name === "string" ? addOn.name.trim() : "";
+                if (!addOnName || seenAddOns.has(addOnName)) {
+                    continue;
+                }
+
+                const menuAddOn = addOnMap.get(addOnName);
+                if (!menuAddOn) {
+                    return res.status(400).json({
+                        message: `Invalid add-on: ${addOnName}`
+                    });
+                }
+
+                const addOnPrice = Number(menuAddOn.price || 0);
+                normalizedAddOns.push({
+                    name: menuAddOn.name,
+                    price: addOnPrice
+                });
+                addOnsTotal += addOnPrice;
+                seenAddOns.add(addOnName);
+            }
+
+            const basePrice = Number(menu.price || 0);
+            const lineTotal = (basePrice + addOnsTotal) * quantity;
+            const note =
+                typeof i.note === "string" ? i.note.trim().slice(0, 200) : "";
+
             orderItems.push({
                 menuId: menu._id,
-                quantity
+                name: menu.name,
+                price: basePrice,
+                quantity,
+                addOns: normalizedAddOns,
+                note,
+                addOnsTotal,
+                lineTotal
             });
 
-            totalAmount += menu.price * quantity;
+            totalAmount += lineTotal;
         }
 
         // Create order
+        const normalizedPaymentMethod =
+            typeof paymentMethod === "string" ? paymentMethod.trim().toLowerCase() : "cash";
+        const allowedPaymentMethods = new Set(["cash", "card", "wallet", "kpay"]);
+        if (!allowedPaymentMethods.has(normalizedPaymentMethod)) {
+            return res.status(400).json({ message: "Invalid payment method." });
+        }
+
         const order = await Order.create({
             customer: req.user._id,       // logged-in user
             shopId,
             items: orderItems,
             deliveryAddress,
             totalAmount,
-            status: "pending"             // default status
+            status: "pending",            // default status
+            paymentMethod: normalizedPaymentMethod,
+            paymentReference:
+                typeof paymentReference === "string" ? paymentReference.trim().slice(0, 100) : ""
         });
 
         res.status(201).json({
@@ -68,6 +122,49 @@ export const createOrder = async (req, res) => {
     } catch (error) {
         console.error("Create order error:", error);
         res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+// ================= Mock KPay payment (customer) =================
+export const mockPayOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid order ID" });
+        }
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        if (order.customer.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        if (order.isPaid) {
+            return res.status(400).json({ message: "Order already paid" });
+        }
+
+        if (order.paymentMethod !== "kpay") {
+            return res.status(400).json({ message: "Order is not set to KPay" });
+        }
+
+        order.isPaid = true;
+        order.paidAt = new Date();
+        if (!order.paymentReference) {
+            order.paymentReference = `KPAY-MOCK-${Date.now()}`;
+        }
+        await order.save();
+
+        res.status(200).json({
+            message: "Mock payment successful",
+            data: order
+        });
+    } catch (error) {
+        console.error("Mock pay order error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -117,7 +214,8 @@ export const updateOrderStatus = async (req, res) => {
             "preparing",
             "ready",
             "delivered",
-            "complete"
+            "complete",
+            "cancelled"
         ];
         const STAFF_STATUS = ["picked-up", "delivered", "complete"];
 
@@ -139,6 +237,52 @@ export const updateOrderStatus = async (req, res) => {
             // shop-admin can update only their shop orders
             if (!req.user.shopId || order.shopId.toString() !== req.user.shopId.toString()) {
                 return res.status(403).json({ message: "Access denied" });
+            }
+
+            if (status === "complete") {
+                if (order.paymentMethod === "wallet" && !order.walletDeductedAt) {
+                    const user = await User.findById(order.customer);
+                    if (!user) {
+                        return res.status(404).json({ message: "Customer not found" });
+                    }
+
+                    const balance = Number(user.walletBalance || 0);
+                    const total = Number(order.totalAmount || 0);
+                    const minRemaining = 100;
+                    if (balance - total < minRemaining) {
+                        return res.status(400).json({
+                            message: "Insufficient wallet balance. Minimum remaining balance is 100 MMK."
+                        });
+                    }
+
+                    user.walletBalance = balance - total;
+                    await user.save();
+
+                    order.isPaid = true;
+                    order.paidAt = new Date();
+                    order.walletAmount = total;
+                    order.walletDeductedAt = new Date();
+                }
+            }
+
+            if (status === "cancelled") {
+                if (
+                    order.paymentMethod === "wallet" &&
+                    order.walletDeductedAt &&
+                    !order.walletRefundedAt
+                ) {
+                    const user = await User.findById(order.customer);
+                    if (!user) {
+                        return res.status(404).json({ message: "Customer not found" });
+                    }
+                    const refundAmount = Number(order.walletAmount || order.totalAmount || 0);
+                    user.walletBalance = Number(user.walletBalance || 0) + refundAmount;
+                    await user.save();
+
+                    order.walletRefundedAt = new Date();
+                    order.isPaid = false;
+                    order.paidAt = null;
+                }
             }
 
             order.status = status;
@@ -164,6 +308,32 @@ export const updateOrderStatus = async (req, res) => {
                 return res.status(403).json({
                     message: "You can update only your assigned orders"
                 });
+            }
+
+            if (status === "complete") {
+                if (order.paymentMethod === "wallet" && !order.walletDeductedAt) {
+                    const user = await User.findById(order.customer);
+                    if (!user) {
+                        return res.status(404).json({ message: "Customer not found" });
+                    }
+
+                    const balance = Number(user.walletBalance || 0);
+                    const total = Number(order.totalAmount || 0);
+                    const minRemaining = 100;
+                    if (balance - total < minRemaining) {
+                        return res.status(400).json({
+                            message: "Insufficient wallet balance. Minimum remaining balance is 100 MMK."
+                        });
+                    }
+
+                    user.walletBalance = balance - total;
+                    await user.save();
+
+                    order.isPaid = true;
+                    order.paidAt = new Date();
+                    order.walletAmount = total;
+                    order.walletDeductedAt = new Date();
+                }
             }
 
             order.status = status;
@@ -378,6 +548,64 @@ export const getMyOrderById = async (req, res) => {
     } catch (error) {
         console.error("Get my order by ID error:", error);
         res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+// ================= Get delivery staff location for an order =================
+export const getOrderStaffLocation = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: "Invalid order ID" });
+        }
+
+        const order = await Order.findById(orderId)
+            .populate("deliveryStaff", "name lastLocation")
+            .populate("customer", "_id")
+            .populate("shopId", "_id")
+            .populate("deliveryCompany", "_id");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        const role = req.user.role;
+        const userId = req.user._id.toString();
+
+        const canView =
+            (role === "customer" && order.customer?._id?.toString() === userId) ||
+            (role === "company-staff" && order.deliveryStaff?._id?.toString() === userId) ||
+            (role === "company-admin" &&
+                req.user.companyId &&
+                order.deliveryCompany?._id?.toString() === req.user.companyId.toString()) ||
+            (role === "shop-admin" &&
+                req.user.shopId &&
+                order.shopId?._id?.toString() === req.user.shopId.toString()) ||
+            role === "admin";
+
+        if (!canView) {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        const staff = order.deliveryStaff;
+        if (!staff || !staff.lastLocation) {
+            return res.status(200).json({
+                success: true,
+                data: null
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                staffId: staff._id,
+                name: staff.name,
+                location: staff.lastLocation
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to load staff location", error: error.message });
     }
 };
 
