@@ -104,6 +104,15 @@ export default function App() {
 
                         {/* reuse pages if needed */}
                         <Route path="AssignedOrder" element={<DeliveryOrder />} />
+                        <Route path="orders" element={<DeliveryOrder />} />
+                        <Route
+                            path="pending-orders"
+                            element={<DeliveryOrder defaultStatusFilter="picked-up" />}
+                        />
+                        <Route
+                            path="completed-orders"
+                            element={<DeliveryOrder defaultStatusFilter="delivered" />}
+                        />
                         <Route path="phone-orders" element={<CompanyPhoneOrders />} />
                         <Route path="delivery-staff" element={<DeliveryStaff />} />
                     </Route>
