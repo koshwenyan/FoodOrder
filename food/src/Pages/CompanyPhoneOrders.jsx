@@ -234,37 +234,41 @@ export default function CompanyPhoneOrders() {
                     >
                       Details
                     </button>
-                    <select
-                      value={order.deliveryStaff?._id || ""}
-                      onChange={(event) =>
-                        handleAssignStaff(order._id, event.target.value)
-                      }
-                      disabled={
-                        assigningId === order._id ||
-                        Boolean(order.deliveryStaff?._id)
-                      }
-                      className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
-                    >
-                      <option value="">Assign staff</option>
-                      {staffs.map((staff) => (
-                        <option key={staff._id} value={staff._id}>
-                          {staff.name}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      value={order.status || ""}
-                      onChange={(event) =>
-                        handleUpdateStatus(order._id, event.target.value)
-                      }
-                      className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
-                    >
-                      {statusOptions.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
+                    {order.status !== "complete" && (
+                      <>
+                        <select
+                          value={order.deliveryStaff?._id || ""}
+                          onChange={(event) =>
+                            handleAssignStaff(order._id, event.target.value)
+                          }
+                          disabled={
+                            assigningId === order._id ||
+                            Boolean(order.deliveryStaff?._id)
+                          }
+                          className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
+                        >
+                          <option value="">Assign staff</option>
+                          {staffs.map((staff) => (
+                            <option key={staff._id} value={staff._id}>
+                              {staff.name}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={order.status || ""}
+                          onChange={(event) =>
+                            handleUpdateStatus(order._id, event.target.value)
+                          }
+                          className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
+                        >
+                          {statusOptions.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
