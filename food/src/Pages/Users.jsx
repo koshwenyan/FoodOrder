@@ -203,7 +203,7 @@ export default function Users() {
 
   const roleClasses = {
     admin: "bg-[#f8d7cd] text-[#a4553a]",
-    "shop-admin": "bg-[#e7eddc] text-[#5b7a40]",
+    "shop-admin": "bg-[#1d222c] text-[#5b7a40]",
     "company-admin": "bg-[#f5e6c8] text-[#a07a2f]",
     "company-staff": "bg-[#2a2f3a] text-[#c9a96a]",
     customer: "bg-[#e6f0f5] text-[#3f6c87]",
@@ -262,7 +262,7 @@ export default function Users() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{adminCount}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <ShieldCheckIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function Users() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{shopAdminCount}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <BuildingStorefrontIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -335,7 +335,7 @@ export default function Users() {
         {/* ---------------- FORM ---------------- */}
         <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6 grid md:grid-cols-3 gap-4">
         {formError && (
-          <div className="md:col-span-3 rounded-2xl border border-[#f3d7cf] bg-[#1d222c] px-4 py-3 text-sm text-[#a4553a]">
+          <div className="md:col-span-3 rounded-2xl border border-[#1d222c] bg-[#1d222c] px-4 py-3 text-sm text-[#a4553a]">
             {formError}
           </div>
         )}
@@ -444,7 +444,7 @@ export default function Users() {
                   </button>
                   <button
                     onClick={() => handleDelete(u._id)}
-                    className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
+                    className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded"
                   >
                     <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                   </button>

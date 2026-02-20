@@ -161,7 +161,7 @@ export default function DeliveryCompanies() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{activeCompanies}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function DeliveryCompanies() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{inactiveCompanies}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -273,7 +273,7 @@ export default function DeliveryCompanies() {
                   <td className="p-4">{c.serviceFee}</td>
                   <td className="p-4">{c.staffCount}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${c.isActive ? "bg-[#e7eddc] text-[#5b7a40]" : "bg-[#f3d7cf] text-[#a4553a]"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs ${c.isActive ? "bg-[#1d222c] text-[#5b7a40]" : "bg-[#1d222c] text-[#a4553a]"}`}>
                       {c.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
@@ -281,7 +281,7 @@ export default function DeliveryCompanies() {
                     <button onClick={() => handleEdit(c)} className="p-2 bg-[#1d222c] hover:bg-[#232833] rounded">
                       <PencilIcon className="w-4 h-4 text-[#a8905d]" />
                     </button>
-                    <button onClick={() => setConfirmDelete(c)} className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded">
+                    <button onClick={() => setConfirmDelete(c)} className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded">
                       <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                     </button>
                   </td>
@@ -292,7 +292,7 @@ export default function DeliveryCompanies() {
         </div>
 
         {currentCompanies.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
             No delivery companies match your search.
           </div>
         )}

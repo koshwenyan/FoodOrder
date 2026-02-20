@@ -190,7 +190,7 @@ export default function Shops() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{activeShops}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function Shops() {
                 </p>
                 <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -357,8 +357,8 @@ export default function Shops() {
                 <span
                   className={`px-2 py-1 rounded-full font-medium ${
                     shop.isActive
-                      ? "bg-[#e7eddc] text-[#5b7a40]"
-                      : "bg-[#f3d7cf] text-[#a4553a]"
+                      ? "bg-[#1d222c] text-[#5b7a40]"
+                      : "bg-[#1d222c] text-[#a4553a]"
                   }`}
                 >
                   {shop.isActive ? "Active" : "Inactive"}
@@ -375,7 +375,7 @@ export default function Shops() {
 
                 <button
                   onClick={() => setConfirmDelete(shop)}
-                  className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
+                  className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded"
                 >
                   <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                 </button>
@@ -385,7 +385,7 @@ export default function Shops() {
         </div>
 
         {filteredShops.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
             No shops match your search.
           </div>
         )}

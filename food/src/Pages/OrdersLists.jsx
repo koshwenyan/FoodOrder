@@ -423,13 +423,13 @@ export default function OrdersLists() {
         <div className="mt-8">
           {loading && <p className="text-sm text-[#a8905d]">Loading orders...</p>}
           {error && (
-            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mb-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {error}
             </div>
           )}
 
           {!loading && filteredOrders.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-10 text-center text-[#a8905d]">
+            <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
               No phone orders for current filters.
             </div>
           )}

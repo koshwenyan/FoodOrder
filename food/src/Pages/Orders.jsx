@@ -219,7 +219,7 @@ export default function OrderPage() {
 
             <div className="mt-4 flex-1 overflow-y-auto space-y-4">
               {cart.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-6 text-center text-sm text-[#a8905d]">
+                <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-6 text-center text-sm text-[#a8905d]">
                   Cart is empty. Add products to create an order.
                 </div>
               )}

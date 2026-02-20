@@ -275,7 +275,7 @@ export default function Menus() {
         </div>
 
         {error && (
-          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mt-4 rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             {error}
           </div>
         )}
@@ -285,9 +285,9 @@ export default function Menus() {
             <p className="text-xs text-[#c9a96a]">Total</p>
             <p className="text-2xl font-semibold">{menus.length}</p>
           </div>
-          <div className="rounded-2xl border border-[#cde8d6] bg-[#edf8f1] px-4 py-3">
-            <p className="text-xs text-[#2f6a46]">Available</p>
-            <p className="text-2xl font-semibold text-[#2f6a46]">{availableCount}</p>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
+            <p className="text-xs text-[#c9a96a]">Available</p>
+            <p className="text-2xl font-semibold text-[#c9a96a]">{availableCount}</p>
           </div>
           <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
             <p className="text-xs text-[#e06c5f]">Sold Out</p>
@@ -463,7 +463,7 @@ export default function Menus() {
               onClick={() => handleToggleAvailability(menu)}
               className={`mt-3 inline-flex rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] ${
                 menu.isAvailable
-                  ? "border-[#cde8d6] bg-[#edf8f1] text-[#2f6a46]"
+                  ? "border-[#2a2f3a] bg-[#1d222c] text-[#c9a96a]"
                   : "border-[#2a2f3a] bg-[#1d222c] text-[#e06c5f]"
               }`}
             >
@@ -479,7 +479,7 @@ export default function Menus() {
                 </button>
                 <button
                   onClick={() => handleDelete(menu._id)}
-                  className="p-2 bg-[#fef2f2] text-[#e06c5f] rounded-full border border-[#f5cfc9]"
+                  className="p-2 bg-[#1d222c] text-[#e06c5f] rounded-full border border-[#2a2f3a]"
                 >
                   <TrashIcon className="w-4 h-4" />
                 </button>
@@ -488,7 +488,7 @@ export default function Menus() {
           ))}
         </div>
         {!filteredMenus.length && (
-          <div className="mt-8 rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="mt-8 rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
             No menu items found for current filters.
           </div>
         )}

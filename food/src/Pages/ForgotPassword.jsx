@@ -45,7 +45,7 @@ export default function ForgotPassword() {
         </div>
 
         {error && (
-          <div className="mt-6 mb-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 px-4 py-3 text-sm">
+          <div className="mt-6 mb-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 text-sm">
             {error}
           </div>
         )}
@@ -79,7 +79,7 @@ export default function ForgotPassword() {
             required
             className="w-full rounded-xl bg-[#1d222c] border border-[#2a2f3a] px-3 py-2 
             text-[#f6f1e8] placeholder-[#c9a96a]/70
-            focus:outline-none focus:ring-2 focus:ring-[#d6c3b2] focus:border-[#d6c3b2]
+            focus:outline-none focus:ring-2 focus:ring-[#c9a96a] focus:border-[#2a2f3a]
             transition"
             placeholder="you@email.com"
             onChange={(e) => setEmail(e.target.value)}

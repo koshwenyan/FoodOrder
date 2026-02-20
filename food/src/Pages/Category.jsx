@@ -153,7 +153,7 @@ export default function Categories() {
                   {categories.filter((c) => c.photo).length}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <PhotoIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function Categories() {
                   {categories.filter((c) => !c.photo).length}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -287,7 +287,7 @@ export default function Categories() {
         </div>
 
         {filteredCategories.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
             No categories match the current filter.
           </div>
         )}
