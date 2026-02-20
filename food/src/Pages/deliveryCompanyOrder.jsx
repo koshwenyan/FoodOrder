@@ -146,23 +146,23 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
   }, [orders, searchTerm, statusFilter, sortBy]);
 
   return (
-    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
             Delivery Company
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
             Company Orders
           </h1>
-          <p className="text-sm text-[#6c5645] mt-2 max-w-2xl">
+          <p className="text-sm text-[#a8905d] mt-2 max-w-2xl">
             Track assigned orders and delivery progress.
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#ead8c7] flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[#1f1a17] tracking-tight">
+        <div className="mt-8 rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#2a2f3a] flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-[#f6f1e8] tracking-tight">
               Orders ({filteredOrders.length})
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -170,12 +170,12 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search customer, shop, address"
-                className="rounded-full border border-[#ead8c7] bg-white px-4 py-2 text-xs outline-none focus:border-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-xs outline-none focus:border-[#f6f1e8]"
               />
               <select
                 value={statusFilter}
                 onChange={(event) => handleStatusFilterChange(event.target.value)}
-                className="rounded-full border border-[#ead8c7] bg-white px-3 py-2 text-xs outline-none focus:border-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-2 text-xs outline-none focus:border-[#f6f1e8]"
               >
                 <option value="all">All status</option>
                 {orderStatuses.map((status) => (
@@ -187,7 +187,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value)}
-                className="rounded-full border border-[#ead8c7] bg-white px-3 py-2 text-xs outline-none focus:border-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-2 text-xs outline-none focus:border-[#f6f1e8]"
               >
                 <option value="latest">Latest</option>
                 <option value="oldest">Oldest</option>
@@ -196,7 +196,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
               </select>
               <button
                 onClick={fetchOrders}
-                className="rounded-full border border-[#ead8c7] px-4 py-2 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] px-4 py-2 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
               >
                 Refresh
               </button>
@@ -204,7 +204,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
           </div>
 
           {loading && (
-            <div className="px-6 py-8 text-[#6c5645]">Loading orders...</div>
+            <div className="px-6 py-8 text-[#a8905d]">Loading orders...</div>
           )}
 
           {!loading && error && (
@@ -212,7 +212,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
           )}
 
           {!loading && !error && filteredOrders.length === 0 && (
-            <div className="px-6 py-8 text-[#6c5645]">
+            <div className="px-6 py-8 text-[#a8905d]">
               No orders to show yet.
             </div>
           )}
@@ -222,58 +222,58 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
               {filteredOrders.map((order, index) => (
                 <div
                   key={order._id}
-                  className="rounded-3xl border border-[#ead8c7] bg-white/95 p-5 shadow-sm"
+                  className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-5 shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Order #{index + 1}
                       </p>
                       <h3 className="mt-2 text-2xl font-semibold leading-tight">
                         {order.customer?.name || "N/A"}
                       </h3>
-                      <p className="text-sm text-[#6c5645] mt-1">
+                      <p className="text-sm text-[#a8905d] mt-1">
                         {order.shopId?.name || "N/A"}
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645]">
+                    <span className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold capitalize text-[#a8905d]">
                       {order.status}
                     </span>
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
-                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Address
                       </p>
-                      <p className="mt-2 text-[#1f1a17]">
+                      <p className="mt-2 text-[#f6f1e8]">
                         {order.deliveryAddress || "N/A"}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Total
                       </p>
-                      <p className="mt-2 text-lg font-semibold text-[#1f1a17]">
+                      <p className="mt-2 text-lg font-semibold text-[#f6f1e8]">
                         {formatMoney(order.totalAmount)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#6c5645]">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#a8905d]">
                     <div>
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Staff
                       </span>
-                      <p className="mt-1 text-sm text-[#1f1a17]">
+                      <p className="mt-1 text-sm text-[#f6f1e8]">
                         {order.deliveryStaff?.name || "Unassigned"}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Created
                       </span>
-                      <p className="mt-1 text-xs text-[#6c5645]">
+                      <p className="mt-1 text-xs text-[#a8905d]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "N/A"}
@@ -284,7 +284,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
                   <div className="mt-5 flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => setSelectedOrder(order)}
-                      className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                      className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
                     >
                       Details
                     </button>
@@ -296,7 +296,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
                           handleAssignStaff(order._id, event.target.value)
                         }
                         disabled={assigningId === order._id || Boolean(order.deliveryStaff?._id)}
-                        className="rounded-full border border-[#ead8c7] bg-white px-3 py-1 text-xs outline-none focus:border-[#1f1a17]"
+                        className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
                       >
                         <option value="">Assign staff</option>
                         {staffs.map((staff) => (
@@ -316,43 +316,43 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
 
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="relative w-full max-w-3xl rounded-3xl bg-white p-6 text-[#1f1a17] shadow-xl border border-[#ead8c7]">
+          <div className="relative w-full max-w-3xl rounded-3xl bg-[#171a20] p-6 text-[#f6f1e8] shadow-xl border border-[#2a2f3a]">
             <button
               onClick={() => setSelectedOrder(null)}
-              className="absolute right-4 top-4 rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold text-[#6c5645]"
+              className="absolute right-4 top-4 rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold text-[#a8905d]"
             >
               Close
             </button>
             <div className="space-y-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Order details
                 </p>
                 <h3 className="text-2xl font-semibold">
                   {selectedOrder.customer?.name || "Customer"}
                 </h3>
-                <p className="text-sm text-[#6c5645] mt-1">
+                <p className="text-sm text-[#a8905d] mt-1">
                   {selectedOrder.shopId?.name || "Shop"} ·{" "}
                   {formatMoney(selectedOrder.totalAmount)}
                 </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-4 text-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                     Address
                   </p>
                   <p className="mt-2">{selectedOrder.deliveryAddress}</p>
                 </div>
-                <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-4 text-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                     Status
                   </p>
                   <p className="mt-2 capitalize">{selectedOrder.status}</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#ead8c7] bg-white p-4">
+              <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
                 <h4 className="text-sm font-semibold">Items</h4>
                 <div className="mt-3 space-y-2">
                   {selectedOrder.items?.map((item, idx) => {
@@ -368,17 +368,17 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
                           <p className="font-semibold">
                             {item.menuId?.name || item.name || "Menu item"}
                           </p>
-                          <p className="text-xs text-[#8b6b4f]">
+                          <p className="text-xs text-[#c9a96a]">
                             Qty: {item.quantity}
                           </p>
                           {item.addOns?.length > 0 && (
-                            <p className="text-xs text-[#6c5645]">
+                            <p className="text-xs text-[#a8905d]">
                               Add-ons:{" "}
                               {item.addOns.map((addOn) => addOn.name).join(", ")}
                             </p>
                           )}
                           {item.note && (
-                            <p className="text-xs text-[#6c5645]">
+                            <p className="text-xs text-[#a8905d]">
                               Note: {item.note}
                             </p>
                           )}
@@ -394,14 +394,14 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
 
               {user?.role === "company-staff" &&
                 selectedOrder.status !== "complete" && (
-                <div className="rounded-2xl border border-[#ead8c7] bg-white p-4">
+                <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
                   <h4 className="text-sm font-semibold">Update status</h4>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {["picked-up", "delivered", "complete"].map((status) => (
                       <button
                         key={status}
                         onClick={() => handleUpdateStatus(selectedOrder._id, status)}
-                        className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                        className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold capitalize text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
                       >
                         {status}
                       </button>

@@ -203,23 +203,23 @@ export default function Users() {
 
   const roleClasses = {
     admin: "bg-[#f8d7cd] text-[#a4553a]",
-    "shop-admin": "bg-[#e7eddc] text-[#5b7a40]",
+    "shop-admin": "bg-[#1d222c] text-[#5b7a40]",
     "company-admin": "bg-[#f5e6c8] text-[#a07a2f]",
-    "company-staff": "bg-[#ead8c7] text-[#8b6b4f]",
+    "company-staff": "bg-[#2a2f3a] text-[#c9a96a]",
     customer: "bg-[#e6f0f5] text-[#3f6c87]",
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
             Admin Console
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold">
             User Management
           </h1>
-          <p className="text-sm text-[#6c5645] mt-2">
+          <p className="text-sm text-[#a8905d] mt-2">
             Create, update, and manage platform users.
           </p>
         </div>
@@ -228,41 +228,41 @@ export default function Users() {
           <button
             type="button"
             onClick={() => setRoleFilter("all")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               roleFilter === "all"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Total Users
                 </p>
                 <p className="text-2xl font-semibold mt-2">{totalUsers}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
-                <UsersIcon className="w-6 h-6 text-[#8b6b4f]" />
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
+                <UsersIcon className="w-6 h-6 text-[#c9a96a]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setRoleFilter("admin")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               roleFilter === "admin"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Admins
                 </p>
                 <p className="text-2xl font-semibold mt-2">{adminCount}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <ShieldCheckIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -270,20 +270,20 @@ export default function Users() {
           <button
             type="button"
             onClick={() => setRoleFilter("shop-admin")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               roleFilter === "shop-admin"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Shop Admins
                 </p>
                 <p className="text-2xl font-semibold mt-2">{shopAdminCount}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <BuildingStorefrontIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -291,36 +291,36 @@ export default function Users() {
           <button
             type="button"
             onClick={() => setRoleFilter("company")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               roleFilter === "company"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Company Users
                 </p>
                 <p className="text-2xl font-semibold mt-2">{companyCount}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
-                <TruckIcon className="w-6 h-6 text-[#8b6b4f]" />
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
+                <TruckIcon className="w-6 h-6 text-[#c9a96a]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setRoleFilter("customer")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               roleFilter === "customer"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Customers
                 </p>
                 <p className="text-2xl font-semibold mt-2">{customerCount}</p>
@@ -333,9 +333,9 @@ export default function Users() {
         </div>
 
         {/* ---------------- FORM ---------------- */}
-        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6 grid md:grid-cols-3 gap-4">
+        <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6 grid md:grid-cols-3 gap-4">
         {formError && (
-          <div className="md:col-span-3 rounded-2xl border border-[#f3d7cf] bg-[#f9f4ef] px-4 py-3 text-sm text-[#a4553a]">
+          <div className="md:col-span-3 rounded-2xl border border-[#1d222c] bg-[#1d222c] px-4 py-3 text-sm text-[#a4553a]">
             {formError}
           </div>
         )}
@@ -346,7 +346,7 @@ export default function Users() {
             placeholder={f}
             value={form[f]}
             onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
           />
         ))}
 
@@ -355,13 +355,13 @@ export default function Users() {
           placeholder="password"
           disabled={isEditing}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+          className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
         />
 
         <select
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value })}
-          className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+          className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
         >
           <option value="admin">Admin</option>
           <option value="shop-admin">Shop Admin</option>
@@ -374,7 +374,7 @@ export default function Users() {
           <select
             value={form.shopId || ""}
             onChange={(e) => setForm({ ...form, shopId: e.target.value })}
-            className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+            className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
           >
             <option value="">Select Shop</option>
             {shops.map((s) => (
@@ -388,23 +388,23 @@ export default function Users() {
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] disabled:opacity-50"
+          className="rounded-full bg-[#f6f1e8] text-[#171a20] py-3 text-sm font-semibold border border-[#f6f1e8] hover:bg-[#c9a96a] disabled:opacity-50"
         >
           {isSubmitting ? "Saving..." : isEditing ? "Update User" : "Create User"}
         </button>
 
         <button
           onClick={resetForm}
-          className="rounded-full bg-white border border-[#e7d5c4] py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
+          className="rounded-full bg-[#171a20] border border-[#2a2f3a] py-3 text-sm font-semibold text-[#a8905d] hover:bg-[#232833]"
         >
           Cancel
         </button>
       </div>
 
       {/* ---------------- TABLE ---------------- */}
-      <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-x-auto">
+      <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-[#f8f3ee] text-[#6c5645] uppercase text-xs">
+          <thead className="bg-[#171a20] text-[#a8905d] uppercase text-xs">
             <tr>
               <th className="p-4 text-left">No</th>
               <th className="p-4 text-left">Name</th>
@@ -418,10 +418,10 @@ export default function Users() {
 
           <tbody>
             {currentUsers.map((u, i) => (
-              <tr key={u._id} className="border-t border-[#ead8c7] hover:bg-[#fbf7f2] text-[#1f1a17]">
+              <tr key={u._id} className="border-t border-[#2a2f3a] hover:bg-[#232833] text-[#f6f1e8]">
                 <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
                 <td className="p-4 font-medium">{u.name}</td>
-                <td className="p-4 text-[#6c5645]">{u.email}</td>
+                <td className="p-4 text-[#a8905d]">{u.email}</td>
                 <td className="p-4">{u.phone || "-"}</td>
                 <td className="p-4">{u.shopId?.name || "-"}</td>
                 <td className="p-4">
@@ -432,19 +432,19 @@ export default function Users() {
                 <td className="p-4 flex justify-end gap-2">
                   <button
                     onClick={() => setModalUser(u)}
-                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
+                    className="p-2 bg-[#1d222c] hover:bg-[#232833] rounded"
                   >
-                    <EyeIcon className="w-4 h-4 text-[#8b6b4f]" />
+                    <EyeIcon className="w-4 h-4 text-[#c9a96a]" />
                   </button>
                   <button
                     onClick={() => handleEdit(u)}
-                    className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
+                    className="p-2 bg-[#1d222c] hover:bg-[#232833] rounded"
                   >
-                    <PencilIcon className="w-4 h-4 text-[#6c5645]" />
+                    <PencilIcon className="w-4 h-4 text-[#a8905d]" />
                   </button>
                   <button
                     onClick={() => handleDelete(u._id)}
-                    className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
+                    className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded"
                   >
                     <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                   </button>
@@ -456,11 +456,11 @@ export default function Users() {
       </div>
 
       {/* ---------------- PAGINATION ---------------- */}
-      <div className="flex justify-center gap-4 text-[#1f1a17]">
+      <div className="flex justify-center gap-4 text-[#f6f1e8]">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(p => p - 1)}
-          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
+          className="px-4 py-2 bg-[#171a20] border border-[#2a2f3a] rounded-full disabled:opacity-40 text-sm"
         >
           Prev
         </button>
@@ -470,7 +470,7 @@ export default function Users() {
         <button
           disabled={currentPage === totalPages}
           onClick={() => setCurrentPage(p => p + 1)}
-          className="px-4 py-2 bg-white border border-[#e7d5c4] rounded-full disabled:opacity-40 text-sm"
+          className="px-4 py-2 bg-[#171a20] border border-[#2a2f3a] rounded-full disabled:opacity-40 text-sm"
         >
           Next
         </button>

@@ -138,16 +138,16 @@ export default function Shops() {
   const inactiveShops = totalShops - activeShops;
 
   return (
-    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
             Admin Console
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold">
             Shop Management
           </h1>
-          <p className="text-sm text-[#6c5645] mt-2">
+          <p className="text-sm text-[#a8905d] mt-2">
             Create, update, and manage restaurant profiles.
           </p>
         </div>
@@ -156,41 +156,41 @@ export default function Shops() {
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               statusFilter === "all"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Total Shops
                 </p>
                 <p className="text-2xl font-semibold mt-2">{totalShops}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f9f4ef] border border-[#ead8c7]">
-                <BuildingStorefrontIcon className="w-6 h-6 text-[#8b6b4f]" />
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
+                <BuildingStorefrontIcon className="w-6 h-6 text-[#c9a96a]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setStatusFilter("active")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               statusFilter === "active"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Active
                 </p>
                 <p className="text-2xl font-semibold mt-2">{activeShops}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#e7eddc] border border-[#c9d8b7]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
               </div>
             </div>
@@ -198,20 +198,20 @@ export default function Shops() {
           <button
             type="button"
             onClick={() => setStatusFilter("inactive")}
-            className={`text-left rounded-2xl bg-white/80 border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
               statusFilter === "inactive"
-                ? "border-[#1f1a17] ring-1 ring-[#1f1a17]/30"
-                : "border-[#e7d5c4]"
+                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
+                : "border-[#2a2f3a]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Inactive
                 </p>
                 <p className="text-2xl font-semibold mt-2">{inactiveShops}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#f3d7cf] border border-[#e8c4b9]">
+              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
                 <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function Shops() {
         </div>
 
         {/* FORM */}
-        <div className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm p-6">
+        <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6">
           <h2 className="text-lg font-semibold mb-4">
             {isEditing ? "Update Shop" : "Create Shop"}
           </h2>
@@ -231,7 +231,7 @@ export default function Shops() {
               onChange={handleChange}
               placeholder="Shop Name"
               required
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             />
 
             <input
@@ -239,7 +239,7 @@ export default function Shops() {
               value={form.photo}
               onChange={handleChange}
               placeholder="Photo URL"
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             />
 
             <select
@@ -247,7 +247,7 @@ export default function Shops() {
               value={form.category}
               onChange={handleChange}
               required
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             >
               <option value="">Select Category</option>
               {categories.map((c) => (
@@ -262,7 +262,7 @@ export default function Shops() {
               value={form.address}
               onChange={handleChange}
               placeholder="Address"
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             />
 
             <input
@@ -270,7 +270,7 @@ export default function Shops() {
               name="OpenTime"
               value={form.OpenTime}
               onChange={handleChange}
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             />
 
             <input
@@ -278,7 +278,7 @@ export default function Shops() {
               name="CloseTime"
               value={form.CloseTime}
               onChange={handleChange}
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
             />
 
             <textarea
@@ -286,11 +286,11 @@ export default function Shops() {
               value={form.description}
               onChange={handleChange}
               placeholder="Description"
-              className="bg-[#fbf7f2] border border-[#ead8c7] rounded-2xl px-4 py-3 text-sm text-[#1f1a17] placeholder:text-[#8b6b4f] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/15 md:col-span-2"
+              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15 md:col-span-2"
             />
 
             <div className="flex gap-3 md:col-span-2">
-              <button className="rounded-full bg-[#1f1a17] text-[#f8f3ee] px-5 py-3 text-sm font-semibold border border-[#1f1a17] hover:bg-[#2b241f] flex items-center gap-2">
+              <button className="rounded-full bg-[#f6f1e8] text-[#171a20] px-5 py-3 text-sm font-semibold border border-[#f6f1e8] hover:bg-[#c9a96a] flex items-center gap-2">
                 <PlusIcon className="w-4 h-4" />
                 {isEditing ? "Update Shop" : "Create Shop"}
               </button>
@@ -298,7 +298,7 @@ export default function Shops() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="rounded-full bg-white border border-[#e7d5c4] px-5 py-3 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2] flex items-center gap-2"
+                className="rounded-full bg-[#171a20] border border-[#2a2f3a] px-5 py-3 text-sm font-semibold text-[#a8905d] hover:bg-[#232833] flex items-center gap-2"
               >
                 <XMarkIcon className="w-4 h-4" />
                 Cancel
@@ -308,8 +308,8 @@ export default function Shops() {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 rounded-full bg-white/80 border border-[#e7d5c4] px-4 py-2">
-            <span className="text-sm text-[#8b6b4f]">Search</span>
+          <div className="flex items-center gap-2 rounded-full bg-[#1d222c] border border-[#2a2f3a] px-4 py-2">
+            <span className="text-sm text-[#c9a96a]">Search</span>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -321,7 +321,7 @@ export default function Shops() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-full border border-[#e7d5c4] bg-white/80 px-4 py-2 text-sm text-[#6c5645] focus:outline-none"
+            className="rounded-full border border-[#2a2f3a] bg-[#1d222c] px-4 py-2 text-sm text-[#a8905d] focus:outline-none"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -334,31 +334,31 @@ export default function Shops() {
           {filteredShops.map((shop) => (
             <div
               key={shop._id}
-              className="rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm hover:shadow-md transition p-4"
+              className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm hover:shadow-md transition p-4"
             >
               {shop.photo && (
                 <img
                   src={shop.photo}
                   alt={shop.name}
-                  className="w-full h-44 object-cover rounded-2xl mb-3 border border-[#ead8c7]"
+                  className="w-full h-44 object-cover rounded-2xl mb-3 border border-[#2a2f3a]"
                 />
               )}
 
-              <h3 className="text-lg font-semibold text-[#1f1a17]">{shop.name}</h3>
+              <h3 className="text-lg font-semibold text-[#f6f1e8]">{shop.name}</h3>
 
-              <p className="text-sm text-[#6c5645] mt-1 line-clamp-2">
+              <p className="text-sm text-[#a8905d] mt-1 line-clamp-2">
                 {shop.description}
               </p>
 
-              <div className="flex justify-between items-center mt-3 text-xs text-[#8b6b4f]">
+              <div className="flex justify-between items-center mt-3 text-xs text-[#c9a96a]">
                 <span>
                   {shop.OpenTime} – {shop.CloseTime}
                 </span>
                 <span
                   className={`px-2 py-1 rounded-full font-medium ${
                     shop.isActive
-                      ? "bg-[#e7eddc] text-[#5b7a40]"
-                      : "bg-[#f3d7cf] text-[#a4553a]"
+                      ? "bg-[#1d222c] text-[#5b7a40]"
+                      : "bg-[#1d222c] text-[#a4553a]"
                   }`}
                 >
                   {shop.isActive ? "Active" : "Inactive"}
@@ -368,14 +368,14 @@ export default function Shops() {
               <div className="flex justify-end gap-2 mt-4">
                 <button
                   onClick={() => handleEdit(shop)}
-                  className="p-2 bg-[#f9f4ef] hover:bg-[#f1e6db] rounded"
+                  className="p-2 bg-[#1d222c] hover:bg-[#232833] rounded"
                 >
-                  <PencilIcon className="w-4 h-4 text-[#6c5645]" />
+                  <PencilIcon className="w-4 h-4 text-[#a8905d]" />
                 </button>
 
                 <button
                   onClick={() => setConfirmDelete(shop)}
-                  className="p-2 bg-[#f3d7cf] hover:bg-[#e8c4b9] rounded"
+                  className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded"
                 >
                   <TrashIcon className="w-4 h-4 text-[#a4553a]" />
                 </button>
@@ -385,7 +385,7 @@ export default function Shops() {
         </div>
 
         {filteredShops.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-10 text-center text-[#6c5645]">
+          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
             No shops match your search.
           </div>
         )}
@@ -393,18 +393,18 @@ export default function Shops() {
 
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-[#1f1a17]">
+          <div className="w-full max-w-md rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#f6f1e8]">
               Delete shop?
             </h3>
-            <p className="mt-2 text-sm text-[#6c5645]">
+            <p className="mt-2 text-sm text-[#a8905d]">
               This will permanently remove{" "}
               <span className="font-semibold">{confirmDelete.name}</span>.
             </p>
             <div className="mt-6 flex gap-3 justify-end">
               <button
                 onClick={() => setConfirmDelete(null)}
-                className="rounded-full bg-white border border-[#e7d5c4] px-4 py-2 text-sm font-semibold text-[#6c5645] hover:bg-[#fbf7f2]"
+                className="rounded-full bg-[#171a20] border border-[#2a2f3a] px-4 py-2 text-sm font-semibold text-[#a8905d] hover:bg-[#232833]"
               >
                 Cancel
               </button>
