@@ -716,7 +716,7 @@ export default function CustomerHome() {
                 </div>
               </div>
 
-              <div className="mt-5 max-h-[520px] overflow-y-auto pr-1">
+              <div className="mt-5 max-h-[640px] overflow-y-auto pr-1">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {loading.menus && (
                     <p className="text-sm text-[#a8905d]">Loading menu...</p>

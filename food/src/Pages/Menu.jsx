@@ -266,7 +266,7 @@ export default function Menus() {
 
             <button
               onClick={() => setShowForm(true)}
-              className="bg-[#f6f1e8] hover:bg-[#2b2320] text-[#171a20] px-5 py-3 rounded-full flex items-center gap-2 font-semibold"
+              className="bg-[#f6f1e8] hover:opacity-75 cursor-pointer text-[#171a20] px-5 py-3 rounded-full flex items-center gap-2 font-semibold"
             >
               <PlusIcon className="w-5 h-5" />
               Add Menu
