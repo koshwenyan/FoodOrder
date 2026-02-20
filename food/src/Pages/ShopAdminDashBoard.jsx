@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookmarkIcon,
@@ -90,6 +90,10 @@ export default function ShopAdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [statusError, setStatusError] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
+  const prevOrderMapRef = useRef(new Map());
+  const soundEnabledRef = useRef(false);
 
   const fetchDashboardData = async () => {
     if (!shopId) return;
@@ -121,9 +125,67 @@ export default function ShopAdminDashboard() {
     }
   };
 
+  const playNotificationSound = () => {
+    if (!soundEnabledRef.current) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      gain.gain.value = 0.04;
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        ctx.close();
+      }, 120);
+    } catch {
+      // ignore autoplay restrictions
+    }
+  };
+
+  const pushNotification = (title, body) => {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const entry = { id, title, body, createdAt: new Date() };
+    setNotifications((prev) => [entry, ...prev].slice(0, 20));
+    setToasts((prev) => [entry, ...prev].slice(0, 4));
+    playNotificationSound();
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
+  };
+
   useEffect(() => {
     fetchDashboardData();
   }, [shopId]);
+
+  useEffect(() => {
+    const enableSound = () => {
+      soundEnabledRef.current = true;
+    };
+    window.addEventListener("pointerdown", enableSound, { once: true });
+    return () => window.removeEventListener("pointerdown", enableSound);
+  }, []);
+
+  useEffect(() => {
+    if (!orders || orders.length === 0) return;
+    const prevMap = prevOrderMapRef.current;
+    orders.forEach((order) => {
+      if (!order?._id) return;
+      const prevStatus = prevMap.get(order._id);
+      if (prevStatus && prevStatus !== order.status) {
+        pushNotification(
+          "Order status updated",
+          `#${String(order._id).slice(-6)} is now ${order.status}`
+        );
+      }
+      prevMap.set(order._id, order.status);
+    });
+  }, [orders]);
 
   const handleStatusUpdate = async (nextStatus) => {
     if (!selectedOrder?._id || !nextStatus) return;
@@ -153,6 +215,10 @@ export default function ShopAdminDashboard() {
         prev.map((order) => (order._id === selectedOrder._id ? { ...order, ...updatedOrder } : order))
       );
       setSelectedOrder((prev) => (prev ? { ...prev, ...updatedOrder } : prev));
+      pushNotification(
+        "Status updated",
+        `#${String(updatedOrder._id || selectedOrder._id).slice(-6)} set to ${updatedOrder.status}`
+      );
     } catch (error) {
       setStatusError(error.message || "Failed to update order status.");
     } finally {
@@ -340,6 +406,20 @@ export default function ShopAdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+      {toasts.length > 0 && (
+        <div className="fixed right-6 top-24 z-40 w-[320px] space-y-3">
+          {toasts.map((note) => (
+            <div
+              key={note.id}
+              className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm shadow-lg"
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Notification</p>
+              <p className="mt-1 font-semibold">{note.title}</p>
+              <p className="text-xs text-[#a8905d] mt-1">{note.body}</p>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="px-6 py-6 sm:px-10">
         <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -466,6 +546,44 @@ export default function ShopAdminDashboard() {
                 ) : (
                   <p className="text-sm text-[#a8905d]">No major alerts in {rangeLabel.toLowerCase()}.</p>
                 )}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Notifications</h2>
+                {notifications.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setNotifications([]);
+                      setToasts([]);
+                    }}
+                    className="text-xs font-semibold text-[#c9a96a] underline"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+              <div className="mt-4 space-y-3">
+                {notifications.length === 0 && (
+                  <p className="text-sm text-[#a8905d]">No notifications yet.</p>
+                )}
+                {notifications.map((note) => (
+                  <div
+                    key={note.id}
+                    className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 text-sm"
+                  >
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      {note.title}
+                    </p>
+                    <p className="mt-1 text-sm text-[#f6f1e8]">{note.body}</p>
+                    <p className="mt-1 text-xs text-[#a8905d]">
+                      {note.createdAt
+                        ? new Date(note.createdAt).toLocaleTimeString()
+                        : ""}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </section>

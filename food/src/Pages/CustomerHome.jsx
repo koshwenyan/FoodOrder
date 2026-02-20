@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -60,9 +60,48 @@ export default function CustomerHome() {
   });
   const [message, setMessage] = useState({ type: "", text: "" });
 
+  const [notifications, setNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
+  const prevOrderMapRef = useRef(new Map());
+  const soundEnabledRef = useRef(false);
+
   const handleLogout = () => {
     logout();
     navigate("/customer/login");
+  };
+
+  const playNotificationSound = () => {
+    if (!soundEnabledRef.current) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      gain.gain.value = 0.04;
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        ctx.close();
+      }, 120);
+    } catch {
+      // ignore autoplay restrictions
+    }
+  };
+
+  const pushNotification = (title, body) => {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const entry = { id, title, body, createdAt: new Date() };
+    setNotifications((prev) => [entry, ...prev].slice(0, 20));
+    setToasts((prev) => [entry, ...prev].slice(0, 4));
+    playNotificationSound();
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
   };
 
   const showMessage = (type, text) => {
@@ -162,6 +201,39 @@ export default function CustomerHome() {
     fetchOrders();
     fetchWallet();
   }, []);
+
+  useEffect(() => {
+    const enableSound = () => {
+      soundEnabledRef.current = true;
+    };
+    window.addEventListener("pointerdown", enableSound, { once: true });
+    return () => window.removeEventListener("pointerdown", enableSound);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      fetchOrders();
+    }, 20000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!orders || orders.length === 0) return;
+    const prevMap = prevOrderMapRef.current;
+    orders.forEach((order) => {
+      if (!order?._id) return;
+      const prevStatus = prevMap.get(order._id);
+      if (prevStatus && prevStatus !== order.status) {
+        pushNotification(
+          "Order status updated",
+          `#${String(order._id).slice(-6)} is now ${order.status}`
+        );
+      }
+      prevMap.set(order._id, order.status);
+    });
+  }, [orders]);
+
+  const toastNotifications = useMemo(() => toasts, [toasts]);
 
   useEffect(() => {
     if (selectedShop?._id) {
@@ -488,6 +560,21 @@ export default function CustomerHome() {
           </div>
         )}
 
+        {toastNotifications.length > 0 && (
+          <div className="fixed right-6 top-24 z-40 w-[320px] space-y-3">
+            {toastNotifications.map((note) => (
+              <div
+                key={note.id}
+                className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm shadow-lg"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Notification</p>
+                <p className="mt-1 font-semibold">{note.title}</p>
+                <p className="text-xs text-[#a8905d] mt-1">{note.body}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6">
             <div className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] p-6 shadow-sm">
@@ -716,7 +803,7 @@ export default function CustomerHome() {
                 </div>
               </div>
 
-              <div className="mt-5 max-h-[520px] overflow-y-auto pr-1">
+              <div className="mt-5 max-h-[640px] overflow-y-auto pr-1">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {loading.menus && (
                     <p className="text-sm text-[#a8905d]">Loading menu...</p>
@@ -963,6 +1050,46 @@ export default function CustomerHome() {
                     ))}
                   </div>
                 </div>
+
+            <div className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Notifications</h2>
+                {notifications.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setNotifications([]);
+                      setToasts([]);
+                    }}
+                    className="text-xs font-semibold text-[#c9a96a] underline"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+              <div className="mt-4 space-y-3">
+                {notifications.length === 0 && (
+                  <p className="text-sm text-[#a8905d]">
+                    No notifications yet.
+                  </p>
+                )}
+                {notifications.map((note) => (
+                  <div
+                    key={note.id}
+                    className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 text-sm"
+                  >
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      {note.title}
+                    </p>
+                    <p className="mt-1 text-sm text-[#f6f1e8]">{note.body}</p>
+                    <p className="mt-1 text-xs text-[#a8905d]">
+                      {note.createdAt
+                        ? new Date(note.createdAt).toLocaleTimeString()
+                        : ""}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
