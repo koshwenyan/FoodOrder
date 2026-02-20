@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 
 const formatMoney = (value) => {
@@ -10,7 +11,7 @@ const formatMoney = (value) => {
   }).format(amount);
 };
 
-const DeliveryCompanyOrder = () => {
+const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
   const [orders, setOrders] = useState([]);
   const [staffs, setStaffs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +19,8 @@ const DeliveryCompanyOrder = () => {
   const [assigningId, setAssigningId] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const user = useMemo(() => {
     const raw = localStorage.getItem("user");
@@ -80,6 +81,41 @@ const DeliveryCompanyOrder = () => {
     }
   };
 
+  const orderStatuses = [
+    "pending",
+    "accepted",
+    "preparing",
+    "ready",
+    "assigned",
+    "picked-up",
+    "delivered",
+    "complete",
+    "cancelled",
+  ];
+
+  const [statusFilter, setStatusFilter] = useState(() => {
+    const queryStatus = searchParams.get("status");
+    const incoming = queryStatus || defaultStatusFilter;
+    return orderStatuses.includes(incoming) ? incoming : "all";
+  });
+
+  useEffect(() => {
+    const queryStatus = searchParams.get("status");
+    const incoming = queryStatus || defaultStatusFilter;
+    setStatusFilter(orderStatuses.includes(incoming) ? incoming : "all");
+  }, [searchParams, defaultStatusFilter]);
+
+  const handleStatusFilterChange = (nextStatus) => {
+    setStatusFilter(nextStatus);
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextStatus === "all") {
+      nextParams.delete("status");
+    } else {
+      nextParams.set("status", nextStatus);
+    }
+    setSearchParams(nextParams);
+  };
+
   const filteredOrders = useMemo(() => {
     const term = searchTerm.toLowerCase();
     const base = orders.filter((order) => {
@@ -108,18 +144,6 @@ const DeliveryCompanyOrder = () => {
     }
     return sorted;
   }, [orders, searchTerm, statusFilter, sortBy]);
-
-  const orderStatuses = [
-    "pending",
-    "accepted",
-    "preparing",
-    "ready",
-    "assigned",
-    "picked-up",
-    "delivered",
-    "complete",
-    "cancelled",
-  ];
 
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
@@ -150,7 +174,7 @@ const DeliveryCompanyOrder = () => {
               />
               <select
                 value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
+                onChange={(event) => handleStatusFilterChange(event.target.value)}
                 className="rounded-full border border-[#ead8c7] bg-white px-3 py-2 text-xs outline-none focus:border-[#1f1a17]"
               >
                 <option value="all">All status</option>
