@@ -397,6 +397,7 @@ export default function CustomerHome() {
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
   }, [orders]);
+  const recentOrders = useMemo(() => sortedOrders.slice(0, 5), [sortedOrders]);
 
   const latestOrder = sortedOrders[0];
   const latestStatusIndex = latestOrder
@@ -715,69 +716,73 @@ export default function CustomerHome() {
                 </div>
               </div>
 
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {loading.menus && (
-                  <p className="text-sm text-[#6c5645]">Loading menu...</p>
-                )}
-                {!loading.menus && selectedShop && filteredMenus.length === 0 && (
-                  <p className="text-sm text-[#6c5645]">
-                    No menu items found for this shop.
-                  </p>
-                )}
-                {!selectedShop && (
-                  <p className="text-sm text-[#6c5645]">
-                    Choose a shop to start browsing menu items.
-                  </p>
-                )}
-                {filteredMenus.map((menu) => (
-                  <div
-                    key={menu._id}
-                    className="rounded-2xl border border-[#ead8c7] bg-white p-4"
-                  >
-                    <div className="mb-3 overflow-hidden rounded-2xl border border-[#ead8c7] bg-[#f8f3ee]">
-                      {menu.image ? (
-                        <img
-                          src={menu.image}
-                          alt={menu.name}
-                          className="h-36 w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="flex h-36 items-center justify-center text-xs text-[#8b6b4f]">
-                          No image
+              <div className="mt-5 max-h-[520px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {loading.menus && (
+                    <p className="text-sm text-[#6c5645]">Loading menu...</p>
+                  )}
+                  {!loading.menus &&
+                    selectedShop &&
+                    filteredMenus.length === 0 && (
+                      <p className="text-sm text-[#6c5645]">
+                        No menu items found for this shop.
+                      </p>
+                    )}
+                  {!selectedShop && (
+                    <p className="text-sm text-[#6c5645]">
+                      Choose a shop to start browsing menu items.
+                    </p>
+                  )}
+                  {filteredMenus.map((menu) => (
+                    <div
+                      key={menu._id}
+                      className="rounded-2xl border border-[#ead8c7] bg-white p-4"
+                    >
+                      <div className="mb-3 overflow-hidden rounded-2xl border border-[#ead8c7] bg-[#f8f3ee]">
+                        {menu.image ? (
+                          <img
+                            src={menu.image}
+                            alt={menu.name}
+                            className="h-36 w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-36 items-center justify-center text-xs text-[#8b6b4f]">
+                            No image
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-semibold">{menu.name}</p>
+                          <p className="text-xs text-[#8b6b4f]">
+                            {menu.category?.name || "Uncategorized"}
+                          </p>
                         </div>
-                      )}
-                    </div>
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold">{menu.name}</p>
-                        <p className="text-xs text-[#8b6b4f]">
-                          {menu.category?.name || "Uncategorized"}
+                        <p className="text-sm font-semibold text-[#1f1a17]">
+                          {formatMoney(menu.price)}
                         </p>
                       </div>
-                      <p className="text-sm font-semibold text-[#1f1a17]">
-                        {formatMoney(menu.price)}
+                      <p className="mt-2 text-sm text-[#6c5645]">
+                        {menu.description || "Freshly prepared for you."}
                       </p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleAddToCart(menu)}
+                          className="rounded-full bg-[#1f1a17] text-[#f8f3ee] px-4 py-2 text-xs font-semibold hover:bg-[#2b241f]"
+                        >
+                          Add to cart
+                        </button>
+                        <button
+                          onClick={() => setSelectedMenu(menu)}
+                          className="rounded-full border border-[#ead8c7] px-4 py-2 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17]"
+                        >
+                          View details
+                        </button>
+                      </div>
                     </div>
-                    <p className="mt-2 text-sm text-[#6c5645]">
-                      {menu.description || "Freshly prepared for you."}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <button
-                        onClick={() => handleAddToCart(menu)}
-                        className="rounded-full bg-[#1f1a17] text-[#f8f3ee] px-4 py-2 text-xs font-semibold hover:bg-[#2b241f]"
-                      >
-                        Add to cart
-                      </button>
-                      <button
-                        onClick={() => setSelectedMenu(menu)}
-                        className="rounded-full border border-[#ead8c7] px-4 py-2 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17]"
-                      >
-                        View details
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -919,7 +924,7 @@ export default function CustomerHome() {
                     No orders placed yet.
                   </p>
                 )}
-                    {sortedOrders.map((order) => (
+                    {recentOrders.map((order) => (
                       <div
                         key={order._id}
                         className="rounded-2xl border border-[#ead8c7] bg-white px-4 py-3"
