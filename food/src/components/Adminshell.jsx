@@ -13,6 +13,7 @@ import {
     BuildingOffice2Icon,
     BuildingOfficeIcon,
     Squares2X2Icon,
+    PhoneIcon,
     ListBulletIcon,
 } from "@heroicons/react/24/outline";
 
@@ -39,13 +40,13 @@ export default function AdminShell() {
         { name: "Create Orders", icon: ClipboardDocumentListIcon, path: "orders" },
         { name: "Delivery", icon: TruckIcon, path: "delivery" },
         { name: "Menu", icon: ShoppingCartIcon, path: "menu" },
-        { name: "Phone-Orders Lists", icon: ListBulletIcon, path: "orderslists" },
+        { name: "Phone-Orders Lists", icon:ListBulletIcon, path: "orderslists" },
     ];
 
     const companyAdminMenu = [
         { name: "Dashboard", icon: HomeIcon, path: "companyadmindashboard" }, // ✅ fixed path
         { name: "Assigned Orders", icon: ClipboardDocumentListIcon, path: "AssignedOrder" },
-        { name: "Phone Orders", icon: ListBulletIcon, path: "phone-orders" },
+        { name: "Phone Orders", icon:PhoneIcon, path: "phone-orders" },
         { name: "Delivery Staff", icon: TruckIcon, path: "delivery-staff" },
     ];
 
