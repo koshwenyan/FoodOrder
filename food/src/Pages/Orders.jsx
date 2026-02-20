@@ -134,28 +134,28 @@ export default function OrderPage() {
 
 
   return (
-    <div className="orders-theme min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+    <div className="orders-theme min-h-screen bg-[#0f1115] text-[#f6f1e8]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
                 Phone Orders
               </p>
               <h1 className="orders-title text-3xl sm:text-4xl font-semibold">
                 Create Order
               </h1>
-              <p className="text-sm text-[#6c5645] mt-2">
+              <p className="text-sm text-[#a8905d] mt-2">
                 Add items, capture customer info, and send to delivery.
               </p>
             </div>
             <div className="flex gap-3">
-              <div className="rounded-2xl bg-white/70 border border-[#e7d5c4] px-4 py-3">
-                <p className="text-xs text-[#8b6b4f]">Items in Cart</p>
+              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
+                <p className="text-xs text-[#c9a96a]">Items in Cart</p>
                 <p className="text-xl font-semibold">{cart.length}</p>
               </div>
-              <div className="rounded-2xl bg-white/70 border border-[#e7d5c4] px-4 py-3">
-                <p className="text-xs text-[#8b6b4f]">Grand Total</p>
+              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
+                <p className="text-xs text-[#c9a96a]">Grand Total</p>
                 <p className="text-xl font-semibold">
                   {grandTotal.toLocaleString()} Ks
                 </p>
@@ -166,10 +166,10 @@ export default function OrderPage() {
 
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           {/* ================= PRODUCTS ================= */}
-          <div className="rounded-3xl bg-white/80 border border-[#ead8c7] shadow-sm p-6">
+          <div className="rounded-3xl bg-[#1d222c] border border-[#2a2f3a] shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="orders-title text-2xl font-semibold">Products</h2>
-              <span className="text-sm text-[#6c5645]">
+              <span className="text-sm text-[#a8905d]">
                 {products.length} items
               </span>
             </div>
@@ -177,9 +177,9 @@ export default function OrderPage() {
               {products.map((p) => (
                 <div
                   key={p._id}
-                  className="rounded-3xl bg-white/90 border border-[#ead8c7] shadow-sm p-4 flex flex-col"
+                  className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] shadow-sm p-4 flex flex-col"
                 >
-                  <div className="h-40 rounded-2xl bg-[#f9f4ef] border border-[#ead8c7] overflow-hidden mb-3">
+                  <div className="h-40 rounded-2xl bg-[#1d222c] border border-[#2a2f3a] overflow-hidden mb-3">
                     <img
                       src={p.image}
                       alt={p.name}
@@ -189,7 +189,7 @@ export default function OrderPage() {
                   <h3 className="orders-title text-lg font-semibold">
                     {p.name}
                   </h3>
-                  <p className="text-sm text-[#6c5645] mb-3">
+                  <p className="text-sm text-[#a8905d] mb-3">
                     {p.price.toLocaleString()} Ks
                   </p>
                   <button
@@ -197,8 +197,8 @@ export default function OrderPage() {
                     onClick={() => addToCart(p)}
                     className={`mt-auto rounded-full px-4 py-2 text-sm font-medium border transition ${
                       cart.some((i) => i._id === p._id)
-                        ? "bg-[#e7d5c4] text-[#8b6b4f] border-[#e7d5c4] cursor-not-allowed"
-                        : "bg-[#1f1a17] text-[#f8f3ee] border-[#1f1a17] hover:bg-[#2b241f]"
+                        ? "bg-[#e7d5c4] text-[#c9a96a] border-[#2a2f3a] cursor-not-allowed"
+                        : "bg-[#f6f1e8] text-[#171a20] border-[#f6f1e8] hover:bg-[#c9a96a]"
                     }`}
                   >
                     {cart.some((i) => i._id === p._id) ? "Added" : "Add To Cart"}
@@ -209,49 +209,49 @@ export default function OrderPage() {
           </div>
 
           {/* ================= CART ================= */}
-          <div className="rounded-3xl bg-white/90 border border-[#ead8c7] shadow-sm p-6 flex flex-col">
+          <div className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] shadow-sm p-6 flex flex-col">
             <div className="flex items-center justify-between">
               <h2 className="orders-title text-2xl font-semibold">Cart</h2>
-              <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+              <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                 {cart.length} items
               </span>
             </div>
 
             <div className="mt-4 flex-1 overflow-y-auto space-y-4">
               {cart.length === 0 && (
-                <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-white/70 p-6 text-center text-sm text-[#6c5645]">
+                <div className="rounded-2xl border border-dashed border-[#d6c3b2] bg-[#232833] p-6 text-center text-sm text-[#a8905d]">
                   Cart is empty. Add products to create an order.
                 </div>
               )}
               {cart.map((i) => (
                 <div
                   key={i._id}
-                  className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-3"
+                  className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3"
                 >
                   <div className="flex items-center gap-3">
                     <img
                       src={i.image}
-                      className="w-12 h-12 rounded-xl object-cover border border-[#ead8c7]"
+                      className="w-12 h-12 rounded-xl object-cover border border-[#2a2f3a]"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#1f1a17]">
+                      <p className="text-sm font-medium text-[#f6f1e8]">
                         {i.name}
                       </p>
-                      <p className="text-xs text-[#8b6b4f]">
+                      <p className="text-xs text-[#c9a96a]">
                         {i.price.toLocaleString()} Ks
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => updateQty(i._id, -1)}
-                        className="rounded-full border border-[#e7d5c4] bg-white px-2 py-1 text-sm text-[#6c5645]"
+                        className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-2 py-1 text-sm text-[#a8905d]"
                       >
                         -
                       </button>
                       <span className="text-sm font-medium">{i.qty}</span>
                       <button
                         onClick={() => updateQty(i._id, 1)}
-                        className="rounded-full border border-[#e7d5c4] bg-white px-2 py-1 text-sm text-[#6c5645]"
+                        className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-2 py-1 text-sm text-[#a8905d]"
                       >
                         +
                       </button>
@@ -263,7 +263,7 @@ export default function OrderPage() {
 
             <div className="mt-6 space-y-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Customer Info
                 </p>
                 <div className="mt-2 space-y-2">
@@ -273,7 +273,7 @@ export default function OrderPage() {
                     value={customer.name}
                     onChange={handleCustomerChange}
                     placeholder="Name"
-                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                    className="w-full rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20"
                   />
                   <input
                     type="text"
@@ -281,7 +281,7 @@ export default function OrderPage() {
                     value={customer.phone}
                     onChange={handleCustomerChange}
                     placeholder="Phone"
-                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                    className="w-full rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20"
                   />
                   <input
                     type="text"
@@ -289,13 +289,13 @@ export default function OrderPage() {
                     value={customer.address}
                     onChange={handleCustomerChange}
                     placeholder="Address"
-                    className="w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                    className="w-full rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                   Delivery Company
                 </label>
                 <select
@@ -304,7 +304,7 @@ export default function OrderPage() {
                     const d = deliveryCompanies.find((x) => x._id === e.target.value);
                     setSelectedDelivery(d || null);
                   }}
-                  className="mt-2 w-full rounded-2xl border border-[#e7d5c4] bg-white px-4 py-3 text-sm text-[#1f1a17] focus:outline-none focus:ring-2 focus:ring-[#1f1a17]/20"
+                  className="mt-2 w-full rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20"
                 >
                   <option value="">Select delivery</option>
                   {deliveryCompanies.map((d) => (
@@ -315,7 +315,7 @@ export default function OrderPage() {
                 </select>
               </div>
 
-              <div className="rounded-2xl border border-[#ead8c7] bg-[#f9f4ef] p-4 text-sm text-[#6c5645]">
+              <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm text-[#a8905d]">
                 <div className="flex justify-between">
                   <span>Items Total</span>
                   <span>{itemsTotal.toLocaleString()} Ks</span>
@@ -326,7 +326,7 @@ export default function OrderPage() {
                     {selectedDelivery?.serviceFee?.toLocaleString() || 0} Ks
                   </span>
                 </div>
-                <div className="mt-3 flex justify-between font-semibold text-base text-[#1f1a17] border-t border-[#e7d5c4] pt-2">
+                <div className="mt-3 flex justify-between font-semibold text-base text-[#f6f1e8] border-t border-[#2a2f3a] pt-2">
                   <span>Grand Total</span>
                   <span>{grandTotal.toLocaleString()} Ks</span>
                 </div>
@@ -341,7 +341,7 @@ export default function OrderPage() {
                   !customer.address
                 }
                 onClick={handleSubmitOrder}
-                className="w-full rounded-full bg-[#1f1a17] text-[#f8f3ee] py-3 text-sm font-semibold border border-[#1f1a17] disabled:opacity-50"
+                className="w-full rounded-full bg-[#f6f1e8] text-[#171a20] py-3 text-sm font-semibold border border-[#f6f1e8] disabled:opacity-50"
               >
                 Checkout
               </button>

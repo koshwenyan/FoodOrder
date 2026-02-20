@@ -305,25 +305,25 @@ export default function ShopAdminDashboard() {
     {
       name: "Orders",
       count: kpis.totalOrders,
-      icon: <BookmarkIcon className="w-10 h-10 text-[#8b6b4f]" />,
+      icon: <BookmarkIcon className="w-10 h-10 text-[#c9a96a]" />,
       link: "/shop-admin/orderslists",
     },
     {
       name: "Pending Orders",
       count: kpis.pendingOrders,
-      icon: <ClockIcon className="w-10 h-10 text-[#8b6b4f]" />,
+      icon: <ClockIcon className="w-10 h-10 text-[#c9a96a]" />,
       link: "/shop-admin/delivery",
     },
     {
       name: "Completed Orders",
       count: kpis.completedOrders,
-      icon: <TruckIcon className="w-10 h-10 text-[#8b6b4f]" />,
+      icon: <TruckIcon className="w-10 h-10 text-[#c9a96a]" />,
       link: "/shop-admin/orderslists",
     },
     {
       name: "Total Menu Items",
       count: menuItems.length,
-      icon: <Squares2X2Icon className="w-10 h-10 text-[#8b6b4f]" />,
+      icon: <Squares2X2Icon className="w-10 h-10 text-[#c9a96a]" />,
       link: "/shop-admin/menu",
     },
   ];
@@ -339,24 +339,24 @@ export default function ShopAdminDashboard() {
     dateRange === "today" ? "Today" : dateRange === "7d" ? "Last 7 days" : "Last 30 days";
 
   return (
-    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
+    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">Shop Admin</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">Shop Admin</p>
               <h1 className="text-3xl sm:text-4xl font-semibold">Dashboard Overview</h1>
-              <p className="text-sm text-[#6c5645] mt-2">
+              <p className="text-sm text-[#a8905d] mt-2">
                 Monitor shop operations, order flow, and menu performance.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Range</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Range</span>
               <select
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="rounded-xl border border-[#d8c1ab] bg-white/90 px-3 py-2 text-sm outline-none"
+                className="rounded-xl border border-[#2a2f3a] bg-[#171a20] px-3 py-2 text-sm text-[#f6f1e8] outline-none focus:border-[#c9a96a]"
               >
                 <option value="today">Today</option>
                 <option value="7d">Last 7 days</option>
@@ -367,20 +367,20 @@ export default function ShopAdminDashboard() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Today Orders</p>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Today Orders</p>
             <p className="text-2xl font-bold mt-2">{todayOrders}</p>
           </div>
-          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Revenue ({rangeLabel})</p>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Revenue ({rangeLabel})</p>
             <p className="text-2xl font-bold mt-2">{formatCurrency(kpis.revenue)} Ks</p>
           </div>
-          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Avg Cycle Time</p>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Avg Cycle Time</p>
             <p className="text-2xl font-bold mt-2">{Math.round(kpis.avgPrepMinutes)} min</p>
           </div>
-          <div className="rounded-2xl border border-[#ead8c7] bg-white/80 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Cancel Rate</p>
+          <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Cancel Rate</p>
             <p className="text-2xl font-bold mt-2">{kpis.cancelRate.toFixed(1)}%</p>
           </div>
         </div>
@@ -390,24 +390,24 @@ export default function ShopAdminDashboard() {
             <div
               key={card.name}
               onClick={() => navigate(card.link)}
-              className="cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#ead8c7] bg-white/90 transition hover:-translate-y-1 hover:shadow-md"
+              className="cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#2a2f3a] bg-[#171a20] transition hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="absolute -top-6 right-6 p-4 bg-white rounded-full shadow-md border border-[#ead8c7]">
+              <div className="absolute -top-6 right-6 p-4 bg-[#171a20] rounded-full shadow-md border border-[#2a2f3a]">
                 {card.icon}
               </div>
               <div className="mt-8">
-                <p className="text-[#8b6b4f] font-semibold text-lg">{card.name}</p>
-                <h2 className="text-[#1f1a17] text-3xl font-bold mt-2">{card.count}</h2>
+                <p className="text-[#c9a96a] font-semibold text-lg">{card.name}</p>
+                <h2 className="text-[#f6f1e8] text-3xl font-bold mt-2">{card.count}</h2>
               </div>
-              <div className="mt-4 h-1 w-16 bg-[#ead8c7] rounded-full opacity-80"></div>
+              <div className="mt-4 h-1 w-16 bg-[#2a2f3a] rounded-full opacity-80"></div>
             </div>
           ))}
         </div>
 
         <div className="mt-8 grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-6">
-          <section className="rounded-3xl border border-[#ead8c7] bg-white/90 p-6 shadow-sm">
+          <section className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm">
             <h2 className="text-xl font-semibold">Order Status Breakdown</h2>
-            <p className="text-sm text-[#6c5645] mt-1">{rangeLabel}</p>
+            <p className="text-sm text-[#a8905d] mt-1">{rangeLabel}</p>
 
             <div className="mt-5 space-y-4">
               {STATUS_KEYS.map((key) => {
@@ -418,12 +418,12 @@ export default function ShopAdminDashboard() {
                 return (
                   <div key={key}>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-[#4a3b30]">{STATUS_LABELS[key]}</span>
-                      <span className="text-[#6c5645]">{count}</span>
+                      <span className="font-medium text-[#f6f1e8]">{STATUS_LABELS[key]}</span>
+                      <span className="text-[#a8905d]">{count}</span>
                     </div>
-                    <div className="mt-2 h-2 rounded-full bg-[#f1e5d9] overflow-hidden">
+                    <div className="mt-2 h-2 rounded-full bg-[#2a2f3a] overflow-hidden">
                       <div
-                        className="h-2 rounded-full bg-[#b8875f]"
+                        className="h-2 rounded-full bg-[#c9a96a]"
                         style={{ width: `${Math.min(percent, 100)}%` }}
                       />
                     </div>
@@ -434,37 +434,37 @@ export default function ShopAdminDashboard() {
           </section>
 
           <section className="space-y-6">
-            <div className="rounded-3xl border border-[#ead8c7] bg-white/90 p-6 shadow-sm">
+            <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm">
               <h2 className="text-xl font-semibold">Quick Actions</h2>
               <div className="mt-4 space-y-3">
                 {quickActions.map((action) => (
                   <button
                     key={action.label}
                     onClick={() => navigate(action.path)}
-                    className="w-full rounded-xl border border-[#e7d5c4] bg-[#fffaf5] px-4 py-3 text-left text-sm font-medium flex items-center justify-between hover:bg-white"
+                    className="w-full rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 text-left text-sm font-medium flex items-center justify-between hover:bg-[#232833]"
                   >
                     <span>{action.label}</span>
-                    <ArrowTopRightOnSquareIcon className="w-4 h-4 text-[#8b6b4f]" />
+                    <ArrowTopRightOnSquareIcon className="w-4 h-4 text-[#c9a96a]" />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-3xl border border-[#ead8c7] bg-white/90 p-6 shadow-sm">
+            <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm">
               <h2 className="text-xl font-semibold">Alerts</h2>
               <div className="mt-4 space-y-3">
                 {alerts.length ? (
                   alerts.map((item) => (
                     <div
                       key={item}
-                      className="rounded-xl border border-[#f0d8c8] bg-[#fff7f2] px-4 py-3 flex items-start gap-3"
+                      className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 flex items-start gap-3"
                     >
                       <ExclamationTriangleIcon className="w-5 h-5 text-[#bf6b3f] flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-[#664636]">{item}</p>
+                      <p className="text-sm text-[#f6f1e8]">{item}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-[#6c5645]">No major alerts in {rangeLabel.toLowerCase()}.</p>
+                  <p className="text-sm text-[#a8905d]">No major alerts in {rangeLabel.toLowerCase()}.</p>
                 )}
               </div>
             </div>
@@ -472,13 +472,13 @@ export default function ShopAdminDashboard() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-6">
-          <section className="rounded-3xl border border-[#ead8c7] bg-white/90 p-6 shadow-sm overflow-x-auto">
+          <section className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm overflow-x-auto">
             <h2 className="text-xl font-semibold">Recent Orders</h2>
-            <p className="text-sm text-[#6c5645] mt-1">Latest 8 orders in {rangeLabel.toLowerCase()}.</p>
+            <p className="text-sm text-[#a8905d] mt-1">Latest 8 orders in {rangeLabel.toLowerCase()}.</p>
 
             <table className="w-full min-w-[680px] mt-4 text-sm">
               <thead>
-                <tr className="text-left text-[#6c5645] border-b border-[#f0dfd1]">
+                <tr className="text-left text-[#a8905d] border-b border-[#2a2f3a]">
                   <th className="py-2">Order ID</th>
                   <th className="py-2">Customer</th>
                   <th className="py-2">Total</th>
@@ -492,7 +492,7 @@ export default function ShopAdminDashboard() {
                     <tr
                       key={order._id}
                       onClick={() => setSelectedOrder(order)}
-                      className="cursor-pointer border-b border-[#f6ebe1] hover:bg-[#fffaf5]"
+                      className="cursor-pointer border-b border-[#1d222c] hover:bg-[#1d222c]"
                     >
                       <td className="py-3 font-medium">#{String(order._id || "").slice(-6)}</td>
                       <td className="py-3">{order.customer?.name || "-"}</td>
@@ -503,7 +503,7 @@ export default function ShopAdminDashboard() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-[#6c5645]">
+                    <td colSpan={5} className="py-8 text-center text-[#a8905d]">
                       No orders found for this range.
                     </td>
                   </tr>
@@ -512,33 +512,33 @@ export default function ShopAdminDashboard() {
             </table>
           </section>
 
-          <section className="rounded-3xl border border-[#ead8c7] bg-white/90 p-6 shadow-sm">
+          <section className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-sm">
             <h2 className="text-xl font-semibold">Top Selling Menu</h2>
-            <p className="text-sm text-[#6c5645] mt-1">By quantity sold in {rangeLabel.toLowerCase()}.</p>
+            <p className="text-sm text-[#a8905d] mt-1">By quantity sold in {rangeLabel.toLowerCase()}.</p>
 
             <div className="mt-4 space-y-3">
               {topMenus.length ? (
                 topMenus.map((item, idx) => (
                   <div
                     key={`${item.name}-${idx}`}
-                    className="rounded-xl border border-[#f0dfd1] bg-[#fffaf5] px-4 py-3"
+                    className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3"
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <p className="font-medium text-[#3f3026]">{item.name}</p>
-                      <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">{item.qty} sold</p>
+                      <p className="font-medium text-[#f6f1e8]">{item.name}</p>
+                      <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">{item.qty} sold</p>
                     </div>
-                    <p className="text-xs text-[#6c5645] mt-1">Revenue: {formatCurrency(item.revenue)} Ks</p>
+                    <p className="text-xs text-[#a8905d] mt-1">Revenue: {formatCurrency(item.revenue)} Ks</p>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-[#6c5645]">No sales data yet in this range.</p>
+                <p className="text-sm text-[#a8905d]">No sales data yet in this range.</p>
               )}
             </div>
           </section>
         </div>
 
         {isLoading && (
-          <p className="mt-6 text-sm text-[#8b6b4f]">Loading dashboard data...</p>
+          <p className="mt-6 text-sm text-[#c9a96a]">Loading dashboard data...</p>
         )}
       </div>
 
@@ -551,45 +551,45 @@ export default function ShopAdminDashboard() {
           }}
         >
           <div
-            className="mx-auto max-w-2xl rounded-3xl border border-[#ead8c7] bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto"
+            className="mx-auto max-w-2xl rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">Order Detail</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Order Detail</p>
                 <h3 className="text-2xl font-semibold mt-1">#{String(selectedOrder._id || "").slice(-6)}</h3>
-                <p className="text-sm text-[#6c5645] mt-1">{formatDateTime(selectedOrder.createdAt)}</p>
+                <p className="text-sm text-[#a8905d] mt-1">{formatDateTime(selectedOrder.createdAt)}</p>
               </div>
               <button
                 onClick={() => {
                   setSelectedOrder(null);
                   setStatusError("");
                 }}
-                className="rounded-xl border border-[#ead8c7] px-3 py-1.5 text-sm hover:bg-[#fffaf5]"
+                className="rounded-xl border border-[#2a2f3a] px-3 py-1.5 text-sm hover:bg-[#1d222c]"
               >
                 Close
               </button>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="rounded-xl border border-[#f0dfd1] bg-[#fffaf5] p-4">
-                <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">Customer</p>
+              <div className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] p-4">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">Customer</p>
                 <p className="font-medium mt-2">{selectedOrder.customer?.name || "-"}</p>
-                <p className="text-sm text-[#6c5645]">{selectedOrder.customer?.phone || "-"}</p>
+                <p className="text-sm text-[#a8905d]">{selectedOrder.customer?.phone || "-"}</p>
               </div>
-              <div className="rounded-xl border border-[#f0dfd1] bg-[#fffaf5] p-4">
-                <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">Status</p>
+              <div className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] p-4">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">Status</p>
                 <p className="font-medium mt-2 capitalize">{selectedOrder.status || "-"}</p>
-                <p className="text-sm text-[#6c5645]">
+                <p className="text-sm text-[#a8905d]">
                   Total: {formatCurrency(selectedOrder.totalAmount)} Ks
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-[#ead8c7] p-4">
+            <div className="mt-6 rounded-2xl border border-[#2a2f3a] p-4">
               <div className="flex items-center justify-between gap-3">
                 <h4 className="font-semibold">Update Status</h4>
-                {statusUpdating && <p className="text-xs text-[#8b6b4f]">Updating...</p>}
+                {statusUpdating && <p className="text-xs text-[#c9a96a]">Updating...</p>}
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {SHOP_ADMIN_STATUS_ACTIONS.map((status) => {
@@ -601,8 +601,8 @@ export default function ShopAdminDashboard() {
                       disabled={statusUpdating || isCurrent}
                       className={`rounded-full border px-3 py-1.5 text-xs capitalize transition ${
                         isCurrent
-                          ? "bg-[#1f1a17] text-[#f8f3ee] border-[#1f1a17]"
-                          : "border-[#e7d5c4] bg-white hover:bg-[#fffaf5]"
+                          ? "bg-[#f6f1e8] text-[#171a20] border-[#f6f1e8]"
+                          : "border-[#2a2f3a] bg-[#171a20] hover:bg-[#1d222c]"
                       } ${statusUpdating ? "opacity-60 cursor-not-allowed" : ""}`}
                     >
                       {status}
@@ -613,50 +613,50 @@ export default function ShopAdminDashboard() {
               {statusError && <p className="mt-3 text-sm text-[#bf4a3a]">{statusError}</p>}
             </div>
 
-            <div className="mt-6 rounded-2xl border border-[#ead8c7] p-4">
+            <div className="mt-6 rounded-2xl border border-[#2a2f3a] p-4">
               <h4 className="font-semibold">Items</h4>
               <div className="mt-3 space-y-3">
                 {(selectedOrder.items || []).length ? (
                   selectedOrder.items.map((item, idx) => (
                     <div
                       key={`${item.menuId || item.name}-${idx}`}
-                      className="rounded-xl border border-[#f4e7da] bg-[#fffaf5] p-3"
+                      className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] p-3"
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <p className="font-medium text-[#3f3026]">{item.name || "Unnamed Item"}</p>
-                        <p className="text-sm text-[#6c5645]">x{item.quantity || 0}</p>
+                        <p className="font-medium text-[#f6f1e8]">{item.name || "Unnamed Item"}</p>
+                        <p className="text-sm text-[#a8905d]">x{item.quantity || 0}</p>
                       </div>
-                      <p className="text-sm text-[#6c5645] mt-1">
+                      <p className="text-sm text-[#a8905d] mt-1">
                         Line total: {formatCurrency(item.lineTotal || item.price * item.quantity || 0)} Ks
                       </p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-[#6c5645]">No item details available.</p>
+                  <p className="text-sm text-[#a8905d]">No item details available.</p>
                 )}
               </div>
             </div>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-[#f0dfd1] bg-[#fffaf5] p-4">
-                <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">Payment</p>
+              <div className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] p-4">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">Payment</p>
                 <p className="font-medium mt-2 capitalize">{selectedOrder.paymentMethod || "cash"}</p>
-                <p className="text-sm text-[#6c5645]">{selectedOrder.isPaid ? "Paid" : "Not paid"}</p>
+                <p className="text-sm text-[#a8905d]">{selectedOrder.isPaid ? "Paid" : "Not paid"}</p>
               </div>
-              <div className="rounded-xl border border-[#f0dfd1] bg-[#fffaf5] p-4">
-                <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">Delivery</p>
+              <div className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] p-4">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">Delivery</p>
                 <p className="font-medium mt-2">
                   {selectedOrder.deliveryCompany?.name || "No company assigned"}
                 </p>
-                <p className="text-sm text-[#6c5645]">
+                <p className="text-sm text-[#a8905d]">
                   Staff: {selectedOrder.deliveryStaff?.name || "-"}
                 </p>
               </div>
             </div>
 
             <div className="mt-6">
-              <p className="text-xs uppercase tracking-[0.15em] text-[#8b6b4f]">Address</p>
-              <p className="text-sm text-[#4a3b30] mt-2">{selectedOrder.deliveryAddress || "-"}</p>
+              <p className="text-xs uppercase tracking-[0.15em] text-[#c9a96a]">Address</p>
+              <p className="text-sm text-[#f6f1e8] mt-2">{selectedOrder.deliveryAddress || "-"}</p>
             </div>
           </div>
         </div>

@@ -158,11 +158,11 @@ export default function DeliveryStaffOrders() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f6f1eb] text-[#1f1a17]">
-      <header className="sticky top-0 z-30 border-b border-[#ead8c7] bg-white/90 px-6 py-3 shadow-sm">
+    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+      <header className="sticky top-0 z-30 border-b border-[#2a2f3a] bg-[#171a20] px-6 py-3 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
               Delivery Staff
             </p>
             <h1 className="text-lg font-semibold leading-tight">
@@ -172,15 +172,15 @@ export default function DeliveryStaffOrders() {
           <div className="flex items-center gap-6">
             {me?.companyId?.name && (
               <div className="text-right text-sm">
-                <div className="text-[#8b6b4f]">Company</div>
-                <div className="font-semibold text-[#1f1a17]">
+                <div className="text-[#c9a96a]">Company</div>
+                <div className="font-semibold text-[#f6f1e8]">
                   {me.companyId.name}
                 </div>
               </div>
             )}
             <button
               onClick={handleLogout}
-              className="rounded-full border border-[#ead8c7] px-4 py-2 text-xs font-semibold text-[#b53b2e] hover:border-[#1f1a17]"
+              className="rounded-full border border-[#2a2f3a] px-4 py-2 text-xs font-semibold text-[#e06c5f] hover:border-[#f6f1e8]"
             >
               Logout
             </button>
@@ -188,14 +188,14 @@ export default function DeliveryStaffOrders() {
         </div>
       </header>
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f9e9d7] via-[#f8f3ee] to-[#f2ddc7] p-6 sm:p-8 shadow-lg border border-[#ead8c7]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#8b6b4f]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
             Delivery Staff
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
             My Assigned Orders
           </h1>
-          <p className="text-sm text-[#6c5645] mt-2 max-w-2xl">
+          <p className="text-sm text-[#a8905d] mt-2 max-w-2xl">
             View your orders and update delivery status.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -203,14 +203,14 @@ export default function DeliveryStaffOrders() {
               onClick={sharing ? stopSharing : startSharing}
               className={`rounded-full px-4 py-2 text-xs font-semibold ${
                 sharing
-                  ? "bg-[#1f1a17] text-[#f8f3ee]"
-                  : "border border-[#ead8c7] text-[#6c5645]"
+                  ? "bg-[#f6f1e8] text-[#171a20]"
+                  : "border border-[#2a2f3a] text-[#a8905d]"
               }`}
             >
               {sharing ? "Stop sharing location" : "Share live location"}
             </button>
             {lastSent && (
-              <span className="text-xs text-[#8b6b4f]">
+              <span className="text-xs text-[#c9a96a]">
                 Last update: {lastSent.toLocaleTimeString()}
               </span>
             )}
@@ -220,9 +220,9 @@ export default function DeliveryStaffOrders() {
           </div>
         </div>
 
-        <div className="mt-8 rounded-3xl border border-[#ead8c7] bg-white/90 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#ead8c7] flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[#1f1a17] tracking-tight">
+        <div className="mt-8 rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#2a2f3a] flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-[#f6f1e8] tracking-tight">
               Orders ({filteredOrders.length})
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -230,12 +230,12 @@ export default function DeliveryStaffOrders() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search customer, shop, address"
-                className="rounded-full border border-[#ead8c7] bg-white px-4 py-2 text-xs outline-none focus:border-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-xs outline-none focus:border-[#f6f1e8]"
               />
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
-                className="rounded-full border border-[#ead8c7] bg-white px-3 py-2 text-xs outline-none focus:border-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-2 text-xs outline-none focus:border-[#f6f1e8]"
               >
                 <option value="all">All status</option>
                 {filterOptions.map((status) => (
@@ -246,7 +246,7 @@ export default function DeliveryStaffOrders() {
               </select>
               <button
                 onClick={fetchOrders}
-                className="rounded-full border border-[#ead8c7] px-4 py-2 text-xs font-semibold text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                className="rounded-full border border-[#2a2f3a] px-4 py-2 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
               >
                 Refresh
               </button>
@@ -254,7 +254,7 @@ export default function DeliveryStaffOrders() {
           </div>
 
           {loading && (
-            <div className="px-6 py-8 text-[#6c5645]">Loading orders...</div>
+            <div className="px-6 py-8 text-[#a8905d]">Loading orders...</div>
           )}
 
           {!loading && error && (
@@ -262,7 +262,7 @@ export default function DeliveryStaffOrders() {
           )}
 
           {!loading && !error && filteredOrders.length === 0 && (
-            <div className="px-6 py-8 text-[#6c5645]">
+            <div className="px-6 py-8 text-[#a8905d]">
               No orders to show yet.
             </div>
           )}
@@ -279,50 +279,50 @@ export default function DeliveryStaffOrders() {
                 return (
                 <div
                   key={order._id}
-                  className="rounded-3xl border border-[#ead8c7] bg-white/95 p-5 shadow-sm"
+                  className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-5 shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Order #{index + 1}
                       </p>
                       <h3 className="mt-2 text-2xl font-semibold leading-tight">
                         {displayName}
                       </h3>
-                      <p className="text-sm text-[#6c5645] mt-1">
+                      <p className="text-sm text-[#a8905d] mt-1">
                         {displayShop}
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645]">
+                    <span className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold capitalize text-[#a8905d]">
                       {order.status}
                     </span>
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
-                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Address
                       </p>
-                      <p className="mt-2 text-[#1f1a17]">
+                      <p className="mt-2 text-[#f6f1e8]">
                         {displayAddress}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-[#ead8c7] bg-[#fdf9f4] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Total
                       </p>
-                      <p className="mt-2 text-lg font-semibold text-[#1f1a17]">
+                      <p className="mt-2 text-lg font-semibold text-[#f6f1e8]">
                         {formatMoney(order.totalAmount)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#6c5645]">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#a8905d]">
                     <div>
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                         Created
                       </span>
-                      <p className="mt-1 text-xs text-[#6c5645]">
+                      <p className="mt-1 text-xs text-[#a8905d]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "N/A"}
@@ -331,12 +331,12 @@ export default function DeliveryStaffOrders() {
                   </div>
 
                   <div className="mt-5">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#8b6b4f]">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
                       Update Status
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {isComplete ? (
-                        <span className="text-xs text-[#6c5645]">
+                        <span className="text-xs text-[#a8905d]">
                           Status complete
                         </span>
                       ) : (
@@ -344,7 +344,7 @@ export default function DeliveryStaffOrders() {
                           <button
                             key={status}
                             onClick={() => handleUpdateStatus(order, status)}
-                            className="rounded-full border border-[#ead8c7] px-3 py-1 text-xs font-semibold capitalize text-[#6c5645] hover:border-[#1f1a17] hover:text-[#1f1a17]"
+                            className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold capitalize text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
                           >
                             {status}
                           </button>
