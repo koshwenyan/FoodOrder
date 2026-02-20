@@ -179,11 +179,7 @@ export default function DeliveryCompanyStaff() {
 
 
     if (loading) {
-<<<<<<< HEAD
         return <div className="px-6 py-6 sm:px-10 text-[#423d38]">Loading staff...</div>;
-=======
-        return <div className="px-6 py-6 sm:px-10 text-[#a8905d]">Loading staff...</div>;
->>>>>>> 42d4c064d23ac3b5703b6d01689aa88697863a78
     }
 
     return (
@@ -206,7 +202,6 @@ export default function DeliveryCompanyStaff() {
                         <h2 className="text-lg font-semibold text-[#f6f1e8]">
                             Staff List ({staffs.length})
                         </h2>
-<<<<<<< HEAD
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-[#8b6b4f]">
                                 Company staff directory
@@ -218,11 +213,6 @@ export default function DeliveryCompanyStaff() {
                                 Add Staff
                             </button>
                         </div>
-=======
-                        <span className="text-sm text-[#c9a96a]">
-                            Company staff directory
-                        </span>
->>>>>>> 42d4c064d23ac3b5703b6d01689aa88697863a78
                     </div>
 
                     {staffs.length === 0 ? (
