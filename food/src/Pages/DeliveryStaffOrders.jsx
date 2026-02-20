@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../api/axios";
 
 const formatMoney = (value) => {
@@ -21,6 +21,10 @@ export default function DeliveryStaffOrders() {
   const [geoError, setGeoError] = useState("");
   const [lastSent, setLastSent] = useState(null);
   const [watchId, setWatchId] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
+  const prevOrderMapRef = useRef(new Map());
+  const soundEnabledRef = useRef(false);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -50,10 +54,75 @@ export default function DeliveryStaffOrders() {
     }
   };
 
+  const playNotificationSound = () => {
+    if (!soundEnabledRef.current) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      gain.gain.value = 0.04;
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        ctx.close();
+      }, 120);
+    } catch {
+      // ignore autoplay restrictions
+    }
+  };
+
+  const pushNotification = (title, body) => {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const entry = { id, title, body, createdAt: new Date() };
+    setNotifications((prev) => [entry, ...prev].slice(0, 20));
+    setToasts((prev) => [entry, ...prev].slice(0, 4));
+    playNotificationSound();
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
+  };
+
   useEffect(() => {
     fetchOrders();
     fetchMe();
   }, []);
+
+  useEffect(() => {
+    const enableSound = () => {
+      soundEnabledRef.current = true;
+    };
+    window.addEventListener("pointerdown", enableSound, { once: true });
+    return () => window.removeEventListener("pointerdown", enableSound);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      fetchOrders();
+    }, 20000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!orders || orders.length === 0) return;
+    const prevMap = prevOrderMapRef.current;
+    orders.forEach((order) => {
+      if (!order?._id) return;
+      const prevStatus = prevMap.get(order._id);
+      if (prevStatus && prevStatus !== order.status) {
+        pushNotification(
+          "Order status updated",
+          `#${String(order._id).slice(-6)} is now ${order.status}`
+        );
+      }
+      prevMap.set(order._id, order.status);
+    });
+  }, [orders]);
 
   const sendLocation = async (position) => {
     const { latitude, longitude } = position.coords;
@@ -125,6 +194,10 @@ export default function DeliveryStaffOrders() {
       } else {
         await api.put(`/order/${order._id}/status`, { status });
       }
+      pushNotification(
+        "Status updated",
+        `#${String(order._id).slice(-6)} set to ${status}`
+      );
       fetchOrders();
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to update status.");
@@ -159,6 +232,20 @@ export default function DeliveryStaffOrders() {
 
   return (
     <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+      {toasts.length > 0 && (
+        <div className="fixed right-6 top-24 z-40 w-[320px] space-y-3">
+          {toasts.map((note) => (
+            <div
+              key={note.id}
+              className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm shadow-lg"
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Notification</p>
+              <p className="mt-1 font-semibold">{note.title}</p>
+              <p className="text-xs text-[#a8905d] mt-1">{note.body}</p>
+            </div>
+          ))}
+        </div>
+      )}
       <header className="sticky top-0 z-30 border-b border-[#2a2f3a] bg-[#171a20] px-6 py-3 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -217,6 +304,48 @@ export default function DeliveryStaffOrders() {
             {geoError && (
               <span className="text-xs text-[#c97a5a]">{geoError}</span>
             )}
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#f6f1e8]">
+              Notifications
+            </h2>
+            {notifications.length > 0 && (
+              <button
+                onClick={() => {
+                  setNotifications([]);
+                  setToasts([]);
+                }}
+                className="text-xs font-semibold text-[#c9a96a] underline"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+          <div className="mt-4 space-y-3">
+            {notifications.length === 0 && (
+              <p className="text-sm text-[#a8905d]">
+                No notifications yet.
+              </p>
+            )}
+            {notifications.map((note) => (
+              <div
+                key={note.id}
+                className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 text-sm"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                  {note.title}
+                </p>
+                <p className="mt-1 text-sm text-[#f6f1e8]">{note.body}</p>
+                <p className="mt-1 text-xs text-[#a8905d]">
+                  {note.createdAt
+                    ? new Date(note.createdAt).toLocaleTimeString()
+                    : ""}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
