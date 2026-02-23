@@ -21,7 +21,16 @@ export default function DeliveryStaffOrders() {
   const [geoError, setGeoError] = useState("");
   const [lastSent, setLastSent] = useState(null);
   const [watchId, setWatchId] = useState(null);
-  const [notifications, setNotifications] = useState([]);
+  const NOTI_STORAGE_KEY = "foodorder.notifications.delivery";
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const raw = localStorage.getItem(NOTI_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
   const [toasts, setToasts] = useState([]);
   const prevOrderMapRef = useRef(new Map());
   const soundEnabledRef = useRef(false);
@@ -63,15 +72,15 @@ export default function DeliveryStaffOrders() {
       const oscillator = ctx.createOscillator();
       const gain = ctx.createGain();
       oscillator.type = "sine";
-      oscillator.frequency.value = 880;
-      gain.gain.value = 0.04;
+      oscillator.frequency.value = 660;
+      gain.gain.value = 0.03;
       oscillator.connect(gain);
       gain.connect(ctx.destination);
       oscillator.start();
       setTimeout(() => {
         oscillator.stop();
         ctx.close();
-      }, 120);
+      }, 100);
     } catch {
       // ignore autoplay restrictions
     }
@@ -104,7 +113,7 @@ export default function DeliveryStaffOrders() {
   useEffect(() => {
     const timer = setInterval(() => {
       fetchOrders();
-    }, 20000);
+    }, 15000);
     return () => clearInterval(timer);
   }, []);
 
@@ -123,6 +132,14 @@ export default function DeliveryStaffOrders() {
       prevMap.set(order._id, order.status);
     });
   }, [orders]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NOTI_STORAGE_KEY, JSON.stringify(notifications));
+    } catch {
+      // ignore storage errors
+    }
+  }, [notifications]);
 
   const sendLocation = async (position) => {
     const { latitude, longitude } = position.coords;

@@ -90,7 +90,16 @@ export default function ShopAdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [statusError, setStatusError] = useState("");
-  const [notifications, setNotifications] = useState([]);
+  const NOTI_STORAGE_KEY = "foodorder.notifications.shopadmin";
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const raw = localStorage.getItem(NOTI_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
   const [toasts, setToasts] = useState([]);
   const prevOrderMapRef = useRef(new Map());
   const soundEnabledRef = useRef(false);
@@ -134,15 +143,15 @@ export default function ShopAdminDashboard() {
       const oscillator = ctx.createOscillator();
       const gain = ctx.createGain();
       oscillator.type = "sine";
-      oscillator.frequency.value = 880;
-      gain.gain.value = 0.04;
+      oscillator.frequency.value = 660;
+      gain.gain.value = 0.03;
       oscillator.connect(gain);
       gain.connect(ctx.destination);
       oscillator.start();
       setTimeout(() => {
         oscillator.stop();
         ctx.close();
-      }, 120);
+      }, 100);
     } catch {
       // ignore autoplay restrictions
     }
@@ -161,6 +170,13 @@ export default function ShopAdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+  }, [shopId]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      fetchDashboardData();
+    }, 15000);
+    return () => clearInterval(timer);
   }, [shopId]);
 
   useEffect(() => {
@@ -186,6 +202,14 @@ export default function ShopAdminDashboard() {
       prevMap.set(order._id, order.status);
     });
   }, [orders]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NOTI_STORAGE_KEY, JSON.stringify(notifications));
+    } catch {
+      // ignore storage errors
+    }
+  }, [notifications]);
 
   const handleStatusUpdate = async (nextStatus) => {
     if (!selectedOrder?._id || !nextStatus) return;

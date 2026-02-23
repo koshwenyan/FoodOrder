@@ -60,7 +60,16 @@ export default function CustomerHome() {
   });
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const [notifications, setNotifications] = useState([]);
+  const NOTI_STORAGE_KEY = "foodorder.notifications.customer";
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const raw = localStorage.getItem(NOTI_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
   const [toasts, setToasts] = useState([]);
   const prevOrderMapRef = useRef(new Map());
   const soundEnabledRef = useRef(false);
@@ -79,15 +88,15 @@ export default function CustomerHome() {
       const oscillator = ctx.createOscillator();
       const gain = ctx.createGain();
       oscillator.type = "sine";
-      oscillator.frequency.value = 880;
-      gain.gain.value = 0.04;
+      oscillator.frequency.value = 660;
+      gain.gain.value = 0.03;
       oscillator.connect(gain);
       gain.connect(ctx.destination);
       oscillator.start();
       setTimeout(() => {
         oscillator.stop();
         ctx.close();
-      }, 120);
+      }, 100);
     } catch {
       // ignore autoplay restrictions
     }
@@ -213,9 +222,17 @@ export default function CustomerHome() {
   useEffect(() => {
     const timer = setInterval(() => {
       fetchOrders();
-    }, 20000);
+    }, 15000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NOTI_STORAGE_KEY, JSON.stringify(notifications));
+    } catch {
+      // ignore storage errors
+    }
+  }, [notifications]);
 
   useEffect(() => {
     if (!orders || orders.length === 0) return;
