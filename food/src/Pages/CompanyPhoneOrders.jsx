@@ -102,23 +102,23 @@ export default function CompanyPhoneOrders() {
   }, [orders, searchTerm, statusFilter]);
 
   return (
-    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
             Company Admin
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold leading-tight">
             Phone Called Orders
           </h1>
-          <p className="text-sm text-[#a8905d] mt-2 max-w-2xl">
+          <p className="text-sm text-[#475569] mt-2 max-w-2xl">
             Assign staff and manage delivery progress for phone orders.
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#2a2f3a] flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[#f6f1e8] tracking-tight">
+        <div className="mt-8 rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#cbd5e1] flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-[#0f172a] tracking-tight">
               Orders ({filteredOrders.length})
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -126,12 +126,12 @@ export default function CompanyPhoneOrders() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search name, phone, address"
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-xs outline-none focus:border-[#f6f1e8]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-xs outline-none focus:border-[#e2e8f0]"
               />
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-2 text-xs outline-none focus:border-[#f6f1e8]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-xs outline-none focus:border-[#e2e8f0]"
               >
                 <option value="all">All status</option>
                 {statusOptions.map((status) => (
@@ -142,7 +142,7 @@ export default function CompanyPhoneOrders() {
               </select>
               <button
                 onClick={fetchOrders}
-                className="rounded-full border border-[#2a2f3a] px-4 py-2 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
+                className="rounded-full border border-[#cbd5e1] px-4 py-2 text-xs font-semibold text-[#475569] hover:border-[#e2e8f0] hover:text-[#0f172a]"
               >
                 Refresh
               </button>
@@ -150,7 +150,7 @@ export default function CompanyPhoneOrders() {
           </div>
 
           {loading && (
-            <div className="px-6 py-8 text-[#a8905d]">Loading orders...</div>
+            <div className="px-6 py-8 text-[#475569]">Loading orders...</div>
           )}
 
           {!loading && error && (
@@ -158,7 +158,7 @@ export default function CompanyPhoneOrders() {
           )}
 
           {!loading && !error && filteredOrders.length === 0 && (
-            <div className="px-6 py-8 text-[#a8905d]">
+            <div className="px-6 py-8 text-[#475569]">
               No orders to show yet.
             </div>
           )}
@@ -168,58 +168,58 @@ export default function CompanyPhoneOrders() {
               {filteredOrders.map((order, index) => (
                 <div
                   key={order._id}
-                  className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-5 shadow-sm"
+                  className="rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] p-5 shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         Order #{index + 1}
                       </p>
                       <h3 className="mt-2 text-2xl font-semibold leading-tight">
                         {order.customerName || "Customer"}
                       </h3>
-                      <p className="text-sm text-[#a8905d] mt-1">
+                      <p className="text-sm text-[#475569] mt-1">
                         {order.phone || "N/A"}
                       </p>
                     </div>
-                    <span className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold capitalize text-[#a8905d]">
+                    <span className="rounded-full border border-[#cbd5e1] px-3 py-1 text-xs font-semibold capitalize text-[#475569]">
                       {order.status}
                     </span>
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
-                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                    <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         Address
                       </p>
-                      <p className="mt-2 text-[#f6f1e8]">
+                      <p className="mt-2 text-[#0f172a]">
                         {order.address || "N/A"}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                    <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         Total
                       </p>
-                      <p className="mt-2 text-lg font-semibold text-[#f6f1e8]">
+                      <p className="mt-2 text-lg font-semibold text-[#0f172a]">
                         {formatMoney(order.totalAmount)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#a8905d]">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[#475569]">
                     <div>
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         Staff
                       </span>
-                      <p className="mt-1 text-sm text-[#f6f1e8]">
+                      <p className="mt-1 text-sm text-[#0f172a]">
                         {order.deliveryStaff?.name || "Unassigned"}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      <span className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         Created
                       </span>
-                      <p className="mt-1 text-xs text-[#a8905d]">
+                      <p className="mt-1 text-xs text-[#475569]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "N/A"}
@@ -230,7 +230,7 @@ export default function CompanyPhoneOrders() {
                   <div className="mt-5 flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => setSelectedOrder(order)}
-                      className="rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
+                      className="rounded-full border border-[#cbd5e1] px-3 py-1 text-xs font-semibold text-[#475569] hover:border-[#e2e8f0] hover:text-[#0f172a]"
                     >
                       Details
                     </button>
@@ -243,7 +243,7 @@ export default function CompanyPhoneOrders() {
                         assigningId === order._id ||
                         Boolean(order.deliveryStaff?._id)
                       }
-                      className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
+                      className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-3 py-1 text-xs outline-none focus:border-[#e2e8f0]"
                     >
                       <option value="">Assign staff</option>
                       {staffs.map((staff) => (
@@ -257,7 +257,7 @@ export default function CompanyPhoneOrders() {
                       onChange={(event) =>
                         handleUpdateStatus(order._id, event.target.value)
                       }
-                      className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-3 py-1 text-xs outline-none focus:border-[#f6f1e8]"
+                      className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-3 py-1 text-xs outline-none focus:border-[#e2e8f0]"
                     >
                       {statusOptions.map((status) => (
                         <option key={status} value={status}>
@@ -275,43 +275,43 @@ export default function CompanyPhoneOrders() {
 
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="relative w-full max-w-3xl rounded-3xl bg-[#171a20] p-6 text-[#f6f1e8] shadow-xl border border-[#2a2f3a]">
+          <div className="relative w-full max-w-3xl rounded-3xl bg-[#f8fafc] p-6 text-[#0f172a] shadow-xl border border-[#cbd5e1]">
             <button
               onClick={() => setSelectedOrder(null)}
-              className="absolute right-4 top-4 rounded-full border border-[#2a2f3a] px-3 py-1 text-xs font-semibold text-[#a8905d]"
+              className="absolute right-4 top-4 rounded-full border border-[#cbd5e1] px-3 py-1 text-xs font-semibold text-[#475569]"
             >
               Close
             </button>
             <div className="space-y-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Order details
                 </p>
                 <h3 className="text-2xl font-semibold">
                   {selectedOrder.customerName || "Customer"}
                 </h3>
-                <p className="text-sm text-[#a8905d] mt-1">
+                <p className="text-sm text-[#475569] mt-1">
                   {selectedOrder.phone || "N/A"} ·{" "}
                   {formatMoney(selectedOrder.totalAmount)}
                 </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-4 text-sm">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                     Address
                   </p>
                   <p className="mt-2">{selectedOrder.address}</p>
                 </div>
-                <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-4 text-sm">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                     Status
                   </p>
                   <p className="mt-2 capitalize">{selectedOrder.status}</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+              <div className="rounded-2xl border border-[#cbd5e1] bg-[#f8fafc] p-4">
                 <h4 className="text-sm font-semibold">Items</h4>
                 <div className="mt-3 space-y-2">
                   {selectedOrder.items?.map((item, idx) => {
@@ -326,17 +326,17 @@ export default function CompanyPhoneOrders() {
                           <p className="font-semibold">
                             {item.menu?.name || item.name || "Menu item"}
                           </p>
-                          <p className="text-xs text-[#c9a96a]">
+                          <p className="text-xs text-[#475569]">
                             Qty: {item.quantity}
                           </p>
                           {item.addOns?.length > 0 && (
-                            <p className="text-xs text-[#a8905d]">
+                            <p className="text-xs text-[#475569]">
                               Add-ons:{" "}
                               {item.addOns.map((addOn) => addOn.name).join(", ")}
                             </p>
                           )}
                           {item.note && (
-                            <p className="text-xs text-[#a8905d]">
+                            <p className="text-xs text-[#475569]">
                               Note: {item.note}
                             </p>
                           )}

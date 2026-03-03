@@ -145,18 +145,18 @@ export default function AdminShell() {
         user?.role === "shop-admin" && shopName ? `• ${shopName}` : "";
 
     return (
-        <div className="orders-theme min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+        <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
 
             {/* ================= SIDEBAR ================= */}
             <aside
                 className={`${sidebarOpen ? "w-64" : "w-20"
                     } fixed inset-y-0 left-0 z-40
         transition-all duration-300
-        bg-[#171a20] border-r border-[#2a2f3a] shadow-sm
+        bg-[#f8fafc] border-r border-[#cbd5e1] shadow-sm
         flex flex-col`}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 h-16 border-b border-[#2a2f3a] bg-gradient-to-r from-[#1d222c] via-[#171a20] to-[#2a2f3a]">
+                <div className="flex items-center justify-between px-4 h-16 border-b border-[#cbd5e1] bg-gradient-to-r from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]">
                     {sidebarOpen && (
                         <span className="orders-title text-lg font-semibold tracking-wide">
                             DASHBOARD
@@ -165,7 +165,7 @@ export default function AdminShell() {
 
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="p-2 rounded-lg hover:bg-[#232833]"
+                        className="p-2 rounded-lg hover:bg-[#e2e8f0]"
                     >
                         <Bars3Icon className="w-5 h-5" />
                     </button>
@@ -180,8 +180,8 @@ export default function AdminShell() {
                             className={({ isActive }) =>
                                 `relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
                 ${isActive
-                                    ? "bg-[#2a2f3a] text-[#f6f1e8]"
-                                    : "text-[#a8905d] hover:bg-[#232833]"
+                                    ? "bg-[#cbd5e1] text-[#0f172a]"
+                                    : "text-[#475569] hover:bg-[#e2e8f0]"
                                 }`
                             }
                             title={item.name}
@@ -191,14 +191,14 @@ export default function AdminShell() {
                                     {/* ACTIVE INDICATOR BAR */}
                                     <span
                                         className={`absolute left-0 top-0 h-full w-1 rounded-r
-                    ${"bg-[#c9a96a]"} ${sidebarOpen ? "" : "opacity-0"
+                    ${"bg-[#0ea5e9]"} ${sidebarOpen ? "" : "opacity-0"
                                             }`}
                                     />
 
                                     <item.icon
                                         className={`w-5 h-5 flex-shrink-0 ${isActive
-                                            ? "text-[#f6f1e8]"
-                                            : "text-[#c9a96a]"
+                                            ? "text-[#0f172a]"
+                                            : "text-[#475569]"
                                             }`}
                                     />
                                     {sidebarOpen && <span>{item.name}</span>}
@@ -216,22 +216,22 @@ export default function AdminShell() {
                     className={`fixed top-0 right-0 z-30
           ${sidebarOpen ? "left-64" : "left-20"}
           h-16 flex items-center justify-between
-          px-6 bg-[#171a20] border-b border-[#2a2f3a] shadow-sm`}
+          px-6 bg-[#f8fafc] border-b border-[#cbd5e1] shadow-sm`}
                 >
                     <div className="relative">
-                        <div className="absolute -top-4 left-0 h-1 w-40 rounded-full bg-gradient-to-r from-[#2a2f3a] via-[#171a20] to-[#1d222c]" />
-                        <div className="flex items-center gap-2 text-sm text-[#c9a96a]">
+                        <div className="absolute -top-4 left-0 h-1 w-40 rounded-full bg-gradient-to-r from-[#cbd5e1] via-[#f1f5f9] to-[#e2e8f0]" />
+                        <div className="flex items-center gap-2 text-sm text-[#475569]">
                             <span className="uppercase tracking-[0.2em]">Dashboard</span>
                             <span>•</span>
-                            <span className="text-[#f6f1e8] font-medium">{activeLabel}</span>
+                            <span className="text-[#0f172a] font-medium">{activeLabel}</span>
                             {shopAdminLabel && (
-                                <span className="text-[#c9a96a]">{shopAdminLabel}</span>
+                                <span className="text-[#475569]">{shopAdminLabel}</span>
                             )}
                         </div>
                         <h1 className="orders-title text-xl font-semibold">
                             {user?.role === "shop-admin" ? "Shop Admin" : "Admin"} Panel
                             {shopName && (
-                                <span className="ml-2 text-sm font-medium text-[#c9a96a]">
+                                <span className="ml-2 text-sm font-medium text-[#475569]">
                                     · {shopName}
                                 </span>
                             )}
@@ -241,15 +241,15 @@ export default function AdminShell() {
                     <div className="flex items-center gap-6">
                         {/* Clock */}
                         <div className="text-right text-sm">
-                            <div className="text-[#c9a96a]">{formattedDate}</div>
+                            <div className="text-[#475569]">{formattedDate}</div>
                             <div className="font-semibold">{formattedTime}</div>
                         </div>
 
                         {/* Company */}
                         {me?.companyId?.name && (
                             <div className="text-right text-sm">
-                                <div className="text-[#c9a96a]">Company</div>
-                                <div className="font-semibold text-[#f6f1e8]">
+                                <div className="text-[#475569]">Company</div>
+                                <div className="font-semibold text-[#0f172a]">
                                     {me.companyId.name}
                                 </div>
                             </div>
@@ -259,12 +259,12 @@ export default function AdminShell() {
                         <div className="flex items-center gap-3">
                             <img
                                 src={`https://ui-avatars.com/api/?name=${me?.name || "Admin"}`}
-                                className="w-10 h-10 rounded-full border border-[#2a2f3a]"
+                                className="w-10 h-10 rounded-full border border-[#cbd5e1]"
                                 alt="profile"
                             />
 
                             {sidebarOpen && (
-                                <span className="text-sm font-medium text-[#f6f1e8]">
+                                <span className="text-sm font-medium text-[#0f172a]">
                                     {me?.name || "Admin"}
                                 </span>
                             )}
@@ -273,7 +273,7 @@ export default function AdminShell() {
                         {/* Logout */}
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2 text-[#e06c5f] hover:text-[#b65349]"
+                            className="flex items-center gap-2 text-[#f87171] hover:text-[#b65349]"
                         >
                             <ArrowRightOnRectangleIcon className="w-5 h-5" />
                             {sidebarOpen && <span>Logout</span>}

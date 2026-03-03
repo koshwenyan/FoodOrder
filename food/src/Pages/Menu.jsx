@@ -36,7 +36,7 @@ export default function Menus() {
   const API_CATEGORY = "http://localhost:3000/api/category";
 
   const inputClass =
-    "w-full px-4 py-3 rounded-2xl bg-[#1d222c] border border-[#2a2f3a] text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20";
+    "w-full px-4 py-3 rounded-2xl bg-[#f1f5f9] border border-[#cbd5e1] text-[#0f172a] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/20";
 
   /* ================= FETCH ================= */
   const fetchMenus = async () => {
@@ -248,25 +248,25 @@ export default function Menus() {
 
   /* ================= UI ================= */
   return (
-    <div className="orders-theme min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
                 Menu Studio
               </p>
               <h1 className="orders-title text-3xl sm:text-4xl font-semibold">
                 Menu Management
               </h1>
-              <p className="text-sm text-[#a8905d] mt-2">
+              <p className="text-sm text-[#475569] mt-2">
                 Create, update, and organize your menu items.
               </p>
             </div>
 
             <button
               onClick={() => setShowForm(true)}
-              className="bg-[#f6f1e8] hover:opacity-75 cursor-pointer text-[#171a20] px-5 py-3 rounded-full flex items-center gap-2 font-semibold"
+              className="bg-[#e2e8f0] hover:opacity-75 cursor-pointer text-[#0f172a] px-5 py-3 rounded-full flex items-center gap-2 font-semibold"
             >
               <PlusIcon className="w-5 h-5" />
               Add Menu
@@ -281,20 +281,20 @@ export default function Menus() {
         )}
 
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
-            <p className="text-xs text-[#c9a96a]">Total</p>
+          <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3">
+            <p className="text-xs text-[#475569]">Total</p>
             <p className="text-2xl font-semibold">{menus.length}</p>
           </div>
-          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
-            <p className="text-xs text-[#c9a96a]">Available</p>
-            <p className="text-2xl font-semibold text-[#c9a96a]">{availableCount}</p>
+          <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3">
+            <p className="text-xs text-[#475569]">Available</p>
+            <p className="text-2xl font-semibold text-[#475569]">{availableCount}</p>
           </div>
-          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
-            <p className="text-xs text-[#e06c5f]">Sold Out</p>
-            <p className="text-2xl font-semibold text-[#e06c5f]">{soldOutCount}</p>
+          <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3">
+            <p className="text-xs text-[#f87171]">Sold Out</p>
+            <p className="text-2xl font-semibold text-[#f87171]">{soldOutCount}</p>
           </div>
-          <div className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3">
-            <p className="text-xs text-[#c9a96a]">Categories</p>
+          <div className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3">
+            <p className="text-xs text-[#475569]">Categories</p>
             <p className="text-2xl font-semibold">{categories.length}</p>
           </div>
         </div>
@@ -304,12 +304,12 @@ export default function Menus() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search menu by name or category"
-            className="rounded-xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm"
+            className="rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-4 py-3 text-sm"
           />
           <select
             value={availabilityFilter}
             onChange={(e) => setAvailabilityFilter(e.target.value)}
-            className="rounded-xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm"
+            className="rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-4 py-3 text-sm"
           >
             <option value="all">All items</option>
             <option value="available">Available only</option>
@@ -320,7 +320,7 @@ export default function Menus() {
               setSearch("");
               setAvailabilityFilter("all");
             }}
-            className="rounded-xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#a8905d]"
+            className="rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-4 py-3 text-sm text-[#475569]"
           >
             Reset filters
           </button>
@@ -334,13 +334,13 @@ export default function Menus() {
               onClick={resetForm}
             />
 
-            <div className="fixed top-0 right-0 z-50 h-full w-full sm:w-[420px] bg-[#171a20] shadow-2xl transform transition-transform duration-300">
-              <div className="p-6 border-b border-[#2a2f3a] flex justify-between items-center bg-[#1d222c]">
+            <div className="fixed top-0 right-0 z-50 h-full w-full sm:w-[420px] bg-[#f8fafc] shadow-2xl transform transition-transform duration-300">
+              <div className="p-6 border-b border-[#cbd5e1] flex justify-between items-center bg-[#f1f5f9]">
                 <h2 className="orders-title text-lg font-semibold">
                   {isEditing ? "Update Menu" : "Create Menu"}
                 </h2>
                 <button onClick={resetForm}>
-                  <XMarkIcon className="w-6 h-6 text-[#a8905d]" />
+                  <XMarkIcon className="w-6 h-6 text-[#475569]" />
                 </button>
               </div>
 
@@ -421,13 +421,13 @@ export default function Menus() {
                     rows={4}
                   />
 
-                  <label className="flex items-center gap-2 text-sm text-[#a8905d]">
+                  <label className="flex items-center gap-2 text-sm text-[#475569]">
                     <input
                       type="checkbox"
                       name="isAvailable"
                       checked={form.isAvailable}
                       onChange={handleChange}
-                      className="accent-[#f6f1e8]"
+                      className="accent-[#e2e8f0]"
                     />
                     Available
                   </label>
@@ -446,9 +446,9 @@ export default function Menus() {
           {filteredMenus.map((menu) => (
             <div
               key={menu._id}
-              className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] p-6 shadow-sm hover:shadow-lg relative group"
+              className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] p-6 shadow-sm hover:shadow-lg relative group"
             >
-              <div className="h-40 flex items-center justify-center mb-4 rounded-2xl bg-[#1d222c] border border-[#2a2f3a]">
+              <div className="h-40 flex items-center justify-center mb-4 rounded-2xl bg-[#f1f5f9] border border-[#cbd5e1]">
                 {menu.image ? (
                   <img src={menu.image} className="h-full object-contain" />
                 ) : (
@@ -463,8 +463,8 @@ export default function Menus() {
               onClick={() => handleToggleAvailability(menu)}
               className={`mt-3 inline-flex rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] ${
                 menu.isAvailable
-                  ? "border-[#2a2f3a] bg-[#1d222c] text-[#c9a96a]"
-                  : "border-[#2a2f3a] bg-[#1d222c] text-[#e06c5f]"
+                  ? "border-[#cbd5e1] bg-[#f1f5f9] text-[#475569]"
+                  : "border-[#cbd5e1] bg-[#f1f5f9] text-[#f87171]"
               }`}
             >
               {menu.isAvailable ? "Available" : "Sold Out"}
@@ -473,13 +473,13 @@ export default function Menus() {
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition">
                 <button
                   onClick={() => handleEdit(menu)}
-                  className="p-2 bg-[#1d222c] text-[#f6f1e8] rounded-full border border-[#2a2f3a]"
+                  className="p-2 bg-[#f1f5f9] text-[#0f172a] rounded-full border border-[#cbd5e1]"
                 >
                   <PencilIcon className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDelete(menu._id)}
-                  className="p-2 bg-[#1d222c] text-[#e06c5f] rounded-full border border-[#2a2f3a]"
+                  className="p-2 bg-[#f1f5f9] text-[#f87171] rounded-full border border-[#cbd5e1]"
                 >
                   <TrashIcon className="w-4 h-4" />
                 </button>
@@ -488,7 +488,7 @@ export default function Menus() {
           ))}
         </div>
         {!filteredMenus.length && (
-          <div className="mt-8 rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="mt-8 rounded-2xl border border-dashed border-[#cbd5e1] bg-[#e2e8f0] p-10 text-center text-[#475569]">
             No menu items found for current filters.
           </div>
         )}

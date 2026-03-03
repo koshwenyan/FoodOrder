@@ -266,28 +266,28 @@ export default function OrdersLists() {
   };
 
   return (
-    <div className="orders-theme min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">Phone Orders</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">Phone Orders</p>
               <h1 className="orders-title text-3xl sm:text-4xl font-semibold">Orders List</h1>
-              <p className="text-sm text-[#a8905d] mt-2">
+              <p className="text-sm text-[#475569] mt-2">
                 Filter orders, perform bulk updates, and review delivery states.
               </p>
             </div>
             <div className="flex gap-3">
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Confirmed</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Confirmed</p>
                 <p className="text-xl font-semibold">{counts.confirmed}</p>
               </div>
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Delivered</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Delivered</p>
                 <p className="text-xl font-semibold">{counts.delivered}</p>
               </div>
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Complete</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Complete</p>
                 <p className="text-xl font-semibold">{counts.complete}</p>
               </div>
             </div>
@@ -301,8 +301,8 @@ export default function OrdersLists() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
                     activeTab === tab.key
-                      ? "bg-[#f6f1e8] text-[#171a20] border-[#f6f1e8]"
-                      : "bg-[#232833] text-[#a8905d] border-[#2a2f3a] hover:bg-[#232833]"
+                      ? "bg-[#e2e8f0] text-[#0f172a] border-[#e2e8f0]"
+                      : "bg-[#e2e8f0] text-[#475569] border-[#cbd5e1] hover:bg-[#e2e8f0]"
                   }`}
                 >
                   {tab.label} <span className="ml-1 text-xs">{counts[tab.key] || 0}</span>
@@ -312,7 +312,7 @@ export default function OrdersLists() {
 
             <button
               onClick={exportCsv}
-              className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+              className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
             >
               Export CSV
             </button>
@@ -323,12 +323,12 @@ export default function OrdersLists() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search customer/phone/address"
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm xl:col-span-2"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm xl:col-span-2"
             />
             <select
               value={companyFilter}
               onChange={(e) => setCompanyFilter(e.target.value)}
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm"
             >
               <option value="all">All companies</option>
               <option value="unassigned">Unassigned</option>
@@ -342,13 +342,13 @@ export default function OrdersLists() {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm"
             />
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm"
             />
             <input
               type="number"
@@ -356,7 +356,7 @@ export default function OrdersLists() {
               value={minAmount}
               onChange={(e) => setMinAmount(e.target.value)}
               placeholder="Min Ks"
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm"
             />
             <input
               type="number"
@@ -364,25 +364,25 @@ export default function OrdersLists() {
               value={maxAmount}
               onChange={(e) => setMaxAmount(e.target.value)}
               placeholder="Max Ks"
-              className="rounded-xl border border-[#2a2f3a] bg-[#1d222c] px-3 py-2 text-sm"
+              className="rounded-xl border border-[#cbd5e1] bg-[#f1f5f9] px-3 py-2 text-sm"
             />
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-[#2a2f3a] bg-[#171a20] p-4">
+        <div className="mt-6 rounded-2xl border border-[#cbd5e1] bg-[#f8fafc] p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="text-sm text-[#a8905d]">{selectedOrders.length} selected</div>
+            <div className="text-sm text-[#475569]">{selectedOrders.length} selected</div>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={toggleSelectAll}
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
               >
                 Select page
               </button>
               <select
                 value={bulkCompany}
                 onChange={(e) => setBulkCompany(e.target.value)}
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
               >
                 <option value="">Assign company</option>
                 {companies.map((c) => (
@@ -394,7 +394,7 @@ export default function OrdersLists() {
               <select
                 value={bulkStatus}
                 onChange={(e) => setBulkStatus(e.target.value)}
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
               >
                 <option value="">Update status</option>
                 {STATUS_OPTIONS.map((status) => (
@@ -406,13 +406,13 @@ export default function OrdersLists() {
               <button
                 onClick={handleBulkApply}
                 disabled={bulkLoading || selectedOrders.length === 0}
-                className="rounded-full bg-[#f6f1e8] px-4 py-2 text-sm font-medium text-[#171a20] disabled:opacity-60"
+                className="rounded-full bg-[#e2e8f0] px-4 py-2 text-sm font-medium text-[#0f172a] disabled:opacity-60"
               >
                 {bulkLoading ? "Applying..." : "Apply"}
               </button>
               <button
                 onClick={clearBulkSelection}
-                className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
               >
                 Clear
               </button>
@@ -421,7 +421,7 @@ export default function OrdersLists() {
         </div>
 
         <div className="mt-8">
-          {loading && <p className="text-sm text-[#a8905d]">Loading orders...</p>}
+          {loading && <p className="text-sm text-[#475569]">Loading orders...</p>}
           {error && (
             <div className="mb-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {error}
@@ -429,61 +429,61 @@ export default function OrdersLists() {
           )}
 
           {!loading && filteredOrders.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
+            <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#e2e8f0] p-10 text-center text-[#475569]">
               No phone orders for current filters.
             </div>
           )}
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {filteredOrders.map((order) => (
-              <div key={order._id} className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] shadow-sm p-6">
+              <div key={order._id} className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] shadow-sm p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
                       checked={selectedOrders.includes(order._id)}
                       onChange={() => toggleSelect(order._id)}
-                      className="h-4 w-4 mt-1 accent-[#f6f1e8]"
+                      className="h-4 w-4 mt-1 accent-[#e2e8f0]"
                     />
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         {order.createdAt ? new Date(order.createdAt).toLocaleString() : "Phone Order"}
                       </p>
                       <h3 className="orders-title text-2xl font-semibold mt-2">{order.customerName}</h3>
-                      <p className="text-sm text-[#a8905d] mt-1">
+                      <p className="text-sm text-[#475569] mt-1">
                         {order.phone} · {order.address}
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-full bg-[#0f1115] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a96a]">
+                  <div className="rounded-full bg-[#e2e8f0] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#475569]">
                     {normalizeStatus(order.status)}
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-[#a8905d]">
-                  <div className="rounded-2xl bg-[#1d222c] p-3">
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-[#475569]">
+                  <div className="rounded-2xl bg-[#f1f5f9] p-3">
                     <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">Items</p>
-                    <p className="text-lg font-semibold text-[#f6f1e8]">
+                    <p className="text-lg font-semibold text-[#0f172a]">
                       {order.totalItems || order.items?.length || 0}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-[#1d222c] p-3">
+                  <div className="rounded-2xl bg-[#f1f5f9] p-3">
                     <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">Total</p>
-                    <p className="text-lg font-semibold text-[#f6f1e8]">
+                    <p className="text-lg font-semibold text-[#0f172a]">
                       {Number(order.totalAmount || 0).toLocaleString()} Ks
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-5 text-sm text-[#a8905d]">
+                <div className="mt-5 text-sm text-[#475569]">
                   <span className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">Delivery</span>
-                  <p className="mt-1 font-medium text-[#f6f1e8]">{order.deliveryCompany?.name || "Unassigned"}</p>
+                  <p className="mt-1 font-medium text-[#0f172a]">{order.deliveryCompany?.name || "Unassigned"}</p>
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
                   <button
                     onClick={() => setDrawerOrder(order)}
-                    className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                    className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
                   >
                     View details
                   </button>
@@ -497,18 +497,18 @@ export default function OrdersLists() {
       {drawerOrder && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOrder(null)} />
-          <div className="relative w-full max-w-lg h-full bg-[#171a20] shadow-2xl p-6 overflow-y-auto">
+          <div className="relative w-full max-w-lg h-full bg-[#f8fafc] shadow-2xl p-6 overflow-y-auto">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">Order Details</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">Order Details</p>
                 <h2 className="orders-title text-2xl font-semibold mt-2">{drawerOrder.customerName}</h2>
-                <p className="text-sm text-[#a8905d] mt-1">
+                <p className="text-sm text-[#475569] mt-1">
                   {drawerOrder.phone} · {drawerOrder.address}
                 </p>
               </div>
               <button
                 onClick={() => setDrawerOrder(null)}
-                className="rounded-full border border-[#2a2f3a] px-3 py-1 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] px-3 py-1 text-sm text-[#475569]"
               >
                 Close
               </button>
@@ -523,13 +523,13 @@ export default function OrdersLists() {
                   return (
                     <div
                       key={`${item.menu || idx}`}
-                      className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3"
+                      className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-3"
                     >
                       <div className="flex justify-between text-sm">
-                        <span className="font-medium text-[#f6f1e8]">{item.menu?.name || "Item"}</span>
-                        <span className="text-[#a8905d]">{unitPrice.toLocaleString()} Ks</span>
+                        <span className="font-medium text-[#0f172a]">{item.menu?.name || "Item"}</span>
+                        <span className="text-[#475569]">{unitPrice.toLocaleString()} Ks</span>
                       </div>
-                      <div className="mt-1 text-xs text-[#c9a96a]">
+                      <div className="mt-1 text-xs text-[#475569]">
                         Qty: {item.quantity} · Subtotal: {lineTotal.toLocaleString()} Ks
                       </div>
                     </div>
@@ -540,7 +540,7 @@ export default function OrdersLists() {
 
             <div className="mt-6">
               <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">Notes</p>
-              <div className="mt-2 rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm text-[#a8905d]">
+              <div className="mt-2 rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-4 text-sm text-[#475569]">
                 {drawerOrder.notes || "No notes provided."}
               </div>
             </div>

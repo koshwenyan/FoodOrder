@@ -99,37 +99,37 @@ export default function DeliveryCompanyAdminDashboard() {
     {
       name: "Total Orders",
       count: totals.orders,
-      icon: <ClipboardDocumentListIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <ClipboardDocumentListIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/orders",
     },
     {
       name: "Picked-Up Orders",
       count: totals.pickedupOrders,
-      icon: <ClockIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <ClockIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/pending-orders",
     },
     {
       name: "Delivered Orders",
       count: totals.deliveredOrders,
-      icon: <TruckIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <TruckIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/completed-orders",
     },
     {
       name: "Completed Orders",
       count: totals.completedOrders,
-      icon: <CheckBadgeIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <CheckBadgeIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/AssignedOrder?status=complete",
     },
     {
       name: "Phone Orders",
       count: totals.phoneOrders,
-      icon: <PhoneIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <PhoneIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/phone-orders",
     },
     {
       name: "Delivery Staff",
       count: totals.deliveryStaff,
-      icon: <UserGroupIcon className="w-10 h-10 text-[#c9a96a]" />,
+      icon: <UserGroupIcon className="w-10 h-10 text-[#475569]" />,
       link: "/company-admin/delivery-staff",
     },
   ];
@@ -139,14 +139,14 @@ export default function DeliveryCompanyAdminDashboard() {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
             Delivery Company Admin
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold">Dashboard Overview</h1>
-          <p className="text-sm text-[#a8905d] mt-2">
+          <p className="text-sm text-[#475569] mt-2">
             Track orders, delivery progress, staff activity, and phone orders.
           </p>
         </div>
@@ -156,66 +156,66 @@ export default function DeliveryCompanyAdminDashboard() {
             <div
               key={card.name}
               onClick={() => navigate(card.link)}
-              className="cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#2a2f3a] bg-[#171a20] transition hover:-translate-y-1 hover:shadow-md"
+              className="cursor-pointer relative p-6 rounded-3xl shadow-sm border border-[#cbd5e1] bg-[#f8fafc] transition hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="absolute -top-6 right-6 p-4 bg-[#171a20] rounded-full shadow-md border border-[#2a2f3a]">
+              <div className="absolute -top-6 right-6 p-4 bg-[#f8fafc] rounded-full shadow-md border border-[#cbd5e1]">
                 {card.icon}
               </div>
               <div className="mt-8">
-                <p className="text-[#c9a96a] font-semibold text-lg">{card.name}</p>
-                <h2 className="text-[#f6f1e8] text-3xl font-bold mt-2">
+                <p className="text-[#475569] font-semibold text-lg">{card.name}</p>
+                <h2 className="text-[#0f172a] text-3xl font-bold mt-2">
                   {loading ? "..." : card.count}
                 </h2>
               </div>
-              <div className="mt-4 h-1 w-16 bg-[#2a2f3a] rounded-full opacity-80"></div>
+              <div className="mt-4 h-1 w-16 bg-[#cbd5e1] rounded-full opacity-80"></div>
             </div>
           ))}
         </div>
 
-        <div className="mt-8 rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#2a2f3a] flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[#f6f1e8]">Recent Orders</h2>
+        <div className="mt-8 rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#cbd5e1] flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#0f172a]">Recent Orders</h2>
             <button
               onClick={() => navigate("/company-admin/AssignedOrder")}
-              className="rounded-full border border-[#2a2f3a] px-4 py-2 text-xs font-semibold text-[#a8905d] hover:border-[#f6f1e8] hover:text-[#f6f1e8]"
+              className="rounded-full border border-[#cbd5e1] px-4 py-2 text-xs font-semibold text-[#475569] hover:border-[#e2e8f0] hover:text-[#0f172a]"
             >
               View all orders
             </button>
           </div>
 
-          {loading && <div className="px-6 py-8 text-[#a8905d]">Loading recent orders...</div>}
+          {loading && <div className="px-6 py-8 text-[#475569]">Loading recent orders...</div>}
 
           {!loading && recentOrders.length === 0 && (
-            <div className="px-6 py-8 text-[#a8905d]">No orders found yet.</div>
+            <div className="px-6 py-8 text-[#475569]">No orders found yet.</div>
           )}
 
           {!loading && recentOrders.length > 0 && (
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto">
-                <thead className="bg-[#171a20] text-left">
+                <thead className="bg-[#f8fafc] text-left">
                   <tr>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#a8905d]">Customer</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#a8905d]">Shop</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#a8905d]">Status</th>
-                    <th className="px-4 py-3 text-sm font-semibold text-[#a8905d]">Created</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-[#475569]">Customer</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-[#475569]">Shop</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-[#475569]">Status</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-[#475569]">Created</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentOrders.map((order) => (
                     <tr
                       key={order._id}
-                      className="border-t border-[#2a2f3a] hover:bg-[#232833]"
+                      className="border-t border-[#cbd5e1] hover:bg-[#e2e8f0]"
                     >
-                      <td className="px-4 py-3 text-sm text-[#f6f1e8]">
+                      <td className="px-4 py-3 text-sm text-[#0f172a]">
                         {order.customer?.name || "N/A"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-[#f6f1e8]">
+                      <td className="px-4 py-3 text-sm text-[#0f172a]">
                         {order.shopId?.name || "N/A"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-[#f6f1e8] capitalize">
+                      <td className="px-4 py-3 text-sm text-[#0f172a] capitalize">
                         {order.status || "N/A"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-[#f6f1e8]">
+                      <td className="px-4 py-3 text-sm text-[#0f172a]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "N/A"}

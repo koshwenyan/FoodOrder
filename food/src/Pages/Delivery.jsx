@@ -22,27 +22,27 @@ const getMinutesSince = (dateValue) => {
 const getSlaMeta = (order) => {
   const status = normalizeStatus(order?.status);
   if (["complete", "cancelled"].includes(status)) {
-    return { label: "Closed", tone: "text-[#a8905d] bg-[#f3ede7] border-[#2a2f3a]" };
+    return { label: "Closed", tone: "text-[#475569] bg-[#f3ede7] border-[#cbd5e1]" };
   }
 
   const minutes = getMinutesSince(order?.createdAt);
   if (minutes >= 60) {
     return {
       label: `${minutes}m late`,
-      tone: "text-[#e06c5f] bg-[#fdecea] border-[#efc8c2]",
+      tone: "text-[#f87171] bg-[#fdecea] border-[#efc8c2]",
       isLate: true,
     };
   }
   if (minutes >= 30) {
     return {
       label: `${minutes}m warning`,
-      tone: "text-[#c9a96a] bg-[#1d222c] border-[#2a2f3a]",
+      tone: "text-[#475569] bg-[#f1f5f9] border-[#cbd5e1]",
       isWarning: true,
     };
   }
   return {
     label: `${minutes}m on-time`,
-    tone: "text-[#c9a96a] bg-[#1d222c] border-[#bfe2cb]",
+    tone: "text-[#475569] bg-[#f1f5f9] border-[#bfe2cb]",
   };
 };
 
@@ -247,37 +247,37 @@ export default function Delivery() {
   };
 
   return (
-    <div className="orders-theme min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
                 Delivery Control
               </p>
               <h1 className="orders-title text-3xl sm:text-4xl font-semibold">
                 Assign and Track Orders
               </h1>
-              <p className="text-sm text-[#a8905d] mt-2">
+              <p className="text-sm text-[#475569] mt-2">
                 Manage pending orders, assign delivery partners, and close out completed runs.
               </p>
             </div>
             <div className="flex gap-3">
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Pending</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Pending</p>
                 <p className="text-xl font-semibold">{counts.pending}</p>
               </div>
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Delivered</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Delivered</p>
                 <p className="text-xl font-semibold">{counts.delivered}</p>
               </div>
-              <div className="rounded-2xl bg-[#232833] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#c9a96a]">Complete</p>
+              <div className="rounded-2xl bg-[#e2e8f0] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#475569]">Complete</p>
                 <p className="text-xl font-semibold">{counts.complete}</p>
               </div>
-              <div className="rounded-2xl bg-[#1d222c] border border-[#2a2f3a] px-4 py-3">
-                <p className="text-xs text-[#e06c5f]">SLA Late</p>
-                <p className="text-xl font-semibold text-[#e06c5f]">{counts.late}</p>
+              <div className="rounded-2xl bg-[#f1f5f9] border border-[#cbd5e1] px-4 py-3">
+                <p className="text-xs text-[#f87171]">SLA Late</p>
+                <p className="text-xl font-semibold text-[#f87171]">{counts.late}</p>
               </div>
             </div>
           </div>
@@ -290,8 +290,8 @@ export default function Delivery() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
                     activeTab === tab.key
-                      ? "bg-[#f6f1e8] text-[#171a20] border-[#f6f1e8]"
-                      : "bg-[#232833] text-[#a8905d] border-[#2a2f3a] hover:bg-[#232833]"
+                      ? "bg-[#e2e8f0] text-[#0f172a] border-[#e2e8f0]"
+                      : "bg-[#e2e8f0] text-[#475569] border-[#cbd5e1] hover:bg-[#e2e8f0]"
                   }`}
                 >
                   {tab.label}{" "}
@@ -302,8 +302,8 @@ export default function Delivery() {
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full bg-[#1d222c] border border-[#2a2f3a] px-4 py-2">
-                <span className="text-sm text-[#c9a96a]">Search</span>
+              <div className="flex items-center gap-2 rounded-full bg-[#f1f5f9] border border-[#cbd5e1] px-4 py-2">
+                <span className="text-sm text-[#475569]">Search</span>
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -314,7 +314,7 @@ export default function Delivery() {
               <select
                 value={filterCompany}
                 onChange={(e) => setFilterCompany(e.target.value)}
-                className="rounded-full border border-[#2a2f3a] bg-[#1d222c] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-2 text-sm text-[#475569]"
               >
                 <option value="all">All companies</option>
                 <option value="unassigned">Unassigned</option>
@@ -327,7 +327,7 @@ export default function Delivery() {
               <select
                 value={slaFilter}
                 onChange={(e) => setSlaFilter(e.target.value)}
-                className="rounded-full border border-[#2a2f3a] bg-[#1d222c] px-4 py-2 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-2 text-sm text-[#475569]"
               >
                 <option value="all">All SLA</option>
                 <option value="warning">Warning (30-59m)</option>
@@ -338,7 +338,7 @@ export default function Delivery() {
         </div>
 
         <div className="mt-8">
-          {loading && <p className="text-sm text-[#a8905d]">Loading delivery orders...</p>}
+          {loading && <p className="text-sm text-[#475569]">Loading delivery orders...</p>}
           {error && (
             <div className="mb-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {error}
@@ -346,21 +346,21 @@ export default function Delivery() {
           )}
 
           {!loading && filteredOrders.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
+            <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#e2e8f0] p-10 text-center text-[#475569]">
               No orders found for this view.
             </div>
           )}
 
-          <div className="mb-6 rounded-3xl border border-[#2a2f3a] bg-[#1d222c] p-4">
+          <div className="mb-6 rounded-3xl border border-[#cbd5e1] bg-[#f1f5f9] p-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="text-sm text-[#a8905d]">
+              <div className="text-sm text-[#475569]">
                 {selectedOrders.length} selected
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   value={bulkCompany}
                   onChange={(e) => setBulkCompany(e.target.value)}
-                  className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                  className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
                 >
                   <option value="">Assign company</option>
                   {companies.map((c) => (
@@ -372,7 +372,7 @@ export default function Delivery() {
                 <select
                   value={bulkStatus}
                   onChange={(e) => setBulkStatus(e.target.value)}
-                  className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                  className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
                 >
                   <option value="">Update status</option>
                   <option value="pending">Pending</option>
@@ -381,13 +381,13 @@ export default function Delivery() {
                 </select>
                 <button
                   onClick={handleBulkUpdate}
-                  className="rounded-full bg-[#f6f1e8] px-4 py-2 text-sm font-medium text-[#171a20]"
+                  className="rounded-full bg-[#e2e8f0] px-4 py-2 text-sm font-medium text-[#0f172a]"
                 >
                   Apply
                 </button>
                 <button
                   onClick={clearSelection}
-                  className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                  className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
                 >
                   Clear
                 </button>
@@ -402,11 +402,11 @@ export default function Delivery() {
               return (
                 <div
                   key={order._id}
-                  className="rounded-3xl bg-[#171a20] border border-[#2a2f3a] shadow-sm p-6"
+                  className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] shadow-sm p-6"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                         {order.createdAt
                           ? new Date(order.createdAt).toLocaleString()
                           : "Order"}
@@ -417,18 +417,18 @@ export default function Delivery() {
                           checked={selectedOrders.includes(order._id)}
                           onChange={() => toggleSelect(order._id)}
                           disabled={status === "complete"}
-                          className="h-4 w-4 accent-[#f6f1e8]"
+                          className="h-4 w-4 accent-[#e2e8f0]"
                         />
                         <h3 className="orders-title text-2xl font-semibold">
                           {order.customer?.name || "Customer"}
                         </h3>
                       </div>
-                      <p className="text-sm text-[#a8905d] mt-1">
+                      <p className="text-sm text-[#475569] mt-1">
                         {order.customer?.phone || "N/A"} ·{" "}
                         {order.deliveryAddress || "N/A"}
                       </p>
                     </div>
-                    <div className="rounded-full bg-[#0f1115] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a96a]">
+                    <div className="rounded-full bg-[#e2e8f0] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#475569]">
                       {status}
                     </div>
                   </div>
@@ -437,22 +437,22 @@ export default function Delivery() {
                     SLA: {sla.label}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-[#a8905d]">
-                    <div className="rounded-2xl bg-[#1d222c] p-3">
+                  <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-[#475569]">
+                    <div className="rounded-2xl bg-[#f1f5f9] p-3">
                       <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">
                         Items
                       </p>
-                      <p className="text-lg font-semibold text-[#f6f1e8]">
+                      <p className="text-lg font-semibold text-[#0f172a]">
                         {order.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) ||
                           order.items?.length ||
                           0}
                       </p>
                     </div>
-                    <div className="rounded-2xl bg-[#1d222c] p-3">
+                    <div className="rounded-2xl bg-[#f1f5f9] p-3">
                       <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">
                         Total
                       </p>
-                      <p className="text-lg font-semibold text-[#f6f1e8]">
+                      <p className="text-lg font-semibold text-[#0f172a]">
                         {order.totalAmount?.toLocaleString()} Ks
                       </p>
                     </div>
@@ -463,14 +463,14 @@ export default function Delivery() {
                       Delivery Company
                     </p>
                     {status === "complete" ? (
-                      <div className="mt-2 w-full rounded-2xl border border-[#2a2f3a] bg-[#1d222c] px-4 py-3 text-sm text-[#f6f1e8]">
+                      <div className="mt-2 w-full rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3 text-sm text-[#0f172a]">
                         {order.deliveryCompany?.name || "Unassigned"}
                       </div>
                     ) : (
                       <select
                         value={order.deliveryCompany?._id || ""}
                         onChange={(e) => handleCompanyUpdate(order._id, e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-[#2a2f3a] bg-[#171a20] px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/20"
+                        className="mt-2 w-full rounded-2xl border border-[#cbd5e1] bg-[#f8fafc] px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/20"
                       >
                         <option value="">
                           {order.deliveryCompany?._id ? "Reassign delivery company" : "Choose delivery company"}
@@ -492,8 +492,8 @@ export default function Delivery() {
                           onClick={() => handleStatusUpdate(order._id, s)}
                           className={`rounded-full px-4 py-2 text-sm font-medium border transition ${
                             status === s
-                              ? "bg-[#f6f1e8] text-[#171a20] border-[#f6f1e8]"
-                              : "bg-[#171a20] text-[#a8905d] border-[#2a2f3a] hover:bg-[#0f1115]"
+                              ? "bg-[#e2e8f0] text-[#0f172a] border-[#e2e8f0]"
+                              : "bg-[#f8fafc] text-[#475569] border-[#cbd5e1] hover:bg-[#e2e8f0]"
                           }`}
                         >
                           {s}
@@ -501,7 +501,7 @@ export default function Delivery() {
                       ))}
                     <button
                       onClick={() => setDrawerOrder(order)}
-                      className="rounded-full border border-[#2a2f3a] bg-[#171a20] px-4 py-2 text-sm text-[#a8905d]"
+                      className="rounded-full border border-[#cbd5e1] bg-[#f8fafc] px-4 py-2 text-sm text-[#475569]"
                     >
                       View details
                     </button>
@@ -519,23 +519,23 @@ export default function Delivery() {
             className="absolute inset-0 bg-black/40"
             onClick={() => setDrawerOrder(null)}
           />
-          <div className="relative w-full max-w-lg h-full bg-[#171a20] shadow-2xl p-6 overflow-y-auto">
+          <div className="relative w-full max-w-lg h-full bg-[#f8fafc] shadow-2xl p-6 overflow-y-auto">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Order Details
                 </p>
                 <h2 className="orders-title text-2xl font-semibold mt-2">
                   {drawerOrder.customer?.name || "Customer"}
                 </h2>
-                <p className="text-sm text-[#a8905d] mt-1">
+                <p className="text-sm text-[#475569] mt-1">
                   {drawerOrder.customer?.phone || "N/A"} ·{" "}
                   {drawerOrder.deliveryAddress || "N/A"}
                 </p>
               </div>
               <button
                 onClick={() => setDrawerOrder(null)}
-                className="rounded-full border border-[#2a2f3a] px-3 py-1 text-sm text-[#a8905d]"
+                className="rounded-full border border-[#cbd5e1] px-3 py-1 text-sm text-[#475569]"
               >
                 Close
               </button>
@@ -554,27 +554,27 @@ export default function Delivery() {
                   return (
                     <div
                       key={item._id}
-                      className="rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-3"
+                      className="rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-3"
                     >
                       <div className="flex justify-between text-sm">
-                        <span className="font-medium text-[#f6f1e8]">
+                        <span className="font-medium text-[#0f172a]">
                           {item.menuId?.name || item.name || "Item"}
                         </span>
-                        <span className="text-[#a8905d]">
+                        <span className="text-[#475569]">
                           {unitPrice.toLocaleString()} Ks
                         </span>
                       </div>
                       {item.addOns?.length > 0 && (
-                        <div className="mt-1 text-xs text-[#a8905d]">
+                        <div className="mt-1 text-xs text-[#475569]">
                           Add-ons: {item.addOns.map((addOn) => addOn.name).join(", ")}
                         </div>
                       )}
                       {item.note && (
-                        <div className="mt-1 text-xs text-[#a8905d]">
+                        <div className="mt-1 text-xs text-[#475569]">
                           Note: {item.note}
                         </div>
                       )}
-                      <div className="mt-1 text-xs text-[#c9a96a]">
+                      <div className="mt-1 text-xs text-[#475569]">
                         Qty: {item.quantity} · Subtotal:{" "}
                         {lineTotal.toLocaleString()} Ks
                       </div>
@@ -588,7 +588,7 @@ export default function Delivery() {
               <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">
                 Notes
               </p>
-              <div className="mt-2 rounded-2xl border border-[#2a2f3a] bg-[#1d222c] p-4 text-sm text-[#a8905d]">
+              <div className="mt-2 rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] p-4 text-sm text-[#475569]">
                 {drawerOrder.notes || "No notes provided."}
               </div>
             </div>

@@ -109,16 +109,16 @@ export default function DeliveryCompanies() {
   const inactiveCompanies = totalCompanies - activeCompanies;
 
   return (
-    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
             Admin Console
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold">
             Delivery Companies
           </h1>
-          <p className="text-sm text-[#a8905d] mt-2">
+          <p className="text-sm text-[#475569] mt-2">
             Manage delivery partners, fees, and staffing.
           </p>
         </div>
@@ -127,70 +127,70 @@ export default function DeliveryCompanies() {
           <button
             type="button"
             onClick={() => setStatusFilter("all")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               statusFilter === "all"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Total Companies
                 </p>
                 <p className="text-2xl font-semibold mt-2">{totalCompanies}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <TruckIcon className="w-6 h-6 text-[#c9a96a]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <TruckIcon className="w-6 h-6 text-[#475569]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setStatusFilter("active")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               statusFilter === "active"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Active
                 </p>
                 <p className="text-2xl font-semibold mt-2">{activeCompanies}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <CheckBadgeIcon className="w-6 h-6 text-[#5b7a40]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <CheckBadgeIcon className="w-6 h-6 text-[#16a34a]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setStatusFilter("inactive")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               statusFilter === "inactive"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Inactive
                 </p>
                 <p className="text-2xl font-semibold mt-2">{inactiveCompanies}</p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <NoSymbolIcon className="w-6 h-6 text-[#dc2626]" />
               </div>
             </div>
           </button>
         </div>
 
         {/* FORM */}
-        <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6 grid md:grid-cols-3 gap-4">
+        <div className="rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm p-6 grid md:grid-cols-3 gap-4">
           {["name", "email", "serviceFee", "staffCount"].map((f) => (
             <input
               key={f}
@@ -198,14 +198,14 @@ export default function DeliveryCompanies() {
               placeholder={f}
               value={form[f]}
               onChange={(e) => setForm({ ...form, [f]: e.target.value })}
-              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
+              className="bg-[#f1f5f9] border border-[#cbd5e1] rounded-2xl px-4 py-3 text-sm text-[#0f172a] placeholder:text-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/15"
             />
           ))}
 
           <select
             value={form.isActive ? "active" : "inactive"}
             onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
-            className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
+            className="bg-[#f1f5f9] border border-[#cbd5e1] rounded-2xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/15"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -213,14 +213,14 @@ export default function DeliveryCompanies() {
 
           <button
             onClick={handleSubmit}
-            className="rounded-full bg-[#f6f1e8] text-[#171a20] py-3 text-sm font-semibold border border-[#f6f1e8] hover:bg-[#c9a96a]"
+            className="rounded-full bg-[#e2e8f0] text-[#0f172a] py-3 text-sm font-semibold border border-[#e2e8f0] hover:bg-[#0ea5e9]"
           >
             {isEditing ? "Update Company" : "Create Company"}
           </button>
 
           <button
             onClick={resetForm}
-            className="rounded-full bg-[#171a20] border border-[#2a2f3a] py-3 text-sm font-semibold text-[#a8905d] hover:bg-[#232833]"
+            className="rounded-full bg-[#f8fafc] border border-[#cbd5e1] py-3 text-sm font-semibold text-[#475569] hover:bg-[#e2e8f0]"
           >
             Cancel
           </button>
@@ -228,8 +228,8 @@ export default function DeliveryCompanies() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-md w-full">
-            <div className="flex items-center gap-2 rounded-full bg-[#1d222c] border border-[#2a2f3a] px-4 py-2">
-              <span className="text-sm text-[#c9a96a]">Search</span>
+            <div className="flex items-center gap-2 rounded-full bg-[#f1f5f9] border border-[#cbd5e1] px-4 py-2">
+              <span className="text-sm text-[#475569]">Search</span>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -242,7 +242,7 @@ export default function DeliveryCompanies() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-full border border-[#2a2f3a] bg-[#1d222c] px-4 py-2 text-sm text-[#a8905d] focus:outline-none"
+            className="rounded-full border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-2 text-sm text-[#475569] focus:outline-none"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -251,9 +251,9 @@ export default function DeliveryCompanies() {
         </div>
 
         {/* TABLE */}
-        <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm overflow-x-auto">
+        <div className="rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#171a20] text-[#a8905d] uppercase text-xs">
+            <thead className="bg-[#f8fafc] text-[#475569] uppercase text-xs">
               <tr>
                 <th className="p-4 text-left">No</th>
                 <th className="p-4 text-left">Name</th>
@@ -266,23 +266,23 @@ export default function DeliveryCompanies() {
             </thead>
             <tbody>
               {currentCompanies.map((c, i) => (
-                <tr key={c._id} className="border-t border-[#2a2f3a] hover:bg-[#232833] text-[#f6f1e8]">
+                <tr key={c._id} className="border-t border-[#cbd5e1] hover:bg-[#e2e8f0] text-[#0f172a]">
                   <td className="p-4">{(currentPage - 1) * perPage + i + 1}</td>
                   <td className="p-4 font-medium">{c.name}</td>
-                  <td className="p-4 text-[#a8905d]">{c.email}</td>
+                  <td className="p-4 text-[#475569]">{c.email}</td>
                   <td className="p-4">{c.serviceFee}</td>
                   <td className="p-4">{c.staffCount}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${c.isActive ? "bg-[#1d222c] text-[#5b7a40]" : "bg-[#1d222c] text-[#a4553a]"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs ${c.isActive ? "bg-[#f1f5f9] text-[#16a34a]" : "bg-[#f1f5f9] text-[#dc2626]"}`}>
                       {c.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td className="p-4 flex justify-end gap-2">
-                    <button onClick={() => handleEdit(c)} className="p-2 bg-[#1d222c] hover:bg-[#232833] rounded">
-                      <PencilIcon className="w-4 h-4 text-[#a8905d]" />
+                    <button onClick={() => handleEdit(c)} className="p-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] rounded">
+                      <PencilIcon className="w-4 h-4 text-[#475569]" />
                     </button>
-                    <button onClick={() => setConfirmDelete(c)} className="p-2 bg-[#1d222c] hover:bg-[#2a2f3a] rounded">
-                      <TrashIcon className="w-4 h-4 text-[#a4553a]" />
+                    <button onClick={() => setConfirmDelete(c)} className="p-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] rounded">
+                      <TrashIcon className="w-4 h-4 text-[#dc2626]" />
                     </button>
                   </td>
                 </tr>
@@ -292,17 +292,17 @@ export default function DeliveryCompanies() {
         </div>
 
         {currentCompanies.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#e2e8f0] p-10 text-center text-[#475569]">
             No delivery companies match your search.
           </div>
         )}
 
         {/* PAGINATION */}
-        <div className="flex justify-center gap-4 text-[#f6f1e8]">
+        <div className="flex justify-center gap-4 text-[#0f172a]">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(p => p - 1)}
-            className="px-4 py-2 bg-[#171a20] border border-[#2a2f3a] rounded-full disabled:opacity-40 text-sm"
+            className="px-4 py-2 bg-[#f8fafc] border border-[#cbd5e1] rounded-full disabled:opacity-40 text-sm"
           >
             Prev
           </button>
@@ -312,7 +312,7 @@ export default function DeliveryCompanies() {
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(p => p + 1)}
-            className="px-4 py-2 bg-[#171a20] border border-[#2a2f3a] rounded-full disabled:opacity-40 text-sm"
+            className="px-4 py-2 bg-[#f8fafc] border border-[#cbd5e1] rounded-full disabled:opacity-40 text-sm"
           >
             Next
           </button>
@@ -321,24 +321,24 @@ export default function DeliveryCompanies() {
 
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#2a2f3a] bg-[#171a20] p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-[#f6f1e8]">
+          <div className="w-full max-w-md rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#0f172a]">
               Delete company?
             </h3>
-            <p className="mt-2 text-sm text-[#a8905d]">
+            <p className="mt-2 text-sm text-[#475569]">
               This will permanently remove{" "}
               <span className="font-semibold">{confirmDelete.name}</span>.
             </p>
             <div className="mt-6 flex gap-3 justify-end">
               <button
                 onClick={() => setConfirmDelete(null)}
-                className="rounded-full bg-[#171a20] border border-[#2a2f3a] px-4 py-2 text-sm font-semibold text-[#a8905d] hover:bg-[#232833]"
+                className="rounded-full bg-[#f8fafc] border border-[#cbd5e1] px-4 py-2 text-sm font-semibold text-[#475569] hover:bg-[#e2e8f0]"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(confirmDelete._id)}
-                className="rounded-full bg-[#a4553a] text-white px-4 py-2 text-sm font-semibold hover:bg-[#8f4a34]"
+                className="rounded-full bg-[#dc2626] text-white px-4 py-2 text-sm font-semibold hover:bg-[#dc2626]"
               >
                 Delete
               </button>

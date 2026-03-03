@@ -97,16 +97,16 @@ export default function Categories() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0f1115] text-[#f6f1e8]">
+    <div className="min-h-screen bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
-        <div className="rounded-3xl bg-gradient-to-br from-[#1d222c] via-[#171a20] to-[#2a2f3a] p-6 sm:p-8 shadow-lg border border-[#2a2f3a]">
-          <p className="text-sm uppercase tracking-[0.2em] text-[#c9a96a]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
+          <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
             Admin Console
           </p>
           <h1 className="text-3xl sm:text-4xl font-semibold">
             Category Management
           </h1>
-          <p className="text-sm text-[#a8905d] mt-2">
+          <p className="text-sm text-[#475569] mt-2">
             Create, edit, and organize menu categories.
           </p>
         </div>
@@ -115,77 +115,77 @@ export default function Categories() {
           <button
             type="button"
             onClick={() => setPhotoFilter("all")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               photoFilter === "all"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   Total Categories
                 </p>
                 <p className="text-2xl font-semibold mt-2">
                   {categories.length}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <Squares2X2Icon className="w-6 h-6 text-[#c9a96a]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <Squares2X2Icon className="w-6 h-6 text-[#475569]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setPhotoFilter("with")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               photoFilter === "with"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   With Photos
                 </p>
                 <p className="text-2xl font-semibold mt-2">
                   {categories.filter((c) => c.photo).length}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <PhotoIcon className="w-6 h-6 text-[#5b7a40]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <PhotoIcon className="w-6 h-6 text-[#16a34a]" />
               </div>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setPhotoFilter("without")}
-            className={`text-left rounded-2xl bg-[#1d222c] border px-4 py-4 transition ${
+            className={`text-left rounded-2xl bg-[#f1f5f9] border px-4 py-4 transition ${
               photoFilter === "without"
-                ? "border-[#f6f1e8] ring-1 ring-[#f6f1e8]/30"
-                : "border-[#2a2f3a]"
+                ? "border-[#e2e8f0] ring-1 ring-[#e2e8f0]/30"
+                : "border-[#cbd5e1]"
             }`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#c9a96a]">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
                   No Photo
                 </p>
                 <p className="text-2xl font-semibold mt-2">
                   {categories.filter((c) => !c.photo).length}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-[#1d222c] border border-[#2a2f3a]">
-                <NoSymbolIcon className="w-6 h-6 text-[#a4553a]" />
+              <div className="p-3 rounded-full bg-[#f1f5f9] border border-[#cbd5e1]">
+                <NoSymbolIcon className="w-6 h-6 text-[#dc2626]" />
               </div>
             </div>
           </button>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 rounded-full bg-[#1d222c] border border-[#2a2f3a] px-4 py-2">
-            <span className="text-sm text-[#c9a96a]">Search</span>
+          <div className="flex items-center gap-2 rounded-full bg-[#f1f5f9] border border-[#cbd5e1] px-4 py-2">
+            <span className="text-sm text-[#475569]">Search</span>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -196,7 +196,7 @@ export default function Categories() {
         </div>
 
         {/* FORM */}
-        <div className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6">
+        <div className="rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm p-6">
           <h2 className="text-lg font-semibold mb-4">
             {isEditing ? "Update Category" : "Create Category"}
           </h2>
@@ -208,7 +208,7 @@ export default function Categories() {
               onChange={handleChange}
               placeholder="Category Name"
               required
-              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
+              className="bg-[#f1f5f9] border border-[#cbd5e1] rounded-2xl px-4 py-3 text-sm text-[#0f172a] placeholder:text-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/15"
             />
 
             <input
@@ -216,12 +216,12 @@ export default function Categories() {
               value={form.photo}
               onChange={handleChange}
               placeholder="Photo URL"
-              className="bg-[#1d222c] border border-[#2a2f3a] rounded-2xl px-4 py-3 text-sm text-[#f6f1e8] placeholder:text-[#c9a96a] focus:outline-none focus:ring-2 focus:ring-[#f6f1e8]/15"
+              className="bg-[#f1f5f9] border border-[#cbd5e1] rounded-2xl px-4 py-3 text-sm text-[#0f172a] placeholder:text-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/15"
             />
 
             <div className="flex gap-2 md:col-span-2">
               <button
-                className="rounded-full bg-[#f6f1e8] text-[#171a20] px-5 py-3 text-sm font-semibold border border-[#f6f1e8] hover:bg-[#c9a96a] flex items-center gap-2"
+                className="rounded-full bg-[#e2e8f0] text-[#0f172a] px-5 py-3 text-sm font-semibold border border-[#e2e8f0] hover:bg-[#0ea5e9] flex items-center gap-2"
               >
                 <PlusIcon className="w-4 h-4" />
                 {isEditing ? "Update Category" : "Create Category"}
@@ -230,7 +230,7 @@ export default function Categories() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="rounded-full bg-[#171a20] border border-[#2a2f3a] px-5 py-3 text-sm font-semibold text-[#a8905d] hover:bg-[#232833] flex items-center gap-2"
+                className="rounded-full bg-[#f8fafc] border border-[#cbd5e1] px-5 py-3 text-sm font-semibold text-[#475569] hover:bg-[#e2e8f0] flex items-center gap-2"
               >
                 <XMarkIcon className="w-4 h-4" /> Cancel
               </button>
@@ -243,10 +243,10 @@ export default function Categories() {
           {filteredCategories.map((cat) => (
             <div
               key={cat._id}
-              className="rounded-3xl border border-[#2a2f3a] bg-[#171a20] shadow-sm p-6 flex flex-col"
+              className="rounded-3xl border border-[#cbd5e1] bg-[#f8fafc] shadow-sm p-6 flex flex-col"
             >
               <div className="flex justify-center mb-4">
-                <div className="w-36 h-36 rounded-full overflow-hidden bg-[#1d222c] border border-[#2a2f3a] flex items-center justify-center">
+                <div className="w-36 h-36 rounded-full overflow-hidden bg-[#f1f5f9] border border-[#cbd5e1] flex items-center justify-center">
                   {cat.photo ? (
                     <img
                       src={cat.photo}
@@ -254,30 +254,30 @@ export default function Categories() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-[#c9a96a] text-sm">No Image</span>
+                    <span className="text-[#475569] text-sm">No Image</span>
                   )}
                 </div>
               </div>
 
-              <h3 className="text-sm font-semibold text-center text-[#f6f1e8]">
+              <h3 className="text-sm font-semibold text-center text-[#0f172a]">
                 {cat.name}
               </h3>
 
-              <p className="text-xs text-center text-[#a8905d] mt-1">
+              <p className="text-xs text-center text-[#475569] mt-1">
                 Category
               </p>
 
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => handleEdit(cat)}
-                  className="flex-1 rounded-full bg-[#f6f1e8] text-[#171a20] py-2 text-sm font-semibold border border-[#f6f1e8] hover:bg-[#c9a96a]"
+                  className="flex-1 rounded-full bg-[#e2e8f0] text-[#0f172a] py-2 text-sm font-semibold border border-[#e2e8f0] hover:bg-[#0ea5e9]"
                 >
                   Edit
                 </button>
 
                 <button
                   onClick={() => handleDelete(cat._id)}
-                  className="flex-1 rounded-full bg-[#171a20] border border-[#2a2f3a] text-[#a8905d] py-2 text-sm font-semibold hover:bg-[#232833]"
+                  className="flex-1 rounded-full bg-[#f8fafc] border border-[#cbd5e1] text-[#475569] py-2 text-sm font-semibold hover:bg-[#e2e8f0]"
                 >
                   Delete
                 </button>
@@ -287,7 +287,7 @@ export default function Categories() {
         </div>
 
         {filteredCategories.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-[#2a2f3a] bg-[#232833] p-10 text-center text-[#a8905d]">
+          <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-[#e2e8f0] p-10 text-center text-[#475569]">
             No categories match the current filter.
           </div>
         )}
