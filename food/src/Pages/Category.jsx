@@ -97,7 +97,7 @@ export default function Categories() {
   });
 
   return (
-    <div className="min-h-screen bg-white text-[#0f172a]">
+    <div className="min-h-screen anim-fade-in-up bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10 space-y-6">
         <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">

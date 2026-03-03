@@ -248,7 +248,7 @@ export default function DeliveryStaffOrders() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-[#0f172a]">
+    <div className="min-h-screen anim-fade-in-up bg-white text-[#0f172a]">
       {toasts.length > 0 && (
         <div className="fixed right-6 top-24 z-40 w-[320px] space-y-3">
           {toasts.map((note) => (

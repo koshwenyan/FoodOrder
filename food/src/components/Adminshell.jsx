@@ -145,7 +145,7 @@ export default function AdminShell() {
         user?.role === "shop-admin" && shopName ? `• ${shopName}` : "";
 
     return (
-        <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
+        <div className="orders-theme min-h-screen anim-fade-in-up bg-white text-[#0f172a]">
 
             {/* ================= SIDEBAR ================= */}
             <aside

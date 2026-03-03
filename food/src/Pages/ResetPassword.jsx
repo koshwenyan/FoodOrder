@@ -33,7 +33,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#0f172a] px-4 flex items-center justify-center">
+    <div className="min-h-screen anim-fade-in-up bg-white text-[#0f172a] px-4 flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] shadow-lg p-8"

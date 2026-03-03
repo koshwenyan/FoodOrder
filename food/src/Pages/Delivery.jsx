@@ -172,7 +172,9 @@ export default function Delivery() {
         o.deliveryAddress?.toLowerCase().includes(term)
       );
     });
-    return filtered.sort((a, b) => getMinutesSince(b.createdAt) - getMinutesSince(a.createdAt));
+    return filtered.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }, [orders, activeTab, search, filterCompany, slaFilter]);
 
   const counts = useMemo(() => {
@@ -247,9 +249,9 @@ export default function Delivery() {
   };
 
   return (
-    <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
+    <div className="orders-theme min-h-screen bg-white text-[#0f172a] anim-fade-in-up">
       <div className="px-6 py-6 sm:px-10">
-        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
+        <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1] anim-fade-in-up">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
@@ -402,7 +404,8 @@ export default function Delivery() {
               return (
                 <div
                   key={order._id}
-                  className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] shadow-sm p-6"
+                  className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] shadow-sm p-6 anim-card-in hover:shadow-md transition-shadow duration-200"
+                  style={{ animationDelay: `${Math.min( 10) * 45}ms` }}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -462,7 +465,7 @@ export default function Delivery() {
                     <p className="text-xs uppercase tracking-[0.2em] text-[#a38b74]">
                       Delivery Company
                     </p>
-                    {status === "complete" ? (
+                    {status === "complete" || order.deliveryCompany?._id ? (
                       <div className="mt-2 w-full rounded-2xl border border-[#cbd5e1] bg-[#f1f5f9] px-4 py-3 text-sm text-[#0f172a]">
                         {order.deliveryCompany?.name || "Unassigned"}
                       </div>
@@ -472,9 +475,7 @@ export default function Delivery() {
                         onChange={(e) => handleCompanyUpdate(order._id, e.target.value)}
                         className="mt-2 w-full rounded-2xl border border-[#cbd5e1] bg-[#f8fafc] px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:ring-2 focus:ring-[#e2e8f0]/20"
                       >
-                        <option value="">
-                          {order.deliveryCompany?._id ? "Reassign delivery company" : "Choose delivery company"}
-                        </option>
+                        <option value="">Choose delivery company</option>
                         {companies.map((c) => (
                           <option key={c._id} value={c._id}>
                             {c.name}
@@ -519,7 +520,7 @@ export default function Delivery() {
             className="absolute inset-0 bg-black/40"
             onClick={() => setDrawerOrder(null)}
           />
-          <div className="relative w-full max-w-lg h-full bg-[#f8fafc] shadow-2xl p-6 overflow-y-auto">
+          <div className="relative w-full max-w-lg h-full bg-[#f8fafc] shadow-2xl p-6 overflow-y-auto anim-drawer-in">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">

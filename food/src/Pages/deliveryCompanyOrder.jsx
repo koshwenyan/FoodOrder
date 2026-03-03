@@ -74,7 +74,13 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
   const handleUpdateStatus = async (orderId, status) => {
     if (!status) return;
     try {
-      await api.put(`/order/${orderId}/status`, { status });
+      const res = await api.put(`/order/${orderId}/status`, { status });
+      const updatedOrder = res.data?.data;
+      if (updatedOrder?._id) {
+        setSelectedOrder((prev) =>
+          prev?._id === updatedOrder._id ? updatedOrder : prev
+        );
+      }
       fetchOrders();
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to update status.");
@@ -146,7 +152,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
   }, [orders, searchTerm, statusFilter, sortBy]);
 
   return (
-    <div className="min-h-screen bg-white text-[#0f172a]">
+    <div className="min-h-screen anim-fade-in-up bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
         <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <p className="text-sm uppercase tracking-[0.2em] text-[#475569]">
@@ -392,7 +398,7 @@ const DeliveryCompanyOrder = ({ defaultStatusFilter = "all" }) => {
                 </div>
               </div>
 
-              {user?.role === "company-staff" &&
+              {(user?.role === "company-staff" || user?.role === "company-admin") &&
                 selectedOrder.status !== "complete" && (
                 <div className="rounded-2xl border border-[#cbd5e1] bg-[#f8fafc] p-4">
                   <h4 className="text-sm font-semibold">Update status</h4>

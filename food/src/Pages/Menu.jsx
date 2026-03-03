@@ -248,7 +248,7 @@ export default function Menus() {
 
   /* ================= UI ================= */
   return (
-    <div className="orders-theme min-h-screen bg-white text-[#0f172a]">
+    <div className="orders-theme min-h-screen anim-fade-in-up bg-white text-[#0f172a]">
       <div className="px-6 py-6 sm:px-10">
         <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

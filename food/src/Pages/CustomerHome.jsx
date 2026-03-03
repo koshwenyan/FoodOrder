@@ -37,7 +37,6 @@ export default function CustomerHome() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState([]);
-  const [cartShopId, setCartShopId] = useState(null);
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [paymentReference, setPaymentReference] = useState("");
@@ -73,6 +72,13 @@ export default function CustomerHome() {
   const [toasts, setToasts] = useState([]);
   const prevOrderMapRef = useRef(new Map());
   const soundEnabledRef = useRef(false);
+  const activeMenuShopIdRef = useRef(null);
+
+  const normalizeShopId = (value) => {
+    if (!value) return null;
+    if (typeof value === "string") return value;
+    return value?._id || null;
+  };
 
   const handleLogout = () => {
     logout();
@@ -177,10 +183,17 @@ export default function CustomerHome() {
 
   const fetchMenus = async (shopId) => {
     if (!shopId) return;
+    const requestedShopId = String(shopId);
     setLoading((prev) => ({ ...prev, menus: true }));
     try {
       const res = await api.get(`/menu/shop/${shopId}`);
-      setMenus(res.data?.data || []);
+      // Ignore stale responses if user already switched to another shop.
+      if (activeMenuShopIdRef.current !== requestedShopId) return;
+      const items = res.data?.data || [];
+      const safeMenus = items.filter(
+        (menu) => normalizeShopId(menu.shopId) === requestedShopId
+      );
+      setMenus(safeMenus);
     } catch (err) {
       showMessage(
         "error",
@@ -254,8 +267,11 @@ export default function CustomerHome() {
 
   useEffect(() => {
     if (selectedShop?._id) {
+      activeMenuShopIdRef.current = String(selectedShop._id);
+      setMenus([]);
       fetchMenus(selectedShop._id);
     } else {
+      activeMenuShopIdRef.current = null;
       setMenus([]);
     }
     setSelectedCategory("all");
@@ -306,10 +322,10 @@ export default function CustomerHome() {
   );
 
   const handleAddToCart = (menu, { addOns = [], note = "" } = {}) => {
-    const menuShopId =
-      typeof menu.shopId === "object" ? menu.shopId?._id : menu.shopId;
-    if (cartShopId && cartShopId !== menuShopId) {
-      showMessage("error", "Please clear the cart before switching shops.");
+    const menuShopId = normalizeShopId(menu.shopId);
+    const selectedShopId = normalizeShopId(selectedShop);
+    if (!selectedShopId || menuShopId !== selectedShopId) {
+      showMessage("error", "Please select the correct shop menu before adding.");
       return;
     }
     const basePrice = Number(menu.price || 0);
@@ -330,7 +346,6 @@ export default function CustomerHome() {
       .sort()
       .join("|");
     const cartKey = `${menu._id}::${addOnKey}::${cleanNote}`;
-    setCartShopId(menuShopId);
     setCartItems((prev) => {
       const existing = prev.find((item) => item.cartKey === cartKey);
       if (existing) {
@@ -345,6 +360,7 @@ export default function CustomerHome() {
         {
           cartKey,
           _id: menu._id,
+          shopId: menuShopId,
           name: menu.name,
           basePrice,
           unitPrice,
@@ -370,12 +386,15 @@ export default function CustomerHome() {
 
   const handleClearCart = () => {
     setCartItems([]);
-    setCartShopId(null);
+  };
+
+  const handleSelectShop = (shop) => {
+    setSelectedShop(shop);
   };
 
   const handlePlaceOrder = async (event) => {
     event.preventDefault();
-    if (!cartShopId || cartItems.length === 0) {
+    if (cartItems.length === 0) {
       showMessage("error", "Please add items to your cart first.");
       return;
     }
@@ -396,7 +415,6 @@ export default function CustomerHome() {
 
     try {
       const res = await api.post("/order/create", {
-        shopId: cartShopId,
         items: cartItems.map((item) => ({
           menuId: item._id,
           quantity: item.quantity,
@@ -407,15 +425,26 @@ export default function CustomerHome() {
         paymentMethod,
         paymentReference: paymentReference.trim(),
       });
-      const createdOrder = res.data?.data;
-      showMessage("success", "Order placed successfully.");
+      const createdData = res.data?.data;
+      const createdOrders = Array.isArray(createdData)
+        ? createdData
+        : createdData
+        ? [createdData]
+        : [];
+
+      showMessage(
+        "success",
+        createdOrders.length > 1
+          ? `Orders placed successfully across ${createdOrders.length} shops.`
+          : "Order placed successfully."
+      );
       handleClearCart();
       setDeliveryAddress("");
       setPaymentReference("");
       fetchOrders();
       fetchWallet();
-      if (paymentMethod === "kpay" && createdOrder?._id) {
-        setPaymentModalOrder(createdOrder);
+      if (paymentMethod === "kpay" && createdOrders.length === 1 && createdOrders[0]?._id) {
+        setPaymentModalOrder(createdOrders[0]);
       }
     } catch (err) {
       showMessage(
@@ -506,7 +535,7 @@ export default function CustomerHome() {
   }, [latestOrder?._id]);
 
   return (
-    <div className="min-h-screen bg-white text-[#0f172a] px-6 py-8">
+    <div className="min-h-screen anim-fade-in-up bg-white text-[#0f172a] px-6 py-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="rounded-3xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-6 sm:p-8 shadow-lg border border-[#cbd5e1]">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -636,7 +665,7 @@ export default function CustomerHome() {
                 {filteredShops.map((shop) => (
                   <button
                     key={shop._id}
-                    onClick={() => setSelectedShop(shop)}
+                    onClick={() => handleSelectShop(shop)}
                     className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                       selectedShop?._id === shop._id
                         ? "border-[#e2e8f0] bg-[#e2e8f0] text-[#0f172a]"
@@ -894,7 +923,7 @@ export default function CustomerHome() {
               <div className="rounded-3xl bg-[#f8fafc] border border-[#cbd5e1] p-6 shadow-sm">
                 <h2 className="text-xl font-semibold">Your cart</h2>
                 <p className="text-sm text-[#475569] mt-1">
-                  Add items from a single shop, then place your order.
+                  Add items from any shops, then place one checkout.
                 </p>
                 <div className="mt-4 space-y-3">
                   {cartItems.length === 0 && (

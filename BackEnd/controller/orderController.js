@@ -10,33 +10,57 @@ export const createOrder = async (req, res) => {
         const { shopId, items, deliveryAddress, paymentMethod, paymentReference } = req.body;
 
         // Check required fields
-        if (!shopId || !items || items.length === 0 || !deliveryAddress) {
-            return res.status(400).json({ message: "shopId, items, and deliveryAddress are required." });
+        if (!items || items.length === 0 || !deliveryAddress) {
+            return res.status(400).json({ message: "items and deliveryAddress are required." });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(shopId)) {
+        const hasShopId = Boolean(shopId);
+        if (hasShopId && !mongoose.Types.ObjectId.isValid(shopId)) {
             return res.status(400).json({ message: "Invalid shopId." });
         }
 
-        // Validate shop exists
-        const shop = await Shop.findById(shopId);
-        if (!shop) return res.status(404).json({ message: "Shop not found." });
+        // Optional single-shop mode: validate selected shop exists
+        if (hasShopId) {
+            const shop = await Shop.findById(shopId);
+            if (!shop) return res.status(404).json({ message: "Shop not found." });
+        }
 
-        // Ensure each menu item exists and quantity is number
-        const orderItems = [];
-        let totalAmount = 0;
+        // Preload menus used by this checkout
+        const menuIdList = items.map((i) => i?.menuId).filter(Boolean);
+        if (menuIdList.length === 0) {
+            return res.status(400).json({ message: "Each item must include menuId." });
+        }
+
+        const invalidMenuId = menuIdList.find((id) => !mongoose.Types.ObjectId.isValid(id));
+        if (invalidMenuId) {
+            return res.status(400).json({ message: `Invalid menuId: ${invalidMenuId}` });
+        }
+
+        const uniqueMenuIds = [...new Set(menuIdList.map((id) => id.toString()))];
+        const menus = await Menu.find({ _id: { $in: uniqueMenuIds } });
+        const menuMap = new Map(menus.map((menu) => [menu._id.toString(), menu]));
+        const missingMenuId = uniqueMenuIds.find((id) => !menuMap.has(id));
+        if (missingMenuId) {
+            return res.status(404).json({ message: `Menu not found: ${missingMenuId}` });
+        }
+
+        // Group items by shop for multi-shop one-checkout behavior
+        const groupedByShop = new Map();
 
         for (const i of items) {
             if (!i.menuId || !i.quantity) {
                 return res.status(400).json({ message: "Each item must have menuId and quantity." });
             }
 
-            if (!mongoose.Types.ObjectId.isValid(i.menuId)) {
-                return res.status(400).json({ message: `Invalid menuId: ${i.menuId}` });
-            }
-
-            const menu = await Menu.findById(i.menuId);
+            const menu = menuMap.get(i.menuId.toString());
             if (!menu) return res.status(404).json({ message: `Menu not found: ${i.menuId}` });
+
+            // If client sent shopId, keep backward-compatible one-shop validation
+            if (hasShopId && menu.shopId.toString() !== shopId.toString()) {
+                return res.status(400).json({
+                    message: "All order items must belong to the selected shop."
+                });
+            }
 
             const quantity = Number(i.quantity);
             if (isNaN(quantity) || quantity <= 0) {
@@ -80,7 +104,16 @@ export const createOrder = async (req, res) => {
             const note =
                 typeof i.note === "string" ? i.note.trim().slice(0, 200) : "";
 
-            orderItems.push({
+            const shopKey = menu.shopId.toString();
+            if (!groupedByShop.has(shopKey)) {
+                groupedByShop.set(shopKey, {
+                    shopId: menu.shopId,
+                    items: [],
+                    totalAmount: 0
+                });
+            }
+            const group = groupedByShop.get(shopKey);
+            group.items.push({
                 menuId: menu._id,
                 name: menu.name,
                 price: basePrice,
@@ -90,8 +123,7 @@ export const createOrder = async (req, res) => {
                 addOnsTotal,
                 lineTotal
             });
-
-            totalAmount += lineTotal;
+            group.totalAmount += lineTotal;
         }
 
         // Create order
@@ -102,21 +134,32 @@ export const createOrder = async (req, res) => {
             return res.status(400).json({ message: "Invalid payment method." });
         }
 
-        const order = await Order.create({
-            customer: req.user._id,       // logged-in user
-            shopId,
-            items: orderItems,
+        const groupedShopIds = [...groupedByShop.keys()];
+        const existingShops = await Shop.find({ _id: { $in: groupedShopIds } }).select("_id");
+        if (existingShops.length !== groupedShopIds.length) {
+            return res.status(404).json({ message: "One or more shops not found." });
+        }
+
+        const orderPayloads = [...groupedByShop.values()].map((group) => ({
+            customer: req.user._id, // logged-in user
+            shopId: group.shopId,
+            items: group.items,
             deliveryAddress,
-            totalAmount,
-            status: "pending",            // default status
+            totalAmount: group.totalAmount,
+            status: "pending",
             paymentMethod: normalizedPaymentMethod,
             paymentReference:
                 typeof paymentReference === "string" ? paymentReference.trim().slice(0, 100) : ""
-        });
+        }));
+        const createdOrders = await Order.insertMany(orderPayloads);
+        const responseData = createdOrders.length === 1 ? createdOrders[0] : createdOrders;
 
         res.status(201).json({
-            message: "Order created successfully",
-            data: order
+            message:
+                createdOrders.length === 1
+                    ? "Order created successfully"
+                    : `Orders created successfully (${createdOrders.length} shops)`,
+            data: responseData
         });
 
     } catch (error) {
@@ -218,6 +261,34 @@ export const updateOrderStatus = async (req, res) => {
             "cancelled"
         ];
         const STAFF_STATUS = ["picked-up", "delivered", "complete"];
+        const COMPANY_ADMIN_STATUS = ["picked-up", "delivered", "complete"];
+
+        const applyWalletPaymentIfNeeded = async (targetOrder) => {
+            if (targetOrder.paymentMethod !== "wallet" || targetOrder.walletDeductedAt) {
+                return;
+            }
+
+            const user = await User.findById(targetOrder.customer);
+            if (!user) {
+                throw new Error("CUSTOMER_NOT_FOUND");
+            }
+
+            const balance = Number(user.walletBalance || 0);
+            const total = Number(targetOrder.totalAmount || 0);
+            const minRemaining = 100;
+            if (balance - total < minRemaining) {
+                const err = new Error("INSUFFICIENT_WALLET");
+                throw err;
+            }
+
+            user.walletBalance = balance - total;
+            await user.save();
+
+            targetOrder.isPaid = true;
+            targetOrder.paidAt = new Date();
+            targetOrder.walletAmount = total;
+            targetOrder.walletDeductedAt = new Date();
+        };
 
         const order = await Order.findById(orderId);
 
@@ -240,28 +311,18 @@ export const updateOrderStatus = async (req, res) => {
             }
 
             if (status === "complete") {
-                if (order.paymentMethod === "wallet" && !order.walletDeductedAt) {
-                    const user = await User.findById(order.customer);
-                    if (!user) {
+                try {
+                    await applyWalletPaymentIfNeeded(order);
+                } catch (walletErr) {
+                    if (walletErr.message === "CUSTOMER_NOT_FOUND") {
                         return res.status(404).json({ message: "Customer not found" });
                     }
-
-                    const balance = Number(user.walletBalance || 0);
-                    const total = Number(order.totalAmount || 0);
-                    const minRemaining = 100;
-                    if (balance - total < minRemaining) {
+                    if (walletErr.message === "INSUFFICIENT_WALLET") {
                         return res.status(400).json({
                             message: "Insufficient wallet balance. Minimum remaining balance is 100 MMK."
                         });
                     }
-
-                    user.walletBalance = balance - total;
-                    await user.save();
-
-                    order.isPaid = true;
-                    order.paidAt = new Date();
-                    order.walletAmount = total;
-                    order.walletDeductedAt = new Date();
+                    throw walletErr;
                 }
             }
 
@@ -311,28 +372,18 @@ export const updateOrderStatus = async (req, res) => {
             }
 
             if (status === "complete") {
-                if (order.paymentMethod === "wallet" && !order.walletDeductedAt) {
-                    const user = await User.findById(order.customer);
-                    if (!user) {
+                try {
+                    await applyWalletPaymentIfNeeded(order);
+                } catch (walletErr) {
+                    if (walletErr.message === "CUSTOMER_NOT_FOUND") {
                         return res.status(404).json({ message: "Customer not found" });
                     }
-
-                    const balance = Number(user.walletBalance || 0);
-                    const total = Number(order.totalAmount || 0);
-                    const minRemaining = 100;
-                    if (balance - total < minRemaining) {
+                    if (walletErr.message === "INSUFFICIENT_WALLET") {
                         return res.status(400).json({
                             message: "Insufficient wallet balance. Minimum remaining balance is 100 MMK."
                         });
                     }
-
-                    user.walletBalance = balance - total;
-                    await user.save();
-
-                    order.isPaid = true;
-                    order.paidAt = new Date();
-                    order.walletAmount = total;
-                    order.walletDeductedAt = new Date();
+                    throw walletErr;
                 }
             }
 
@@ -341,6 +392,49 @@ export const updateOrderStatus = async (req, res) => {
 
             return res.status(200).json({
                 message: "Order status updated by delivery staff",
+                data: order
+            });
+        }
+
+        // ================= COMPANY ADMIN =================
+        if (req.user.role === "company-admin") {
+            if (!COMPANY_ADMIN_STATUS.includes(status)) {
+                return res.status(400).json({
+                    message: "Invalid status for company-admin"
+                });
+            }
+
+            if (
+                !req.user.companyId ||
+                !order.deliveryCompany ||
+                order.deliveryCompany.toString() !== req.user.companyId.toString()
+            ) {
+                return res.status(403).json({
+                    message: "You can update only your company orders"
+                });
+            }
+
+            if (status === "complete") {
+                try {
+                    await applyWalletPaymentIfNeeded(order);
+                } catch (walletErr) {
+                    if (walletErr.message === "CUSTOMER_NOT_FOUND") {
+                        return res.status(404).json({ message: "Customer not found" });
+                    }
+                    if (walletErr.message === "INSUFFICIENT_WALLET") {
+                        return res.status(400).json({
+                            message: "Insufficient wallet balance. Minimum remaining balance is 100 MMK."
+                        });
+                    }
+                    throw walletErr;
+                }
+            }
+
+            order.status = status;
+            await order.save();
+
+            return res.status(200).json({
+                message: "Order status updated by company-admin",
                 data: order
             });
         }
