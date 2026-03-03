@@ -35,7 +35,7 @@ export default function CustomerRegister() {
 
       setSuccess("Account created! Please log in.");
       setForm({ name: "", email: "", phone: "", address: "", password: "" });
-      setTimeout(() => navigate("/customer/login"), 800);
+      setTimeout(() => navigate("/login"), 800);
     } catch (err) {
       const msg = err?.response?.data?.message || "Register failed";
       setError(msg);
@@ -172,7 +172,7 @@ export default function CustomerRegister() {
         <p className="mt-5 text-center text-sm text-[#475569]">
           Already have an account?{" "}
           <Link
-            to="/customer/login"
+            to="/login"
             className="font-semibold text-[#0ea5e9] hover:underline"
           >
             Login

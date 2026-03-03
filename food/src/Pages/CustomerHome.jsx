@@ -76,7 +76,7 @@ export default function CustomerHome() {
 
   const handleLogout = () => {
     logout();
-    navigate("/customer/login");
+    navigate("/login");
   };
 
   const playNotificationSound = () => {

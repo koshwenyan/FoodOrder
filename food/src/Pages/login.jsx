@@ -24,6 +24,8 @@ export default function Login() {
                 navigate("/admin/dashboard");
             } else if (user.role === "shop-admin") {
                 navigate("/shop-admin/shopadmindashboard");
+            } else if (user.role === "customer") {
+                navigate("/customer/home");
             }
             else if (user.role === "company-admin") {
                 navigate("/company-admin/companyadmindashboard");
@@ -47,11 +49,11 @@ export default function Login() {
             >
                 <div className="rounded-2xl bg-gradient-to-br from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] p-5 border border-[#cbd5e1] text-center">
                     <p className="text-xs uppercase tracking-[0.2em] text-[#475569]">
-                        Admin Access
+                        Account Access
                     </p>
                     <h1 className="text-3xl font-semibold mt-1">Login</h1>
                     <p className="text-sm text-[#475569] mt-1">
-                        Secure access to your dashboard
+                        One login page for all account types
                     </p>
                 </div>
 
@@ -132,14 +134,7 @@ export default function Login() {
                 </p>
 
                 <p className="mt-2 text-center text-sm text-[#475569]">
-                    Customer?{" "}
-                    <Link
-                        to="/customer/login"
-                        className="font-semibold text-[#0ea5e9] hover:underline"
-                    >
-                        Login here
-                    </Link>{" "}
-                    or{" "}
+                    Don’t have an account?{" "}
                     <Link
                         to="/customer/register"
                         className="font-semibold text-[#0ea5e9] hover:underline"

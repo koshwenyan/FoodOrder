@@ -15,10 +15,9 @@ import Orders from "./Pages/Orders.jsx";
 import Delivery from "./Pages/Deliservice.jsx";
 import ShopDelivery from "./Pages/Delivery.jsx";
 import Menu from "./Pages/Menu.jsx";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./routes/PrivateRoute.jsx";
 import Login from "./Pages/Login.jsx";
-import CustomerLogin from "./Pages/CustomerLogin.jsx";
 import CustomerRegister from "./Pages/CustomerRegister.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import ResetPassword from "./Pages/ResetPassword.jsx";
@@ -40,7 +39,7 @@ export default function App() {
 
                     {/* LOGIN */}
                     <Route path="/login" element={<Login />} />
-                    <Route path="/customer/login" element={<CustomerLogin />} />
+                    <Route path="/customer/login" element={<Navigate to="/login" replace />} />
                     <Route path="/customer/register" element={<CustomerRegister />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
@@ -82,7 +81,7 @@ export default function App() {
                     <Route
                         path="/customer/home"
                         element={
-                            <PrivateRoute allowedRoles={["customer"]} redirectTo="/customer/login">
+                            <PrivateRoute allowedRoles={["customer"]} redirectTo="/login">
                                 <CustomerHome />
                             </PrivateRoute>
                         }
