@@ -32,7 +32,7 @@ export default function OrderPage() {
     const res = await fetch(API_DELIVERY, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const data = await res.json();
+    const data = await res.json(); 
     setDeliveryCompanies(data.data || []);
   };
 
